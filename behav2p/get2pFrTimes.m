@@ -1,5 +1,6 @@
 function [relFrTimes, absFrTimes, frInds] = get2pFrTimes()
 
+% import the Bruker 2p XML data as cell array
 [xmCell] = import2pXml();
 
 
@@ -7,6 +8,7 @@ relFrTimes = [];
 absFrTimes = [];
 frInds = [];
 
+% look through XML cell array for info from each frame
 tic;
 for i=1:length(xmCell)
     rowStr = xmCell{i};

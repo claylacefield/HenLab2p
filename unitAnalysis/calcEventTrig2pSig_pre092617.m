@@ -1,4 +1,4 @@
-function [eventCa, zeroInds] = calcEventTrig2pSig(ca, tCa, eventTimes, toPlot)
+function [eventCa] = calcEventTrig2pSig(ca, treadBehStruc, eventName, toPlot)
 
 %% USAGE: [eventCa] = calcEventTrigFPsig(fpStruc, behavStruc, eventName, toPlot);
 
@@ -6,11 +6,9 @@ function [eventCa, zeroInds] = calcEventTrig2pSig(ca, tCa, eventTimes, toPlot)
 preEvSec = 10;
 postEvSec = 30;
 
-ca = ca/max(ca);
-
 % load necessary data
-% relFrTimes = treadBehStruc.adjFrTimes; %relFrTimes;
-% eventTimes = treadBehStruc.(eventName);
+relFrTimes = treadBehStruc.adjFrTimes; %relFrTimes;
+eventTimes = treadBehStruc.(eventName);
 
 % adjust ca frame times if downsampled
 % if length(relFrTimes)/length(ca) > 1.5
@@ -20,20 +18,20 @@ ca = ca/max(ca);
 %     fps = 30;
 % end
 
-fps = 1/mean(diff(tCa));
+
 
 preEvFr = round(preEvSec*fps); % samples before event to include in ca epoch
 postEvFr = round(postEvSec*fps);
 
-eventTimes(eventTimes>(max(tCa)-30))= NaN;
-eventTimes(eventTimes<(min(tCa)+10))= NaN;
+eventTimes(eventTimes>(max(relFrTimes)-30))= NaN;
+eventTimes(eventTimes<(min(relFrTimes)+10))= NaN;
 
 %% extract calcium window around events
 for evNum = 1:length(eventTimes)
     %try
         if ~isnan(eventTimes(evNum))
             evTime = eventTimes(evNum);
-            [minVal, zeroInd] = min(abs(tCa-evTime));
+            [minVal, zeroInd] = min(abs(relFrTimes-evTime));
             eventCa(:, evNum) = ca(zeroInd-preEvFr:zeroInd+postEvFr);
             zeroInds(evNum) = zeroInd;
         else

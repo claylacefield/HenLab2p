@@ -51,16 +51,15 @@ title('ca vs. pos (normalized)');
 subplot(4,1,3);
 plot(mean(popCaPos,2));
 xlim([1 size(popCaPos,1)]);
-ylim([min(mean(popCaPos,2)-0.001) max(mean(popCaPos,2)+0.001)]);
 hold on;
-line([relRewPos relRewPos], [min(mean(popCaPos,2)-0.01) max(mean(popCaPos,2)+0.01)], 'Color','r');
+line([relRewPos relRewPos], [0 size(popCaPos,2)], 'Color','r');
 title('mean goodSeg ca vs. position (not norm)');
 
 subplot(4,1,4);
 plot(binYvel);
 xlim([1 length(binYvel)]);
 hold on;
-line([relRewPos/2.5 relRewPos/2.5], [0 1], 'Color','r');
+line([relRewPos relRewPos], [0 size(popCaPos,2)], 'Color','r');
 title('vel');
 
 toc;
