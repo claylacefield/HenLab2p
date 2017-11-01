@@ -2,7 +2,8 @@ function saveDwnsmpH5(outfile)
 
 ifSima = 1; numCh = 2;
 segCh = 2; endFr = 0;
-[Y, Ysiz, filename] = h5readClay(ifSima, numCh, segCh, endFr, 0);
+%[Y, Ysiz, filename] = h5readClay(ifSima, numCh, segCh, endFr, 0);
+[Y, Ysiz, filename] = h5readClay(segCh, endFr, 0);
 Ysiz = size(Y);
 
 %outfile = 'eftyM1.h5';

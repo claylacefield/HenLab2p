@@ -1,14 +1,24 @@
-function [popCaPos, popCaPosNorm] = plotGoodSegTuning(C, goodSeg, treadBehStruc, dsFactor)
+function [popCaPos, popCaPosNorm] = plotGoodSegTuning(C, goodSeg, treadBehStruc, dsFactor, forRate);
 
 %C = segStruc.C;
 %goodSeg = segStruc.goodSeg;
 
 numbins = 40;
 
+fps = 30/dsFactor;
+
 tic;
 
 for i = 1:length(goodSeg)
     ca = C(goodSeg(i),:);
+    
+    if forRate
+       [pks] = clayCaTransients(ca, fps); 
+       ca = zeros(length(ca),1);
+       ca(pks) = 1;
+    end
+    
+    
     [binYca, binYvel, binVelCa] = caVsPosVel(treadBehStruc, ca, numbins, dsFactor);
     binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
     popCaPos(:,i) = binYca;
@@ -51,7 +61,7 @@ title('ca vs. pos (normalized)');
 subplot(4,1,3);
 plot(mean(popCaPos,2));
 xlim([1 size(popCaPos,1)]);
-ylim([min(mean(popCaPos,2)-0.001) max(mean(popCaPos,2)+0.001)]);
+%ylim([min(mean(popCaPos,2)-0.001) max(mean(popCaPos,2)+0.001)]);
 hold on;
 line([relRewPos relRewPos], [min(mean(popCaPos,2)-0.01) max(mean(popCaPos,2)+0.01)], 'Color','r');
 title('mean goodSeg ca vs. position (not norm)');

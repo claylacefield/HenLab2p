@@ -83,7 +83,7 @@ segStruc.filtParams.sigma = sigma;
 %% Downsample
 
 if size(Y,1)>256
-    toDownsample = [4 2];
+    toDownsample = [2 2]; %[4 2];
     Y = downsampleStack(Y,toDownsample(1),toDownsample(2));
     segStruc.avCh2ds = squeeze(mean(Y,3));  % avg downsampled green channel
 else
@@ -92,7 +92,7 @@ end
 
 segStruc.toDownsample = toDownsample;
 
-Y = Y(:,:,1:end-50); % hack to trim off some frames from end because of conv2 
+%Y = Y(:,:,1:end-50); % hack to trim off some frames from end because of conv2 
 
 %% NMF segmentation
 

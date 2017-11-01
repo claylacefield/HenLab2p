@@ -13,10 +13,17 @@ Y = reshape(Y,d1*d2,t);
 
 disp(['Filtering calcium data with exponential filter, tau=' num2str(tau)]);
 tic; 
-Y = conv2(Y,yexp, 'same'); 
+%Y = conv2(Y,yexp, 'same');
+Y = conv2(Y,yexp);
+
+% but this produces 1fr lag and beginning and end are crap (empirically)
+Y = Y(:,1:t);  % trim end frames (which are crap)
 toc;
 
 Y = reshape(Y, d1,d2, size(Y,2));
+
+% and just replace first 50 frames with frame 51
+Y(:,:,1:50) = repmat(Y(:,:,51), 1, 1, 50);
 
 
 % outfile = 'ch2ExpFilt.h5';

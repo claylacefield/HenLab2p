@@ -1,5 +1,7 @@
 function saveH5(Y, outfile)
 
+%% USAGE: saveH5(Y, outfile);
+
 disp('Saving stack as H5 with sima dimensions (tzyxc)');
 
 %Y = uint16(Y);
