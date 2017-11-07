@@ -2,28 +2,28 @@ function [binYca, binYvel, binVelCa] = caVsPosVel(treadBehStruc, ca, numbins, ds
 
 %% USAGE: [binYca, binVelCa] = caVsPosVel(treadBehStruc, ca, numbins);
 
-tCa = treadBehStruc.adjFrTimes;
-y = treadBehStruc.y;
-yTimes = treadBehStruc.yTimes;
+tCa = treadBehStruc.adjFrTimes; % times of 2p frames with respect to behavior TDML
+y = treadBehStruc.y;    % each position measurement (when rotary encoder turns)
+yTimes = treadBehStruc.yTimes;  % times (TDML) for each position meas
 
 % adjust ca frame times if downsampled
 % if length(tCa)/length(ca) > 1.5
 %    tCa = tCa(2:2:end); 
 % end
 
-tCa = tCa(1:dsFactor:end);
-tCa = tCa(1:length(ca));
+tCa = tCa(1:dsFactor:end);  % 2p frame times after downsampling video
+tCa = tCa(1:length(ca));    % and trim (is this necessary?)
 
 ca = ca/max(ca); % normalize calcium
 
 % calculate velocity over each frame (at 30hz)
-resampY = interp1(yTimes, y, tCa);
+resampY = interp1(yTimes, y, tCa); % interpolate position at times of 2p frames
 vel = abs(diff(resampY));
 vel(vel>30) = 0;
 vel = [0 vel];
 
 
-yRel = resampY/max(resampY);
+yRel = resampY/max(resampY);  % relative position (relative to max rotary encoder reading)
 
 velRel = vel/max(vel);
 

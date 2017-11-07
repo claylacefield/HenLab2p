@@ -1,5 +1,6 @@
-function [goodSeg] = findGoodSegsCaiman(C,fps)
+function [goodSeg, unitEvInds] = findGoodSegsCaiman(C,fps)
 
+spkNumThresh = 5;
 
 n=0;
 for i = 1:size(C,1)
