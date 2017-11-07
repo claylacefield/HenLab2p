@@ -15,15 +15,16 @@ else
 end
 
 
-sdThresh = 2;
+sdThresh = 6;
+timeoutSec = 5;
 
-rm = runmean(ca, fps); % smooth a little
+rm = runmean(ca, 4); %fps); % smooth a little
 
 dCa = diff(rm);  % note that in absolute terms, this will be one fr short
 
 thresh = sdThresh*std(dCa);  % threshold, in SD
 
-pks = LocalMinima(-dCa, 10*fps, -thresh);
+pks = LocalMinima(-dCa, timeoutSec*fps, -thresh);
 
 if toPlot
     figure; t = 1:length(ca);
@@ -34,7 +35,7 @@ if toPlot
     figure; hold on;
     for i = 1:length(pks)
         try
-            plot(ca(pks(i)-100:pks(i)+450)-ca(pks(i)-15));
+            plot(ca(pks(i)-100:pks(i)+300)-ca(pks(i)-15));
         catch
         end
     end

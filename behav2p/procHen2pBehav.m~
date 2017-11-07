@@ -16,7 +16,7 @@ treadBehStruc.absFrTimes = absFrTimes;
 treadBehStruc.frInds = frInds;
 
 % take into account offset between behavior start time and 2p trigger ON
-adjFrTimes = relFrTimes + treadBehStruc.syncOnTime;  % this gives you 2p frame times relative to behav/TDML timescale
+adjFrTimes = relFrTimes + treadBehStruc.syncOnTime;  % this gives you 
 treadBehStruc.adjFrTimes = adjFrTimes;
 
 % calculate velocity over each frame (at 30hz)
