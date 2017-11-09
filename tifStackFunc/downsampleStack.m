@@ -22,11 +22,11 @@ tic;
 if tempDs >1
     disp(['Downsampling temporal by ' num2str(tempDs) 'x']); 
     Y3 = reshape(Y2, (ydim*xdim), t);
-    Y4 = zeros((ydim*xdim), t/tempDs);
+    Y4 = zeros((ydim*xdim), round(t/tempDs));
     for pixNum = 1:size(Y3,1)
         Y4(pixNum,:) = decimate(double(Y3(pixNum,:)), tempDs);
     end
-    Y = reshape(Y4,ydim, xdim, t/tempDs);
+    Y = reshape(Y4,ydim, xdim, round(t/tempDs));
 else
     disp('No temporal downsampling');
     Y = Y2;
