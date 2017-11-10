@@ -32,6 +32,8 @@ for i = 1:length(goodSeg)
     
 end
 
+binYvel = caPosVelStruc.binYvel;
+
 % figure; 
 % imagesc(popCaPos');
 
