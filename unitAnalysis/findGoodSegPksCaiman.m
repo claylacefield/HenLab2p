@@ -1,4 +1,4 @@
-function [goodSeg, goodSegEvents, goodSegPosPks] = findGoodSegPksCaiman(C, treadBehStruc)
+function [goodSeg, goodSegEvents, goodSegPosPks] = findGoodSegPksCaiman(C, treadBehStruc);
 
 % This script detects transients for all units, selects goodSegs as units
 % thathave more than a certain number of events, and calculates their
