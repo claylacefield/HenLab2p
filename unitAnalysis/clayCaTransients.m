@@ -18,7 +18,7 @@ end
 sdThresh = 6;
 timeoutSec = 5;
 
-rm = runmean(ca, 4); %fps); % smooth a little
+rm = runmean(ca, 4); %fps); % smooth a little: this averages over 4frames, reducing the impact of short noisy activity
 
 dCa = diff(rm);  % note that in absolute terms, this will be one fr short
 
