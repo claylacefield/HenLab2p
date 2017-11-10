@@ -1,4 +1,4 @@
-function plotCNMF_AC(A, C,d1,d2, toPlotAll, varargin)
+function plotCNMF_AC(A, C,d1,d2, toPlotAll, varargin);
 
 %% USAGE: 
 
