@@ -23,7 +23,7 @@ for i = 1:length(goodSeg)
     if forRate
         binYca = caPosVelStruc.binYcaSum;
     else
-        binYca = caPosVelStruc.binYca;
+        binYca = caPosVelStruc.binYcaAvg;
     end
     
     %binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
