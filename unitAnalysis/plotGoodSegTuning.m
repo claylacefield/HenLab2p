@@ -3,7 +3,7 @@ function [popCaPos, popCaPosNorm] = plotGoodSegTuning(C, goodSeg, treadBehStruc,
 %C = segStruc.C;
 %goodSeg = segStruc.goodSeg;
 
-numbins = 40;
+numbins = 100;
 
 fps = 30/dsFactor;
 
@@ -19,8 +19,14 @@ for i = 1:length(goodSeg)
     end
     
     
-    [binYca, binYvel, binVelCa] = caVsPosVel(treadBehStruc, ca, numbins, dsFactor);
-    binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
+    [caPosVelStruc] = caVsPosVel(treadBehStruc, ca, numbins, dsFactor);
+    if forRate
+        binYca = caPosVelStruc.binYcaSum;
+    else
+        binYca = caPosVelStruc.binYca;
+    end
+    
+    %binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
     popCaPos(:,i) = binYca;
     popCaPosNorm(:,i) = binYca/max(binYca);
     
