@@ -82,3 +82,9 @@ line([relRewPos/2.5 relRewPos/2.5], [0 1], 'Color','r');
 title('vel');
 
 toc;
+
+reordC = C(goodSeg(sortInds),:);
+figure; hold on;
+for i = 1:length(goodSeg)
+    plot(reordC(i,:)+i/20);
+end
