@@ -91,6 +91,6 @@ y = resampY(1:2:end);
 y = y/max(y);
 plot((y-1)/20);
 for i = 1:length(goodSeg)
-    plot(reordC(i,:)+i/20);
+    plot(reordC(i,:)+i/15);
 end
-title('goodSegs sorted by tuning pos');
+title('goodSegs sorted by tuning pos (abs pos at bottom)');
