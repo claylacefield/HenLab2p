@@ -30,3 +30,6 @@ end
 
 toc;
 
+outfile = [basename '.h5'];
+disp(
+saveH5(Y, outfile);
