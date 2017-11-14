@@ -1,4 +1,4 @@
-function [Y] = readTiffSeq()
+function [Y] = readTiffSeq();
 
 
 folderpath = uigetdir();
@@ -9,10 +9,12 @@ tifDir = dir;
 
 numFrames = sum(contains({tifDir.name}, '.ome.tif'));
 firstFrame = 1;
+frNum = 0;
 
 tic;
 for i = 1:length(tifDir)
     if ~isempty(strfind(tifDir(i).name, '.ome.tif'))
+        frNum = frNum + 1;
         tif = imread(tifDir(i).name);
         if firstFrame == 1
             d1 = size(tif,1);
@@ -23,7 +25,7 @@ for i = 1:length(tifDir)
             basename = filename(1:strfind(filename, '_Cycle')-1);
             disp(['Reading ' basename]);
         end
-        Y(:,:,i)= tif;  % no, need actual frame number, not dir index
+        Y(:,:,frNum)= tif;  % no, need actual frame number, not dir index
     end
     
 end
