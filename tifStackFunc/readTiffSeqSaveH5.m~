@@ -10,7 +10,7 @@ cd(folderpath);
 tifDir = dir;
 
 %numFrames = sum(contains({tifDir.name}, '.ome.tif'));
-numFrames = sum(~cellfun('isempty', strfind({tifDir.name}, '.ome.tif')));
+numFrames = sum(cellfun('isempty', strfind(tiffDir.name, '.ome.tif')
 firstFrame = 1;
 frNum = 0;
 
