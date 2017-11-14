@@ -46,6 +46,7 @@ filename = 0; %
 [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
 
 Y = squeeze(Y);
+Y = permute(Y, [2 1 3]);
 
 basename = filename(1:strfind(filename, '.h5')-1);
 
