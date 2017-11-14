@@ -3,13 +3,14 @@ function [caPos, caPosNorm, evPos] = plotSegTuning(ca, fps, treadBehStruc, dsFac
 % Clay 101817 from plotGoodSegTuning.m
 % for single trace
 
-numbins = 40;
+numbins = 100;
 
 tic;
 
 % raw calcium
-[binYca, binYvel, binVelCa] = caVsPosVel(treadBehStruc, ca, numbins, dsFactor);
-binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
+[caPosVelStruc] = caVsPosVel(treadBehStruc, ca, numbins, dsFactor);
+
+binYca = caPosVelStruc.binYcaAvg; %interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
 caPos = binYca;
 caPosNorm = binYca/max(binYca);
 
@@ -18,11 +19,11 @@ caPosNorm = binYca/max(binYca);
 [pks] = clayCaTransients(ca, fps);
 ev = zeros(length(ca),1);
 ev(pks) = 1;
-[binYca, binYvel, binVelCa] = caVsPosVel(treadBehStruc, ev, numbins, dsFactor);
-binYca = interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
+[caPosVelStruc] = caVsPosVel(treadBehStruc, ev, numbins, dsFactor);
+binYca = caPosVelStruc.binYcaSum; %interp1(0:1/numbins:1-1/numbins, binYca, 0:0.01:1-1/numbins);
 evPos = binYca;
 
-
+binYvel = caPosVelStruc.binYvel;
 % Find rewZone
 % NOTE: this currently only works with single rewZone (092617)
 rewZone = treadBehStruc.rewZoneStartPos;
