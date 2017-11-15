@@ -78,7 +78,7 @@ subplot(4,1,4);
 plot(binYvel);
 xlim([1 length(binYvel)]);
 hold on;
-line([relRewPos/2.5 relRewPos/2.5], [0 1], 'Color','r');
+line([relRewPos relRewPos], [0 1], 'Color','r');
 title('vel');
 
 toc;
@@ -89,10 +89,15 @@ figure; hold on;
 %y = decimate(resampY,2);
 y = resampY(1:2:end);
 y = y/max(y);
-plot((y-1)/20);
+plot((y+1)/20);
 for i = 1:length(goodSeg)
-    plot(reordC(i,:)+i/15);
+    plot(reordC(i,:)-i/15);
 end
-title('goodSegs sorted by tuning pos (abs pos at bottom)');
+title('goodSegs sorted by tuning pos (abs pos at top)');
 
-figure; imagesc(reordC);
+for i=1:size(reordC,1)
+    reordC2(i,:)=reordC(i,:)/max(reordC(i,:));
+end
+figure; %colormap(jet); 
+imagesc(reordC2);
+title('units ordered by tuning');
