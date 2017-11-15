@@ -1,5 +1,6 @@
 function [goodSegPosPkStruc] = findGoodSegPksCaiman(C, treadBehStruc, numbins);
 
+%% USAGE: [goodSegPosPkStruc] = findGoodSegPksCaiman(C, treadBehStruc, numbins);
 % This script detects transients for all units, selects goodSegs as units
 % thathave more than a certain number of events, and calculates their
 % spatial tuning.
