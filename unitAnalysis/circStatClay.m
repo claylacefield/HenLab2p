@@ -20,7 +20,12 @@ function [stats] = circStatClay(goodSegPosPks)
 
 
 %% part 1: load and plot data
-ori = linspace(0, 180, 100);
+
+% summed spikes per orientation 
+w = goodSegPosPks;
+numBins = size(w,2);
+
+ori = linspace(0, 180, numBins);
 
 % orientation of bins -> convert two directions
 ori = circ_axial(circ_ang2rad(ori),2);
@@ -28,8 +33,7 @@ ori = circ_axial(circ_ang2rad(ori),2);
 % spacing of bins
 dori = diff(ori(1:2));
 
-% summed spikes per orientation 
-w;
+
 
 k = 25;
 
@@ -39,11 +43,12 @@ for j = 1:k
   subplot(5,5,j)
   
   % compute and plot mean resultant vector length and direction
+    %figure;
   mw = max(w(j,:));
-  r = circ_r(ori,w(j,:),dori) * mw;
-  phi = circ_mean(ori,w(j,:));
+  r = circ_r(ori,w(j,:),dori,2) * mw;
+  phi = circ_mean(ori,w(j,:),2);
   hold on;
-  zm = r*exp(i*phi');
+  zm = r*exp(1i*phi');
   plot([0 real(zm)], [0, imag(zm)],'r','linewidth',1.5)
   
   % plot the tuning function of the three neurons 

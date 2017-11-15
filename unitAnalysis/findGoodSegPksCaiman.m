@@ -5,6 +5,7 @@ function [goodSeg, goodSegEvents, goodSegPosPks] = findGoodSegPksCaiman(C, tread
 % spatial tuning.
 % Clay 2017
 
+numbins = 40; % number of spatial bins over the treadmill track
 fps = 15;
 n=0; goodSeg = []; goodSegEvents={};
 
@@ -18,7 +19,7 @@ for i = 1:size(C,1)
        
        ca = zeros(length(ca),1);
        ca(pks) = 1;
-       [caPosVelStruc] = caVsPosVel(treadBehStruc, ca, 100, 2);
+       [caPosVelStruc] = caVsPosVel(treadBehStruc, ca, numbins, 2);
        goodSegPosPks(n,:) = caPosVelStruc.binYcaSum;
    end
 end
