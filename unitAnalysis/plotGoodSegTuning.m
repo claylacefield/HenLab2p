@@ -94,3 +94,5 @@ for i = 1:length(goodSeg)
     plot(reordC(i,:)+i/15);
 end
 title('goodSegs sorted by tuning pos (abs pos at bottom)');
+
+figure; imagesc(reordC);

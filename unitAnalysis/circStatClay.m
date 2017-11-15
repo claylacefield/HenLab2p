@@ -1,4 +1,4 @@
-function [circStatStruc] = circStatClay(goodSegPosPks)
+function [circStatStruc] = circStatClay(goodSegPosPks);
 
 
 % Philipp Berens
@@ -49,6 +49,7 @@ for j = 1:k
     % compute and plot mean resultant vector length and direction
     %figure;
     mw = max(w(j,:));
+    allMax(j)=mw;
     r = circ_r(ori,w(j,:),dori,2) * mw;
     allR(j) = r;
     phi = circ_mean(ori,w(j,:),2);
@@ -68,7 +69,7 @@ for j = 1:k
     formatSubplot(gca,'ax','square','box','off','lim',[-mw mw -mw mw])
     set(gca,'xtick',[])
     set(gca,'ytick',[])
-    
+    title(j);
 end
 
 %% part 2: descriptive statistics
@@ -147,8 +148,10 @@ end
 
 
 
-circStatStruc.allR = allR;
-circStatStruc.allPhi = allPhi;
+circStatStruc.allR = allR; % tuning vector magnitude
+circStatStruc.allMax = allMax; % max # events of all bins for each unit
+circStatStruc.allPhi = allPhi;  % and angle (in rad)
 circStatStruc.stats = stats;
+circStatStruc.statsFields = {'circMeanAngle' 'circVar' 'circStd1' 'circStd2' 'circSkew' 'circKurt' 'conf1' 'conf2'};
 circStatStruc.uniform = uniform;
-
+circStatStruc.uniformFields = {'rayleigh' 'omnibus'};
