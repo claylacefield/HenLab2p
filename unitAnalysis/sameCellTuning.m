@@ -52,7 +52,29 @@ for i = 1:size(cellsInAll,1)
 end
 
 
-% cellRegInd for cells present in all sessions, that are place cells in all
+% cellRegInd(cellsInAll) for cells present in all sessions, that are place cells in all
 placeCellsInAll = find(min(sameCellPlaceBool, [], 2));
+notPlaceCellsInAll = find(~max(sameCellPlaceBool, [], 2)); % or none
 
-notPlaceCellsInAll = find(~max(sameCellPlaceBool, [], 2));
+
+% tuning in placeCellsInAll
+placeCellAllOrigInd = cellsInAll(placeCellsInAll,:); 
+ %= cellRegIndInAll(placeCellsInAll,:);
+
+ figure; color = {'r' 'g' 'b'};
+for i = 1:length(placeCellsInAll)
+    subplot(3,3,i);
+    hold on;
+    for j = 1:size(placeCellAllOrigInd,2)
+        origInd = placeCellAllOrigInd(i,j);
+        goodSegInd = find(multSessTuningStruc(j).goodSegPosPkStruc.goodSeg == origInd);
+        posPks = multSessTuningStruc(j).goodSegPosPkStruc.goodSegPosPks(goodSegInd,:);
+        samePlacePosPks(i,j,:) = posPks;
+        plot(posPks, color{j});
+    end
+end
+
+
+
+
+
