@@ -76,5 +76,12 @@ end
 
 
 
+%unitSpatCell
+for i = 1:length(unitSpatCell)
+allCell = mean(unitSpatCell{i},1);
+ rgb(:,:,i) = allCell/max(allCell(:));
+end
+
+imwrite(rgb, 'cellRegRGB.tif');
 
 
