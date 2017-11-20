@@ -1,5 +1,7 @@
 function [sameCellStruc] = findSameCells(multSessTuningStruc)
 
+% NOTE: this is a draft script- not for use
+% (supplanted by Ziv CellReg (see cellRegClay.m)
 
 % take sum of all goodSeg spatial
 % xcorr to find offsets between datasets
