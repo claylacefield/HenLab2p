@@ -1,4 +1,4 @@
-function sameCellTuning(multSessTuningStruc, cell_registered_struct);
+function [sameCellTuningStruc] = sameCellTuning(multSessTuningStruc, cell_registered_struct);
 
 
 mapInd = cell_registered_struct.cell_to_index_map;
