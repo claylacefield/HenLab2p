@@ -98,14 +98,50 @@ imwrite(rgb, 'cellRegRGB.tif');
 %cellRegIndInAll
 
 % mark centroids of place cells in all
-rgb2 = insertMarker(rgb, zivCentroids(cellRegIndInAll(placeCellsInAll),:));
+rgb2 = insertMarker(10*rgb, zivCentroids(cellRegIndInAll(placeCellsInAll),:));
+%rgb2 = insertMarker(10*rgb, zivCentroids);
 figure;
 imshow(rgb2);
 
 % also, want to look at whether there are clusters or domains of tuning
 % similarity
+% 1.) find all place cells, 2.) find tuning center for each place cell, 3.)
+% 'color', color, from array of positions, 4.) 
 
-% go ahead and get posPks for all ziv cells, to look at tuning of cells
+%% for all units in multiple sessions (not just all sessions), find tuning
+% similarity
+
+
+% for all cells
+for i = 1:size(mapInd2,1)
+    for j = 1:size(mapInd2,2)
+        origInd = mapInd2(i,j); % orig C/A index of this cell
+        if origInd ~= 0
+        goodSegInd = find(multSessTuningStruc(j).goodSegPosPkStruc.goodSeg == origInd);
+        posPks = multSessTuningStruc(j).goodSegPosPkStruc.goodSegPosPks(goodSegInd,:);
+        else
+           posPks = zeros(40,1); 
+        end
+        allPlacePosPks(i,j,:) = posPks;
+    end
+end
+
+color = {'r' 'g' 'b'};
+%figure;
+for i = 1:size(allPlacePosPks,1)
+    ceil(size(allPlacePosPks,1)/25)
+    if mod(i,25)-1==0
+        figure;
+        n = 0;
+    end
+    
+   for j = 1:size(allPlacePosPks,2)
+        
+   end
+end
+
+
+%% go ahead and get posPks for all ziv cells, to look at tuning of cells
 % that appear or disappear in different sessions
 
 %figure; pie([229 35 8 42]);
