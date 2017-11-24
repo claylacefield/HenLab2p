@@ -109,7 +109,8 @@ imshow(rgb2);
 % 'color', color, from array of positions, 4.) 
 
 %% for all units in multiple sessions (not just all sessions), find tuning
-% similarity
+% similarity; go ahead and get posPks for all ziv cells, to look at tuning of cells
+% that appear or disappear in different sessions
 
 
 % for all cells
@@ -129,19 +130,24 @@ end
 color = {'r' 'g' 'b'};
 %figure;
 for i = 1:size(allPlacePosPks,1)
-    ceil(size(allPlacePosPks,1)/25)
+    %ceil(size(allPlacePosPks,1)/25)
     if mod(i,25)-1==0
         figure;
-        n = 0;
+        n = 1;
+    else
+        n=n+1;
     end
-    
+    subplot(5,5,n);
    for j = 1:size(allPlacePosPks,2)
-        
+       hold on;
+        plot(squeeze(allPlacePosPks(i,j,:)), color{j});
    end
 end
 
 
-%% go ahead and get posPks for all ziv cells, to look at tuning of cells
-% that appear or disappear in different sessions
+%% 
+% and from this I see that some cells seem to have consistent place fields
+% between sessions so maybe I should check and see if cells are place cells
+% when considering all sessions from cellReg registered cells
 
 %figure; pie([229 35 8 42]);
