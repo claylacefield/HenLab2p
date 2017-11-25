@@ -1,13 +1,13 @@
-function cellRegClay(multSessTuningStruc)
+function [cell_registered_struct] = cellRegClay(multSessTuningStruc);
 
-
+%% USAGE: [cell_registered_struct] = cellRegClay(multSessTuningStruc);
 %% Clay 2017
 % This is a wrapper script for the Ziv CellReg alignment procedure, based
 % upon demo.m from CellReg folder.
 % Inputs are from multSessTuningStruc, which contains
 % C/A/treadBehStruc/etc. 
 % Outputs are saved in the output directory (the current directory), as
-% "cellRegistered_..._.m"
+% "cellRegistered_..._.m", and also output as cell_registered_struct
 
 %% Method overview:
 
