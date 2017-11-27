@@ -1,6 +1,15 @@
 function out = computePlaceTransVectorSimple1(activity, T, treadPos, shuffN)
 %function out = computePlaceTransVectorSimple1(activity, sess, treadPos, shuffN)
 
+
+% Output:
+%   out = structure of output fields
+% Inputs:
+% activity = bool of spikes for each neuron for each time
+% T = vector of frame times
+% treadPos = vector of position, interpolated to frame times
+% shuffN = ?
+
 if size(activity, 1) > size(activity, 2)
     activity = activity';
 end
@@ -30,39 +39,40 @@ runTimes(:, 1) = runTimes(:, 1) + trimRunStarts;
 runTimes(:, 2) = runTimes(:, 2) - trimRunEnds;
 runTimes = runTimes(diff(runTimes, [], 2) > minRunTime, :);
 
-kRun = inInterval(runTimes, T); % find th
+kRun = inInterval(runTimes, T); % indices of times 
 kRun = kRun ~= 0;
 
 out.runTimes = runTimes;
-pos(~kRun) = NaN;
+pos(~kRun) = NaN;   % NaN pos vector at times when animal isn't running
 
 out.nanedPos = pos;
 %    activity(:, ~isnan(pos)) = NaN;
-activity = activity(:, ~isnan(pos));
+activity = activity(:, ~isnan(pos)); % get activity only at times when animal is running
 pos = pos(~isnan(pos));
 
-[occ1, whichPlace] = histc(pos, h1);
+% occupancy
+[occ1, whichPlace] = histc(pos, h1); % distribution of indices when animal is in a particular spatial bin
 occ1 = occ1(1:(end - 1));
-occ1 = occ1*dT;
+occ1 = occ1*dT; % now make this times, from indices
 
 out.rawOccupancy = occ1;
 rawSums = zeros(size(activity, 1), 100);
 
-for i = 1:100
+for i = 1:100   % for all neurons/segments
     k = whichPlace == i;
     if sum(k) > 0
-        rawSums(:, i) = nansum(activity(:, k), 2);
+        rawSums(:, i) = nansum(activity(:, k), 2);  % sum of spikes for each spatial bin?
     end
 end
 out.posSums = rawSums;
-out.rawPosRates = rawSums./repmat(occ1, size(rawSums, 1), 1);
+out.rawPosRates = rawSums./repmat(occ1, size(rawSums, 1), 1); % rates = sumSpks/pos / occupancy for that bin
 
 Q = [occ1', rawSums'];
 
-Qs = convolve2(Q, g, 'wrap')';
+Qs = convolve2(Q, g, 'wrap')';  % convolve spikes and rates with gaussian
 
 out.Occupancy = Qs(1, :);
-out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1);
+out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1); % gaussian filtered rates / occupancy
 
 if shuffN > 1
     rng('shuffle');
