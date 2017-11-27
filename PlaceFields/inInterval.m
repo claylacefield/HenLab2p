@@ -1,11 +1,21 @@
 function [whichInt, counts] = inInterval(intervals, X)
 %function [indexes, counts] = inInterval(intervals, X)
+
+% This is the binning function of treadmill spatial bins
+% Inputs:
+%   intervals = bin intervals, like an array of running epoch start/stop
+%   times ("runTimes")
+%   X = e.g. T times of 2p frames
+% Outputs:
+%   whichInt = which bin each sample is contained in?
+
+
 if size(intervals, 2) ~= 2 & min(size(X)) > 1
     error('Please format your inputs correctly. Signed Sincerely -The Management');
 end
 
 if ~isempty(intervals) & ~isempty(X)
-    [~, ind] = sort(mean(intervals, 2));
+    [~, ind] = sort(mean(intervals, 2));  % sort the array of run epoch start/stop times
     intervals = intervals(ind, :);
     
     h1 = reshape(intervals', 1, []);

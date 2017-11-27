@@ -18,19 +18,19 @@ out = [];
 
 pos = treadPos;
 
-dT = median(diff(T));
+dT = median(diff(T));  % frame interval?
 
-g = fspecial('Gaussian',[10 1], 1);
-h1 = linspace(0, 1, 101);
-h1(end) = 1.0001;
+g = fspecial('Gaussian',[10 1], 1); % compute gaussian kernel
+h1 = linspace(0, 1, 101);   % vector of spatial bins, from 0:1 (i.e. normalized)
+h1(end) = 1.0001; % yeah I don't know why to do this
 
-runTimes = calcMovEpochs1(treadPos, T);
-runTimes(:, 2) = runTimes(:, 2) + 0.00001;
+runTimes = calcMovEpochs1(treadPos, T); % start/stop times of running epochs >5cm/sec, >3sec long?
+runTimes(:, 2) = runTimes(:, 2) + 0.00001; % do some modif/trimming of running epochs?
 runTimes(:, 1) = runTimes(:, 1) + trimRunStarts;
 runTimes(:, 2) = runTimes(:, 2) - trimRunEnds;
 runTimes = runTimes(diff(runTimes, [], 2) > minRunTime, :);
 
-kRun = inInterval(runTimes, T);
+kRun = inInterval(runTimes, T); % find th
 kRun = kRun ~= 0;
 
 out.runTimes = runTimes;
