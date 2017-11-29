@@ -1,9 +1,22 @@
-function [treadBehStruc] = readTDML()
+function [treadBehStruc] = readTDML(varargin);
+
+%% USAGE: [treadBehStruc] = readTDML(varargin);
+% Clay 2017
+% Reads known events from .tdml output from Jack Bowler's BehaviorMate
+% treadmill behavioral software.
+% NOTE: only includes currently known events- may need to add more later.
 
 % currDir = dir;
 % currDirNames = {currDir.name};
 
-[filename, path] = uigetfile('*.tdml', 'Select TDML file to process:');
+switch nargin
+    case 1
+        filename = findLatestFilename('.tdml');
+        path = [pwd '/'];
+    otherwise
+        [filename, path] = uigetfile('*.tdml', 'Select TDML file to process:');
+end
+
 behCell = importdata([path filename], '\t');
 
 disp(['Processing treadmill behavior data from: ' filename]);

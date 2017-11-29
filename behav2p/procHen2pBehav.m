@@ -1,16 +1,28 @@
-function [treadBehStruc] = procHen2pBehav();
+function [treadBehStruc] = procHen2pBehav(varargin);
 
-% USAGE: [treadBehStruc] = align2pBehav();
+%% USAGE: [treadBehStruc] = procHen2pBehav();
+% Clay 2017
 % GUI select TDML behavior and 2p XML files
 % to process 2p behavioral data from Jack Bowler's 
 % BehaviorMate system
 
+switch nargin
+    case 1
+        % read behavioral events and times
+        [treadBehStruc] = readTDML('auto');
+        
+        % find 2p frame times
+        [relFrTimes, absFrTimes, frInds] = get2pFrTimes('auto');
+    otherwise
+        % read behavioral events and times
+        [treadBehStruc] = readTDML();
+        
+        % find 2p frame times
+        [relFrTimes, absFrTimes, frInds] = get2pFrTimes();
+end
 
-% read behavioral events and times
-[treadBehStruc] = readTDML();
 
-% find 2p frame times
-[relFrTimes, absFrTimes, frInds] = get2pFrTimes();
+
 treadBehStruc.relFrTimes = relFrTimes;
 treadBehStruc.absFrTimes = absFrTimes;
 treadBehStruc.frInds = frInds;

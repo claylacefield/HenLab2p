@@ -6,8 +6,8 @@ function [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, n
 [goodSegPosPkStruc] = findGoodSegPksCaiman(C, treadBehStruc, numbins);
 
 
-
-[circStatStruc] = circStatClay(goodSegPosPkStruc.greatSegPosPks);
+toPlot = 0;
+[circStatStruc] = circStatClay(goodSegPosPkStruc.greatSegPosPks, toPlot);
 
 % plot only well tuned units
 wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
