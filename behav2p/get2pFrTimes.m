@@ -1,7 +1,15 @@
-function [relFrTimes, absFrTimes, frInds] = get2pFrTimes()
+function [relFrTimes, absFrTimes, frInds] = get2pFrTimes(varargin);
+
+%% USAGE: [relFrTimes, absFrTimes, frInds] = get2pFrTimes(varargin);
+% Clay 2017
 
 % import the Bruker 2p XML data as cell array
-[xmCell] = import2pXml();
+switch nargin
+    case 1
+        [xmCell] = import2pXml('auto');
+    otherwise
+        [xmCell] = import2pXml();
+end
 
 
 relFrTimes = [];

@@ -1,4 +1,4 @@
-function [circStatStruc] = circStatClay(goodSegPosPks);
+function [circStatStruc] = circStatClay(goodSegPosPks, toPlot);
 
 
 % Philipp Berens
@@ -39,12 +39,13 @@ k = size(goodSegPosPks,1);
 
 % plot the activity of the three neurons
 numFig=0;
+
 for j = 1:k
-    if mod(j-1,25)==0
-        figure;
-        numFig = numFig + 1;
-    end
-    subplot(5,5,j-(numFig-1)*25);
+    %         if mod(j-1,25)==0
+    %             figure;
+    %             numFig = numFig + 1;
+    %         end
+    %         subplot(5,5,j-(numFig-1)*25);
     
     % compute and plot mean resultant vector length and direction
     %figure;
@@ -54,24 +55,32 @@ for j = 1:k
     allR(j) = r;
     phi = circ_mean(ori,w(j,:),2);
     allPhi(j) = phi;
-    hold on;
-    zm = r*exp(1i*phi');
-    plot([0 real(zm)], [0, imag(zm)],'r','linewidth',1.5)
     
-    % plot the tuning function of the three neurons
-    polar([ori ori(1)], [w(j,:) w(j,1)],'k')
-    
-    % draw a unit circle
-    zz = exp(1i*linspace(0, 2*pi, 101)) * mw;
-    plot(real(zz),imag(zz),'k:')
-    plot([-mw mw], [0 0], 'k:', [0 0], [-mw mw], 'k:')
-    
-    formatSubplot(gca,'ax','square','box','off','lim',[-mw mw -mw mw])
-    set(gca,'xtick',[])
-    set(gca,'ytick',[])
-    title(j);
+    if toPlot
+        if mod(j-1,25)==0
+            figure;
+            numFig = numFig + 1;
+        end
+        subplot(5,5,j-(numFig-1)*25);
+        
+        hold on;
+        zm = r*exp(1i*phi');
+        plot([0 real(zm)], [0, imag(zm)],'r','linewidth',1.5)
+        
+        % plot the tuning function of the three neurons
+        polar([ori ori(1)], [w(j,:) w(j,1)],'k')
+        
+        % draw a unit circle
+        zz = exp(1i*linspace(0, 2*pi, 101)) * mw;
+        plot(real(zz),imag(zz),'k:')
+        plot([-mw mw], [0 0], 'k:', [0 0], [-mw mw], 'k:')
+        
+        formatSubplot(gca,'ax','square','box','off','lim',[-mw mw -mw mw])
+        set(gca,'xtick',[])
+        set(gca,'ytick',[])
+        title(j);
+    end
 end
-
 %% part 2: descriptive statistics
 
 stats = zeros(k,10);
