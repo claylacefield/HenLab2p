@@ -20,15 +20,12 @@ figure;
 %plot(avSpksG(:,1));
 imagesc(avSpksG(200:end-1,:)');
 
-% normalized per session
-for i = 1:length(multSessTuningStruc)
-    av = avSpksG(:,i);
-    av = av - nanmean(av);
-    av = av/max(av);
-    avSpksGn(:,i) = av;
-end
+
+
+
 figure;
-imagesc(avSpksGn(200:end-1,:)');
+%avSpksG = 
+imagesc(avSpks');
 
 %%
 
