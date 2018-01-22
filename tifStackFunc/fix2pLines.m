@@ -1,4 +1,4 @@
-function [Y4] = fix2pLines(Y)
+function [Y2] = fix2pLines(Y)
 
 % Clay 2018
 % This is an attempt to fix some 2p acquisition sessions where
@@ -15,6 +15,8 @@ if initOk == 1  % if initial frames are okay
 else
     badFrStart = 1;
 end
+
+Y = permute(Y,[2 1 3]);
 
 Yinit = Y(:,:,1:badFrStart-10);
 
@@ -36,10 +38,10 @@ shift = 86;
 xShift = shift;  % number of pixels to shift scan lines
 yShift = shift;   % number of pixels to fix Y (BUT note that the lines collected at the end may be from next frame)
 
-Y2 = zeros(size(Y,1), size(Y,2)+xShift, size(Y,3));
+Y2 = zeros(size(Y,1), size(Y,2)+xShift, size(Y,3), 'uint16');
 
 %tic;
-for t = badFrStart:size(Y,3)
+for t = badFrStart+1:size(Y,3)
     for y = 1:size(Y,1)
         % even to the left of odd lines
         
@@ -52,11 +54,23 @@ for t = badFrStart:size(Y,3)
 end
 %toc;
 
+clear Y;
 
 subplot(3,2,3);
 imagesc(mean(Y2,3));
 title(['scan lines adj by ' num2str(xShift) ' px']);
 
+%% trim x borders
+
+disp('Trimming x borders');
+
+Y2 = Y2(:,xShift:size(Y2,2)-xShift,:); % trim line borders
+
+%clear Y3;
+
+subplot(3,2,4);
+imagesc(mean(Y2,3));
+title('trim x axis');
 
 %% fix Y discontinuity
 % BUT NOTE: the bottom of the frame might be from next frame
@@ -67,15 +81,17 @@ avYax = mean(mean(Y2,3),2);
 
 yShift = 100;
 
-Y3 = [Y2(size(Y2,1)-yShift:end,:,:); Y2(1:size(Y2,1)-yShift,:,:)];
+%Y2 = [Y2(size(Y2,1)-yShift:end,:,:); Y2(1:size(Y2,1)-yShift,:,:)];
+% NOTE: to save memory, need to do this frame by frame I think
+for fr = 1:size(Y2,3)
+    Y2(:,:,fr) = [Y2(size(Y2,1)-yShift:end,:,fr); Y2(1:size(Y2,1)-yShift-1,:,fr)];
+end
 
-subplot(3,2,4);
-imagesc(mean(Y3,3));
-title(['Y discont corr (' num2str(yShift) ' pix)']);
-
-Y4 = Y3(:,xShift:size(Y3,2)-xShift,:); % trim line borders
+%clear Y2;
 
 subplot(3,2,5);
-imagesc(mean(Y4,3));
-title('trim x axis');
+imagesc(mean(Y2,3));
+title(['Y discont corr (' num2str(yShift) ' pix)']);
+
+
 
