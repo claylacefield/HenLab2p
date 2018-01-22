@@ -18,7 +18,7 @@ end
 
 Yinit = Y(:,:,1:badFrStart-10);
 
-figure('Position', [20 20 600 900]);
+figure(';
 subplot(3,2,1);
 imagesc(mean(Yinit,3));
 title('first frames avg');
@@ -55,7 +55,7 @@ end
 
 subplot(3,2,3);
 imagesc(mean(Y2,3));
-title(['scan lines adj by ' num2str(xShift) ' px']);
+title(['scan lines adjusted by ' num2str(xShift) ' pixels']);
 
 
 %% fix Y discontinuity
@@ -71,7 +71,7 @@ Y3 = [Y2(size(Y2,1)-yShift:end,:,:); Y2(1:size(Y2,1)-yShift,:,:)];
 
 subplot(3,2,4);
 imagesc(mean(Y3,3));
-title(['Y discont corr (' num2str(yShift) ' pix)']);
+title(['Y discont corrected (' num2str(yShift) ' pixels)']);
 
 Y4 = Y3(:,xShift:size(Y3,2)-xShift,:); % trim line borders
 
