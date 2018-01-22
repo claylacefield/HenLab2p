@@ -86,6 +86,8 @@ else
     Y = downsampleStack(Y,toDownsample(1),toDownsample(2));
 end
 
+Y = im2uint16(Y/max(Y(:)));
+
 %segStruc.toDownsample = toDownsample;
 
 %Y = Y(:,:,1:end-50); % hack to trim off some frames from end because of conv2
