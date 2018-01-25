@@ -101,20 +101,22 @@ imagesc(avSpksG(200:end-1,:)');
 
 %% 012518: similar but for single session
 
-% plot mean greatSeg spikes/position, single session
+%% plot mean greatSeg spikes/position over sessions
 
+colors = {'r', 'g', 'b'};
+figure; hold on;
 hsize = [1 200]; sigma = 40;
 h = fspecial('gaussian', hsize, sigma);
 
-greatSegPosPks = goodSegPosPkStruc.greatSegPosPks;
-av = mean(greatSegPosPks,1);
-avSpks = decimate(av,2); %av;
-%fCaPos(i,:) = conv(segCaPos(i,:), h, 'same');
-avSpksG = conv(interp1(1:20,decimate(av,2), 0:0.01:20, 'linear'), h, 'same');
-%avSpksG = interp1(1:20,decimate(av,2), 0:0.01:20, 'spline');
+    greatSegPosPks = goodSegPosPkStruc.greatSegPosPks;
+    av = mean(greatSegPosPks,1);
+    avSpks = decimate(av,2); %av;
+    %fCaPos(i,:) = conv(segCaPos(i,:), h, 'same');
+    avSpksG = conv(interp1(1:20,decimate(av,2), 0:0.01:20, 'linear'), h, 'same');
+    plot(decimate(av,2), colors{i});
+    
+end
 
-
-figure;
-%plot(avSpksG);
-imagesc(avSpksG(200:end-1));
-%imagesc(avSpksG);
+figure; 
+%plot(avSpksG(:,1));
+imagesc(avSpksG(200:end-1,:)');
