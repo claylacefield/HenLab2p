@@ -13,7 +13,7 @@ function [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, n
 % calc unit firing/position
 [goodSegPosPkStruc] = findGoodSegPksCaiman(C, treadBehStruc, numbins);
 
-% compute unit spatial tuning
+% compute unit 
 toPlot = 0;
 [circStatStruc] = circStatClay(goodSegPosPkStruc.greatSegPosPks, toPlot);
 
@@ -21,8 +21,5 @@ toPlot = 0;
 wellTunedInd = find(circStatStruc.uniform(:,1)< rayThresh);
 [popCaPos, popCaPosNorm] = plotGoodSegTuning(C, goodSegPosPkStruc.greatSeg(wellTunedInd), treadBehStruc, 2, 1);
 
-% and plot mean tuning vectors
+
 plotTunedUnitVect(circStatStruc);
-
-
-
