@@ -6,13 +6,13 @@ function [goodSeg, goodSegEvents, goodSegPosPks, pksAll] = findGoodSegPksCaiman(
 % Clay 2017
 
 fps = 15;
-n=0; goodSeg = []; goodSegEvents={};
+n=0; goodSeg = []; goodSegEvents={}; 
 pksAll = {};
 for i = 1:size(C,1)
    ca = C(i,:);
    [pks] = clayCaTransients(ca, fps);
    pksAll{i} = pks;
-   if length(pks) > 5
+   if length(pks) <4
        n = n+1;
        goodSeg(n) = i;
        goodSegEvents{n}=pks;
@@ -22,6 +22,7 @@ for i = 1:size(C,1)
        [caPosVelStruc] = caVsPosVel(treadBehStruc, ca, 100, 2);
        goodSegPosPks(n,:) = caPosVelStruc.binYcaSum;
    end
+   
 end
 
 

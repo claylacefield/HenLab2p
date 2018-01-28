@@ -93,7 +93,7 @@ for i = 1:length(unitSpatCell)
     rgb(:,:,i) = allCell/max(allCell(:));
 end
 
-imwrite(rgb, 'cellRegRGB.tif');
+%imwrite(rgb, 'cellRegRGB.tif');
 
 %cellRegIndInAll
 
