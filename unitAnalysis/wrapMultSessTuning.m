@@ -30,8 +30,11 @@ while stillAdding
             
             [treadBehStruc] = procHen2pBehav('auto');
             
-            numBins = 40;
-            [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, numBins);
+            numBins = 100 ; rayThresh = 0.05;
+            [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, numBins, rayThresh);
+            
+            % put other things to calculate here, e.g.
+            % xxxxx
             
             numSess = numSess + 1;
             slashInds = strfind(foldername, '/');
@@ -49,6 +52,9 @@ while stillAdding
             
             wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
             multSessTuningStruc(numSess).placeCellStruc.goodRay = wellTunedInd;
+            
+            % multSessTuningStruc(numSess).xxxx
+            
         catch
             disp(['Couldnt process ' foldername ' (probably some file missing']);
         end

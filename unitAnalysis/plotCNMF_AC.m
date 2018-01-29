@@ -52,20 +52,20 @@ end
 
 C = C'; A=A';
 
-% spatial
-allSegIm = zeros(d1,d2);
-for seg = 1:K
-    allSegIm = allSegIm + reshape(A(seg,:),d1,d2);
-end
-figure; imagesc(allSegIm); hold on;
-
-for seg = 1:K
-    spat = A(seg,:);
-    [pk, ind] = max(spat(:));
-    [y,x] = ind2sub([d1 d2],ind);
-    text(x,y, sprintf('%d', seg), 'Units', 'data');
-end
-%title(filename);
+% % spatial
+% allSegIm = zeros(d1,d2);
+% for seg = 1:K
+%     allSegIm = allSegIm + reshape(A(seg,:),d1,d2);
+% end
+% figure; imagesc(allSegIm); hold on;
+% 
+% for seg = 1:K
+%     spat = A(seg,:);
+%     [pk, ind] = max(spat(:));
+%     [y,x] = ind2sub([d1 d2],ind);
+%     text(x,y, sprintf('%d', seg), 'Units', 'data');
+% end
+% %title(filename);
 
 % timecourse
 

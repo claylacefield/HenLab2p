@@ -49,3 +49,4 @@ treadBehStruc.y = y2;
 treadBehStruc.yTimes = yTimes2;
 treadBehStruc.resampY = resampY; % NOTE that times will be = adjFrTimes
 treadBehStruc.vel = vel;
+
