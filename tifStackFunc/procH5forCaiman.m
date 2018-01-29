@@ -55,10 +55,13 @@ basename = filename(1:strfind(filename, '.h5')-1);
 
 
 %% trim if necessary
-
-if size(Y,1)>512
-    [Y, trimYX] = trim2pStack(Y);
-else
+try
+    if size(Y,1)>512
+        [Y, trimYX] = trim2pStack(Y);
+    else
+        trimYX = 0;
+    end
+catch
     trimYX = 0;
 end
 
