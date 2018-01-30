@@ -57,7 +57,7 @@ figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
 imaging_technique='two_photon'; % either 'one_photon' or 'two_photon'
 microns_per_pixel=2.4;
 
-% Loading the data: (compile spatial_footprints from multSessTuningStruc)
+% Loading the data: (compile spatial_footprints from multSdessTuningStruc)
 disp('Stage 1 - Loading sessions')
 
 % nUnits x d1 x d2
