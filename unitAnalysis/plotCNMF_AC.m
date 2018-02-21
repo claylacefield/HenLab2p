@@ -2,6 +2,13 @@ function plotCNMF_AC(A, C,d1,d2, toPlotAll, varargin);
 
 %% USAGE: 
 
+%% Transpose if wrong shape
+if size(A,2)>size(A,1)
+    A = A';
+    C = C';
+end
+
+%% Select out goodSegs if desired
 if length(varargin)==1
     goodSeg = varargin{1};
     A = A(:,goodSeg);
@@ -10,6 +17,7 @@ end
 
 K = size(C,1);
 
+%% Plot all spatial and temporal factors?
 if toPlotAll == 1
     if K > 25
         numPlots = ceil(K/25);
@@ -50,42 +58,41 @@ end
 
 %% Now plot all units together
 
-C = C'; A=A';
+%C = C';  % A=A';
 
-% % spatial
-% allSegIm = zeros(d1,d2);
-% for seg = 1:K
-%     allSegIm = allSegIm + reshape(A(seg,:),d1,d2);
-% end
-% figure; imagesc(allSegIm); hold on;
-% 
-% for seg = 1:K
-%     spat = A(seg,:);
-%     [pk, ind] = max(spat(:));
-%     [y,x] = ind2sub([d1 d2],ind);
-%     text(x,y, sprintf('%d', seg), 'Units', 'data');
-% end
-% %title(filename);
-
-% timecourse
+% spatial
+allSegIm = zeros(d1,d2);
+for seg = 1:K
+    allSegIm = allSegIm + reshape(A(:,seg),d1,d2);
+end
+figure; imagesc(allSegIm); hold on;
 
 for seg = 1:K
-    [val, ind] = max(C(:,seg));
+    spat = A(:,seg);
+    [pk, ind] = max(spat(:));
+    [y,x] = ind2sub([d1 d2],ind);
+    text(x,y, sprintf('%d', seg), 'Units', 'data');
+end
+%title(filename);
+
+% timecourse
+for seg = 1:K
+    [val, ind] = max(C(seg,:));
     maxVal(seg) = val;
     maxInd(seg) = ind;
 end
 
 [vals, ord]= sort(maxInd);
 
-C2 = C(:,ord);
+C2 = C(ord,:);
 
 scaleFact = 3;
 figure; hold on;
 for seg = 1:K
-    plot(scaleFact*(C2(:,seg)/max(C2(:,seg)))+seg);
+    plot(scaleFact*(C2(seg,:)/max(C2(seg,:)))+seg);
 end
 %title(filename);
-avUnitCa = mean(C,2);
+avUnitCa = mean(C,1);
 plot(20*avUnitCa/max(avUnitCa)-20, 'b');
 
 %plot((frAv-min(frAv))*400-6, 'r');
