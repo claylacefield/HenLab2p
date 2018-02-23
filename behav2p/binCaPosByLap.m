@@ -15,7 +15,7 @@ caLapBin = caLapBin';
 figure; 
 hold on;
 for j = 1:size(caLapBin,1)
-    plot(caLapBin(:,j)+i/10000);
+    plot(caLapBin(:,j)+j/10000);
 end
 
 
