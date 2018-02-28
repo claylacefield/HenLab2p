@@ -1,4 +1,4 @@
-function [newBinInd] = shuffleTreadmillPos(treadBehStruc, dsFactor, numBins)
+function [shufPos] = shuffleTreadmillPos(treadBehStruc, dsFactor, numBins)
 
 
 % Based upon:
@@ -17,15 +17,15 @@ end
 % calc histogram of positions
 [counts, edges, binInd] = histcounts(pos, numBins);
 
-% make a prob distr function (pdf) based upon this
+% make a prob distr function based upon this
 pdf = counts/sum(counts);
 
-% make cumulative pdf
+
 cumPdf = cumsum(pdf);
 
 % choose new bin for all frames based upon session pos pdf
-for i=1:length(pos)
-r = randi(99)/100;
-newBinInd(i) = find(cumPdf>r, 1, 'first');
-end
+
+r = randi(100)/100;
+
+p = find(r
 

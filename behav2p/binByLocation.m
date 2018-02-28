@@ -1,8 +1,8 @@
-function [binCaAvg] = binByLocation(ca, pos)
+function [binCaAvg] = binByLocation(ca, pos, numBins)
 
 
 
-[counts, edges, binInd] = histcounts(pos, 100);
+[counts, edges, binInd] = histcounts(pos, numBins);
 
 
 for i = 1:100
