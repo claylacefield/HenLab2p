@@ -1,14 +1,16 @@
 
 % Clay Dec. 2017
 % script to take intermediate step of Ziv registration on DG place cells
-% and find cells active in subsets of sessions
+% and find cells active in subsets of sessions (or are place cells in
+% subsets of
+% sessions?)
 
 figure; pie([229 35 8 42]);
 
 n=0;m=0;p=0;q=0;
 
 for i = 1:size(sameCellPlaceBool,1)
-    pcs = sameCellPlaceBool(i,:);
+    pcs = sameCellPlaceBool(i,:); % whether cell present in all sessions is a place cell in each
     if pcs==[1,0,0]
         n=n+1;
         firstOnly(n) = i;
