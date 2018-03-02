@@ -1,8 +1,13 @@
-function fabShuf(ca, pos);
+function [shufBinCaAvg] = fabShuf(ca, pos, numBins, toPlot);
 
+%% USAGE: [shufBinCaAvg] = fabShuf(ca, pos, numBins, toPlot);
 % Treadmill position shuffling based upon Fabio's suggestion
 % on 2/224/18
 % Reverses position vector and then shifts by random amount.
+% Inputs:
+% ca = vector of calcium signal, or spikes
+% pos = position vector (resampled to frames and downsampled)
+% numBins = number of bins in lap
 
 % figure;
 % hold on;
@@ -22,16 +27,22 @@ function fabShuf(ca, pos);
 % plot(caPosVelStruc.binYcaAvg);
 
 %% 
-figure;
-hold on;
+
+ca = ca/max(ca);
+
 tic;
-for j = 1:100
-pos2 = pos(end:-1:1);
-pos2 = circshift(pos2, randi(10000), 2);
+for j = 1:1000
+pos2 = pos(end:-1:1);  % reverse position vector
+pos2 = circshift(pos2, randi(1000), 2); % shift by random amount (within about a minute)
 
-[binCaAvg] = binByLocation(ca, pos2, numBins);
+shufBinCaAvg(:,j) = binByLocation(ca, pos2, numBins);  % bin ca based upon shuffled pos
 
-plot(binCaAvg);
 end
 toc;
-plot(caPosVelStruc.binYcaAvg);
+
+if toPlot
+figure;
+hold on;
+plot(shufBinCaAvg);
+plot(binByLocation(ca, pos, numBins));
+end

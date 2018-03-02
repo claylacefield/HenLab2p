@@ -161,6 +161,6 @@ circStatStruc.allR = allR; % tuning vector magnitude
 circStatStruc.allMax = allMax; % max # events of all bins for each unit
 circStatStruc.allPhi = allPhi;  % and angle (in rad)
 circStatStruc.stats = stats;
-circStatStruc.statsFields = {'circMeanAngle' 'circVar' 'circStd1' 'circStd2' 'circSkew' 'circKurt' 'conf1' 'conf2'};
+circStatStruc.statsFields = {'circMeanAngle' 'circVar' 'circStd1' 'circStd2' 'circSkew1' 'circSkew2' 'circKurt1' 'circKurt2' 'conf1' 'conf2'};
 circStatStruc.uniform = uniform;
 circStatStruc.uniformFields = {'rayleigh' 'omnibus'};
