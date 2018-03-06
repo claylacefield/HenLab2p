@@ -1,14 +1,20 @@
 function out = computePlaceTransVectorSimple1(activity, T, treadPos, shuffN)
 %function out = computePlaceTransVectorSimple1(activity, sess, treadPos, shuffN)
 
+% by Andres
 
 % Output:
 %   out = structure of output fields
+%       .runTimes = start(1)/stop(2) times of running epochs
+%       .nandPos = pos vector with NaNs when animal isn't running
+%       .
+%       .
+%       .
 % Inputs:
 % activity = bool of spikes for each neuron for each time
 % T = vector of frame times
-% treadPos = vector of position, interpolated to frame times
-% shuffN = ?
+% treadPos = vector of position, interpolated to frame times (and normalized)
+% shuffN = ? (number of shuffles)
 
 if size(activity, 1) > size(activity, 2)
     activity = activity';
@@ -24,6 +30,11 @@ minPFBins = 5;
 RatePerc = 95;  %for each bin its the 99th precentile of the shuffled firing rates 
 
 out = [];
+
+% clay: normalize pos if necessary
+if max(treadPos)>2
+    treadPos = treadPos/max(treadPos);
+end
 
 pos = treadPos;
 

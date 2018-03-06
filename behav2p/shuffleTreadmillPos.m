@@ -1,5 +1,9 @@
 function [newBinInd] = shuffleTreadmillPos(treadBehStruc, dsFactor, numBins)
 
+% Clay 2018
+% shuffle treadmill position, maintaining distribution
+% of positions.
+% NOTE: abandoned later in favor of Fabio's shuffling suggestion
 
 % Based upon:
 % www.mathworks.com/matlabcentral/answers/51897-generate-random-numbers-given-distribution-histogram
