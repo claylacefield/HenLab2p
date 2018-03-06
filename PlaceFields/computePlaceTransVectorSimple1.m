@@ -99,7 +99,7 @@ Q = [occ1', rawSums'];  % nbins x 2 array of occupancy rates and spike#s (for ga
 Qs = convolve2(Q, g, 'wrap')';  % convolve spikes and rates with gaussian
 
 out.Occupancy = Qs(1, :);
-out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1); % gaussian filtered rates / occupancy
+out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1); % gaussian filtered rates / gaussian filtered occupancy
 
 
 %% Shuffle statistics
