@@ -14,8 +14,12 @@ function out = computePlaceTransVectorSimple1(activity, T, treadPos, shuffN)
 %       .rawOccupancy = for each position bin, #frames*frameInterval (dT)
 %       .posSums = sum of spikes for each neuron, for each spatial bin
 %       .rawPosRates = sum of apikes/bin / occupancy of that bin
-%       .
-%       .
+%       .Occupancy = gaussian filtered occupancy of spatial bins
+%       .posRates = gaussian filtered spikes/bin / gaussian filtered
+%       occupancy
+%       .Shuff.RatePerc = threshold percentile of shuffled firing rates
+%       .Shuff.ThreshRate = 95% percentile rate for shuffled pos spikes for
+%       each cell
 %       .
 
 % Inputs:
@@ -98,50 +102,63 @@ Q = [occ1', rawSums'];  % nbins x 2 array of occupancy rates and spike#s (for ga
 Qs = convolve2(Q, g, 'wrap')';  % convolve spikes and rates with gaussian
 
 out.Occupancy = Qs(1, :);
-out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1); % gaussian filtered rates / occupancy
+out.posRates = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1); % gaussian filtered rates / gaussian filtered occupancy
 
 
 %% Shuffle statistics
 
 if shuffN > 1
     rng('shuffle'); % reset random number generator
-    out.Shuff.RatePerc = RatePerc;
-    posReal = pos;
+    out.Shuff.RatePerc = RatePerc;  % usu like 0.95
+    posReal = pos;  % just position array again (without non-running)
     ratesAllShuff = zeros(size(activity, 1), 100, shuffN);
     
     % for each shuffle iteration
     for sh = 1:shuffN
-        pos = posReal(randperm(length(posReal)));
+        pos = posReal(randperm(length(posReal))); % randomly shuffle position vector
         
-        [~, whichPlace] = histc(pos, h1);
+        [~, whichPlace] = histc(pos, h1);   % and reassign bins based upon shuffled pos.
         
         rawSums = zeros(size(activity, 1), 100);
         
+        % as before, sum spikes in each spatial bin, but now from shuffled
+        % pos ("whichPlace")
         for i = 1:100
             k = whichPlace == i;
             if sum(k) > 0
                 rawSums(:, i) = nansum(activity(:, k), 2);
             end
         end
-        Q = [occ1', rawSums'];
+        Q = [occ1', rawSums']; % remember occupancy will be same after shuffling
         Qs = convolve2(Q, g, 'wrap')';
+        % and again, compute occupancy-adjusted tuning rates based upon
+        % shuffled positions
         ratesAllShuff(:, :, sh) = Qs(2:end, :)./repmat(out.Occupancy, size(rawSums, 1), 1);
     end
     
-    edgeSize = length(g);
+    edgeSize = length(g); % size of the gaussian kernel for convolution (=10)
     
     ratesR = out.posRates;
+    % this wraps around the gaus-conv pos rate by tacking on end to begin
+    % and begin to end
     ratesR = [ratesR(:, (end - (edgeSize - 1)):end), ratesR, ratesR(:, 1:edgeSize)];
     pos = 1:100;
+    % and same to pos
     pos = [pos(:, (end - (edgeSize - 1)):end), pos, pos(:, 1:edgeSize)];   
     
+    % calc 95% of each cells shuffled pos tuning
     percRate = prctile(ratesAllShuff, RatePerc, 3);
     out.Shuff.ThreshRate = percRate;
+    % and again, just wrap ends of shuffled 95% rates
     percRate = [percRate(:, (end - (edgeSize - 1)):end), percRate, percRate(:, 1:edgeSize)];
     
+    % bool with 1's in pos bins where rate is > 95% shuffled rate
+    % NOTE: if cell fires near beg/end of track, spikes might be duplicated
+    % during above edge wrapping
     sigRate = double(ratesR > percRate);
     
-    pC = find(sum(sigRate, 2) >= minPFBins);
+    pC = find(sum(sigRate, 2) >= minPFBins); % indices of cells with a significant firing rate for more than 5bins
+    
     out.Shuff.isPC = zeros(size(ratesR, 1), 1);
     out.Shuff.PeakRate = NaN(size(ratesR, 1), 1);
     out.Shuff.PFPos = NaN(size(ratesR, 1), 2);
