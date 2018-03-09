@@ -147,7 +147,7 @@ set(handles.goodSegTxt, 'String', num2str(goodSeg));
 posRates = handles.out.posRates(goodSeg, :);
 for i = 1:length(goodSeg)
     rates = posRates(i,:);
-    [val maxInd(i)] = max(rates);
+    maxInd(i) = max(rates);
     posRates(i,:) = rates/max(rates);
 end
 
