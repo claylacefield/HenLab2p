@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs_180308a(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs_180308a
 
-% Last Modified by GUIDE v2.5 09-Mar-2018 17:16:03
+% Last Modified by GUIDE v2.5 10-Mar-2018 00:21:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -150,24 +150,27 @@ function addSegButton_Callback(hObject, eventdata, handles)
 segNum = handles.segNum;
 goodSeg = [handles.goodSeg segNum];
 goodSeg = sort(goodSeg);
+goodSeg = unique(goodSeg);
 handles.goodSeg = goodSeg;
 
 set(handles.goodSegTxt, 'String', num2str(goodSeg));
 
-try
-posRates = handles.out.posRates(goodSeg, :);
-for i = 1:length(goodSeg)
-    rates = posRates(i,:);
-    [val maxInd(i)] = max(rates);
-    posRates(i,:) = rates/max(rates);
-end
-
-[b,inds]=sort(maxInd);
-posRates = posRates(inds,:);
-
-imagesc(handles.goodPosTuneAxes, posRates);
-catch
-end
+plotPopTuning(hObject, handles);
+% 
+% try
+% posRates = handles.out.posRates(goodSeg, :);
+% for i = 1:length(goodSeg)
+%     rates = posRates(i,:);
+%     [val maxInd(i)] = max(rates);
+%     posRates(i,:) = rates/max(rates);
+% end
+% 
+% [b,inds]=sort(maxInd);
+% posRates = posRates(inds,:);
+% 
+% imagesc(handles.goodPosTuneAxes, posRates);
+% catch
+% end
 
 guidata(hObject, handles);
 
@@ -206,3 +209,57 @@ function editBasename_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in removeGoodSegButton.
+function removeGoodSegButton_Callback(hObject, eventdata, handles)
+segNum = handles.segNum;
+goodSeg = handles.goodSeg;
+goodSeg = goodSeg(goodSeg ~= segNum);
+handles.goodSeg = goodSeg;
+plotPopTuning(hObject, handles);
+set(handles.goodSegTxt, 'String', num2str(goodSeg));
+guidata(hObject, handles);
+
+
+% --- Executes on button press in clearGoodSegButton.
+function clearGoodSegButton_Callback(hObject, eventdata, handles)
+handles.goodSeg = [];
+plotPopTuning(hObject, handles);
+set(handles.goodSegTxt, 'String', 'none');
+guidata(hObject, handles);
+
+
+% --- Executes on button press in loadGoodSegButton.
+function loadGoodSegButton_Callback(hObject, eventdata, handles)
+[file, path] = uigetfile('*goodSeg*');
+load([path file]);
+handles.goodSeg = goodSeg;
+
+set(handles.goodSegTxt, 'String', num2str(goodSeg));
+
+plotPopTuning(hObject, handles);
+
+guidata(hObject, handles);
+
+
+function plotPopTuning(hObject, handles);
+
+goodSeg = handles.goodSeg;
+
+try
+posRates = handles.out.posRates(goodSeg, :);
+for i = 1:length(goodSeg)
+    rates = posRates(i,:);
+    [val maxInd(i)] = max(rates);
+    posRates(i,:) = rates/max(rates);
+end
+
+[b,inds]=sort(maxInd);
+posRates = posRates(inds,:);
+plot(handles.popAvgAxes, mean(posRates,1));
+imagesc(handles.goodPosTuneAxes, posRates);
+catch
+end
+
+guidata(hObject, handles);
