@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 11-Mar-2018 00:11:17
+% Last Modified by GUIDE v2.5 13-Mar-2018 16:00:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,6 +58,7 @@ handles.output = hObject;
 handles.goodSeg = [];
 handles.plotPos = 0;
 handles.plotVel = 0;
+handles.plotDff = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -94,17 +95,30 @@ catch
     disp('Cant find treadBehStruc file so calculating');
     [treadBehStruc] = procHen2pBehav(1);
 end
-treadPos = treadBehStruc.resampY(1:2
+treadPos = treadBehStruc.resampY(1:2:end);
+
+C = C/max(C(:));
 
 handles.C = C;
 handles.A = A;
 handles.d1 = d1;
 handles.d2 = d2;
 handles.treadBehStruc = treadBehStruc;
+
 vel = fixVel(treadBehStruc.vel(1:2:end));
+vel = vel/max(vel(:));
 handles.vel = vel;
+
+treadPos = treadPos/max(treadPos(:));
 handles.treadPos = treadPos; 
 %handles.
+
+try
+    dff = dff/max(dff(:));
+    handles.dff = dff;
+catch
+    disp('No dF/F calc');
+end
 
 try
 handles.sAll = sAll;
@@ -133,16 +147,7 @@ A = handles.A; C = handles.C;
 aSeg = reshape(full(A(:,segNum)),handles.d1,handles.d2);
 imagesc(handles.spatialAxes, aSeg);
 
-if handles.plotPos == 1
-plot(handles.temporalAxes, handles.treadPos/50, 'c');
-hold(handles.temporalAxes, 'on');
-end
-if handles.plotVel == 1
-plot(handles.temporalAxes, handles.vel/500, 'g');
-hold(handles.temporalAxes, 'on');
-end
-plot(handles.temporalAxes, C(segNum,:));
-hold(handles.temporalAxes, 'off');
+plotTemp(hObject, handles);
 
 try
 sAll = handles.sAll; out = handles.out;
@@ -283,16 +288,7 @@ function plotVelCheckbox_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of plotVelCheckbox
 handles.plotVel = int32(get(handles.plotVelCheckbox, 'Value'));
 
-if handles.plotPos == 1
-plot(handles.temporalAxes, handles.treadPos/50, 'c');
-hold(handles.temporalAxes, 'on');
-end
-if handles.plotVel == 1
-plot(handles.temporalAxes, handles.vel/500, 'g');
-hold(handles.temporalAxes, 'on');
-end
-plot(handles.temporalAxes, handles.C(handles.segNum,:));
-hold(handles.temporalAxes, 'off');
+plotTemp(hObject, handles);
 
 guidata(hObject, handles);
 
@@ -305,15 +301,51 @@ function plotPosCheckbox_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of plotPosCheckbox
 handles.plotPos = int32(get(handles.plotPosCheckbox, 'Value'));
 
+plotTemp(hObject, handles);
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in dffCheckbox.
+function dffCheckbox_Callback(hObject, eventdata, handles)
+handles.plotDff = int32(get(handles.dffCheckbox, 'Value'));
+
+plotTemp(hObject, handles);
+
+guidata(hObject, handles);
+
+
+%% 
+function plotTemp(hObject, handles)
+
+c = handles.C(handles.segNum,:);
+
 if handles.plotPos == 1
-plot(handles.temporalAxes, handles.treadPos/50, 'c');
+plot(handles.temporalAxes, max(c)*handles.treadPos, 'm');
 hold(handles.temporalAxes, 'on');
 end
 if handles.plotVel == 1
-plot(handles.temporalAxes, handles.vel/500, 'g');
+plot(handles.temporalAxes, max(c)*handles.vel, 'c');
 hold(handles.temporalAxes, 'on');
 end
-plot(handles.temporalAxes, handles.C(handles.segNum,:));
+if handles.plotDff == 1
+plot(handles.temporalAxes, handles.dff(handles.segNum,:), 'g');
+hold(handles.temporalAxes, 'on');
+end
+plot(handles.temporalAxes, c);
 hold(handles.temporalAxes, 'off');
 
+
+%%
+function calcTransientsGui(hObject, handles)
+
+C = handles.C;
+
+for seg = 1:size(C,1)
+handles.pksCell{seg} = clayCaTransients(C(seg,:), 15, 0);
+end
+
 guidata(hObject, handles);
+
+
+
