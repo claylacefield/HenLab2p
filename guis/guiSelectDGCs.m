@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 13-Mar-2018 16:00:56
+% Last Modified by GUIDE v2.5 15-Mar-2018 00:20:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,6 +59,9 @@ handles.goodSeg = [];
 handles.plotPos = 0;
 handles.plotVel = 0;
 handles.plotDff = 0;
+handles.sdThresh = 6;
+handles.plotPks = 0;
+handles.pksCell = {};
 
 % Update handles structure
 guidata(hObject, handles);
@@ -122,6 +125,15 @@ end
 
 calcTransientsGui(hObject, handles);
 
+disp('Calculating transients');
+tic;
+for seg = 1:size(C,1)
+pksCell{seg} = clayCaTransients(C(seg,:), 15);
+end
+toc;
+handles.pksCell = pksCell;
+
+handles.segSdThresh = 6*ones(size(C,1),1);
 
 try
 handles.sAll = sAll;
@@ -317,11 +329,25 @@ plotTemp(hObject, handles);
 
 guidata(hObject, handles);
 
+%%
+function calcTransientsGui(hObject, handles)
+
+C = handles.C;
+
+disp('Calculating transients');
+tic;
+for seg = 1:size(C,1)
+pksCell{seg} = clayCaTransients(C(seg,:), 15);
+end
+toc;
+handles.pksCell = pksCell;
+
+guidata(hObject, handles);
 
 %% 
 function plotTemp(hObject, handles)
-
-c = handles.C(handles.segNum,:);
+segNum = handles.segNum;
+c = handles.C(segNum,:);
 
 if handles.plotPos == 1
 plot(handles.temporalAxes, max(c)*handles.treadPos, 'm');
@@ -336,21 +362,48 @@ plot(handles.temporalAxes, handles.dff(handles.segNum,:), 'g');
 hold(handles.temporalAxes, 'on');
 end
 plot(handles.temporalAxes, c);
+hold(handles.temporalAxes, 'on');
+
+if handles.plotPks == 1
+    pks = handles.pksCell{segNum};
+    t = 1:length(c);
+    plot(handles.temporalAxes, t(pks), c(pks), 'r*');
+    %hold(handles.temporalAxes, 'on');
+end
 hold(handles.temporalAxes, 'off');
 
+guidata(hObject, handles);
 
-%%
-function calcTransientsGui(hObject, handles)
+% --- Executes on button press in pksCheckbox.
+function pksCheckbox_Callback(hObject, eventdata, handles)
+handles.plotPks = int32(get(handles.pksCheckbox, 'Value'));
 
-C = handles.C;
+plotTemp(hObject, handles);
 
-disp('Calculating transients');
-tic;
-for seg = 1:size(C,1)
-handles.pksCell{seg} = clayCaTransients(C(seg,:), 15);
-end
-toc;
 guidata(hObject, handles);
 
 
+% --- Executes on slider movement.
+function pkSlider_Callback(hObject, eventdata, handles)
+sdThresh = get(handles.pkSlider, 'Value');
+set(handles.sdTxt, 'String', num2str(sdThresh));
 
+segNum = handles.segNum;
+C = handles.C;
+handles.pksCell{segNum} = clayCaTransients(C(segNum,:), 15, 0, sdThresh);
+handles.segSdThresh(segNum) = sdThresh;
+
+plotTemp(hObject, handles);
+
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function pkSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pkSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end

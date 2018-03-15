@@ -8,13 +8,13 @@ function [pks] = clayCaTransients(ca, fps, varargin);
 % requirements:
 % LocalMinima (old script from Buzsaki lab)
 
-if isempty(varargin)
-    toPlot = 0;
-    sdThresh = 6;
-    timeoutSec = 5;
-elseif length(varargin)==1
+if length(varargin)==1
     toPlot = varargin{1};
     sdThresh = 6;
+    timeoutSec = 5;
+    elseif length(varargin)==2
+    toPlot = varargin{1};
+    sdThresh = varargin{2};
     timeoutSec = 5;
 elseif length(varargin)==2
     toPlot = varargin{1};
