@@ -138,11 +138,11 @@ handles.pksCell = pksCell;
 handles.segSdThresh = 6*ones(size(C,1),1);
 set(handles.pkSlider, 'Value', 6);
 
+handles.binVel = binByLocation(vel, treadPos, 100);
+
 try
 handles.sAll = sAll;
 handles.out = out;
-
-handles.binVel = binByLocation(vel, treadPos, 100);
 catch
     disp('No tuning info');
 end
@@ -382,7 +382,10 @@ if handles.plotPks == 1
     end
     try
     plot(handles.spkWavAxes, caPks);
+    hold(handles.spkWavAxes, 'on');
+    plot(handles.spkWavAxes, mean(caPks,2), 'r', 'Linewidth', 2);
     set(handles.spkWavAxes, 'XLim',[0 400]);
+    hold(handles.spkWavAxes, 'off');
     catch
     end
     
@@ -419,6 +422,17 @@ handles.pksCell{segNum} = clayCaTransients(C(segNum,:), 15, 0, sdThresh);
 handles.segSdThresh(segNum) = sdThresh;
 
 plotTemp(hObject, handles);
+
+numBins = 100;
+pos = handles.treadPos;
+segNum = handles.segNum;
+c = handles.C(segNum, :); t = 1:length(c);
+binCa = binByLocation(c, pos, numBins);
+pks = handles.pksCell{segNum};
+spks = zeros(1,length(c));
+spks(pks) = 1;
+binSpks = binByLocation(spks, pos, numBins);
+handles.posRates(segNum,1:numBins) = binSpks;
 
 %try
 plotSegTuning(hObject, handles);
@@ -457,8 +471,9 @@ greatSeg = unique(greatSeg);
 handles.greatSeg = greatSeg;
 set(handles.greatSegTxt, 'String', num2str(greatSeg));
 
-plotPopTuning(hObject, handles);
+
 plotSegTuning(hObject, handles);
+plotPopTuning(hObject, handles);
 
 guidata(hObject, handles);
 
@@ -475,18 +490,21 @@ guidata(hObject, handles);
 
 %% plot all tuning data
 function plotPopTuning(hObject, handles);
+
 if handles.plotTuning ~= 0
 pksCell = handles.pksCell;
 goodSeg = handles.goodSeg;
 
+if length(goodSeg)>0
+    disp(['Plotting popTuning for segNum ' num2str(handles.segNum) ', ' num2str(length(pksCell{handles.segNum})) ' spikes']);
 %try
 posRates = handles.posRates(goodSeg, :);
+disp(['Max rate= ' num2str(max(posRates(:)))]);
 for i = 1:length(goodSeg)
     rates = posRates(i,:);
     [val maxInd(i)] = max(rates);
     posRates(i,:) = rates/max(rates);
 end
-
 
 [b,inds]=sort(maxInd);
 posRates = posRates(inds,:);
@@ -497,32 +515,34 @@ hold(handles.popAvgAxes, 'off');
 imagesc(handles.goodPosTuneAxes, posRates);
 %catch
 %end
+end
 
 %% plot 
 greatSeg = handles.greatSeg;
-try
+if ~isempty(greatSeg)
+%try
 posRates = handles.posRates(greatSeg, :);
-for i = 1:length(goodSeg)
+for i = 1:length(greatSeg)
     rates = posRates(i,:);
     [val maxInd(i)] = max(rates);
     posRates(i,:) = rates/max(rates);
 end
 
-[b,inds]=sort(maxInd);
-posRates = posRates(inds,:);
+[b2,inds2]=sort(maxInd);
+posRates = posRates(inds2,:);   % getting error in this right now
 plot(handles.greatPopAvgAxes, handles.binVel/20, 'g.');
 hold(handles.greatPopAvgAxes, 'on');
 plot(handles.greatPopAvgAxes, mean(posRates,1));
 hold(handles.greatPopAvgAxes, 'off');
 imagesc(handles.greatPosTunAxes, posRates);
-catch
+%catch
+%end
 end
-
 end
 
 guidata(hObject, handles);
 
-
+%%
 function plotSegTuning(hObject, handles)
 if handles.plotTuning ~= 0
 numBins = 100;
@@ -534,9 +554,9 @@ pks = handles.pksCell{segNum};
 spks = zeros(1,length(c));
 spks(pks) = 1;
 binSpks = binByLocation(spks, pos, numBins);
-handles.posRates{segNum} = binSpks;
+handles.posRates(segNum,1:numBins) = binSpks;
 
-handles.binVel = binByLocation(handles.vel, pos, numBins);
+%handles.binVel = binByLocation(handles.vel, pos, numBins);
 
 %try
 plot(handles.posTuneAxes, handles.binVel/5, 'c.');
@@ -546,5 +566,9 @@ plot(handles.posTuneAxes, binSpks);
 hold(handles.posTuneAxes, 'off');
 %catch
 %end
+
+
+disp(['Plotting seg ' num2str(segNum) ' tuning']);
 end
+
 guidata(hObject, handles);
