@@ -209,8 +209,15 @@ function saveButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+file = handles.file;
+path = handles.path;
 goodSeg = handles.goodSeg;
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'goodSeg');
+greatSeg = handles.greatSeg;
+pksCell = handles.pksCell;
+segSdThresh = handles.segSdThresh;
+posRates = handles.posRates;
+
+save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'posRates');
 
 guidata(hObject, handles);
 
@@ -280,7 +287,7 @@ load([path file]);
 handles.goodSeg = goodSeg;
 handles.greatSeg = greatSeg;
 handles.pksCell = pksCell;
-handles.sdThresh = sdThresh;
+handles.segSdThresh = segSdThresh;
 
 set(handles.goodSegTxt, 'String', num2str(goodSeg));
 set(handles.greatSegTxt, 'String', num2str(greatSeg));
