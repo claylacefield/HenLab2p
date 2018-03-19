@@ -94,6 +94,10 @@ load([path file]);
 handles.file = file;
 handles.path = path;
 
+basename = file(1:strfind(file,'.mat')-1);
+set(handles.editBasename, 'String', basename);
+handles.basename = basename;
+
 try
 load(findLatestFilename('treadBehStruc'));
 catch
