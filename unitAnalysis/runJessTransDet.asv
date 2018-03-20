@@ -1,4 +1,4 @@
-function [jessTransStruc] = runJessTransDet(C, fps, thresh, toPlot);
+function [jessTransStruc] = runJessTransDet(C, fps, thresh);
 
 %% USAGE: [jessTransStruc] = runJessTransDet(C, fps);
 

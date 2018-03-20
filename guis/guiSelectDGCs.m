@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 16-Mar-2018 13:05:35
+% Last Modified by GUIDE v2.5 20-Mar-2018 15:49:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,6 +64,7 @@ handles.sdThresh = 6;
 handles.plotPks = 0;
 handles.pksCell = {};
 handles.plotTuning = 0;
+handles.pkMethod = 0; % for clayTransients vs. dombeck
 
 % Update handles structure
 guidata(hObject, handles);
@@ -429,7 +430,20 @@ set(handles.sdTxt, 'String', num2str(sdThresh));
 
 segNum = handles.segNum;
 C = handles.C;
-handles.pksCell{segNum} = clayCaTransients(C(segNum,:), 15, 0, sdThresh);
+
+ca = C(segNum,:);
+fps = 15;
+if handles.pkMethod == 0
+handles.pksCell{segNum} = clayCaTransients(ca, fps, 0, sdThresh);
+elseif handles.pkMethod == 1
+[jessTransStruc] = runJessTransDet(ca, fps, sdThresh, 0);
+handles.pksCell{segNum} = find(jessTransStruc.cell_events~=0);
+elseif handles.pkMethod == 2
+    [vals, locs] = findpeaks(ca, 'MinPeakProminence', sdThresh*std(ca), 'MinPeakDistance', fps);  % this finds the local peaks
+    %epoch =    % and this finds the location of max rise slope approaching this peak
+    handles.pksCell{segNum} = locs;
+end
+
 handles.segSdThresh(segNum) = sdThresh;
 
 plotTemp(hObject, handles);
@@ -583,3 +597,28 @@ disp(['Plotting seg ' num2str(segNum) ' tuning']);
 end
 
 guidata(hObject, handles);
+
+
+% --- Executes on button press in pkMethodCheckbox.
+function pkMethodCheckbox_Callback(hObject, eventdata, handles)
+pkMethod = int32(get(handles.pkMethodCheckbox, 'Value'));
+if pkMethod == 1
+set(handles.findPksCheckbox, 'Value', 0);
+end
+
+handles.pkMethod = pkMethod;
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in findPksCheckbox.
+function findPksCheckbox_Callback(hObject, eventdata, handles)
+pkMethod = int32(get(handles.findPksCheckbox, 'Value'));
+if pkMethod == 1
+set(handles.pkMethodCheckbox, 'Value', 0);
+pkMethod = 2;
+elseif int32(get(handles.pkMethodCheckbox, 'Value')) == 1
+    pkMethod = 1;
+end
+
+handles.pkMethod = pkMethod;

@@ -1,4 +1,4 @@
-function [zscored_cell,cell_transients,cell_events, cell_AUC]=detect_ca_transients(raw_cell,thresh,baseline,t_half,FR);
+function [zscored_cell,cell_transients,cell_events, cell_AUC]=detect_ca_transients(raw_cell,thresh,baseline,t_half,FR, toPlot);
 %Ca transient event detection, adapted from Dombeck 2007
 %author Jessica Jimenez, Columbia University, jcj2123@columbia.edu
 
@@ -107,10 +107,11 @@ X=(1:size(cell_events,1))';
 events=cell_events;
 events(events==0)=NaN;
 
+if toPlot == 1
 for i=1:size(cell_events,2);
     figure(i);plot(zscored_cell(:,i),'b'); hold on; plot(cell_transients(:,i),'r'); hold on; plot(X,events(:,i),'m*');title(['Cell',num2str(i)],'Fontsize',10);
 end
-
+end
 % h = get(0,'children');
 % for i=1:length(h)
 %     saveas(h(i), ['figure' num2str(i)], 'fig');
