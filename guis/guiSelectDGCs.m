@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 20-Mar-2018 15:49:48
+% Last Modified by GUIDE v2.5 20-Mar-2018 23:37:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -130,7 +130,7 @@ catch
     disp('No dF/F calc');
 end
 
-calcTransientsGui(hObject, handles);
+handles = calcTransientsGui(hObject, handles);
 
 disp('Calculating transients');
 tic;
@@ -220,9 +220,10 @@ goodSeg = handles.goodSeg;
 greatSeg = handles.greatSeg;
 pksCell = handles.pksCell;
 segSdThresh = handles.segSdThresh;
+segPkMethod = handles.segPkMethod;
 posRates = handles.posRates;
 
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'posRates');
+save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
 
 guidata(hObject, handles);
 
@@ -346,7 +347,7 @@ plotTemp(hObject, handles);
 guidata(hObject, handles);
 
 %% This just a quick initial transient detection with default parameters upon data loading
-function calcTransientsGui(hObject, handles)
+function handles = calcTransientsGui(hObject, handles)
 
 C = handles.C;
 
@@ -413,6 +414,8 @@ set(handles.pkSlider, 'Value', handles.segSdThresh(handles.segNum));
 set(handles.sdTxt, 'String', num2str(handles.segSdThresh(handles.segNum)));
 plotTemp(hObject, handles);
 
+handles = calcPksTuning(hObject, handles);
+
 %try
 plotSegTuning(hObject, handles);
 plotPopTuning(hObject, handles);
@@ -429,36 +432,11 @@ sdThresh = get(handles.pkSlider, 'Value');
 set(handles.sdTxt, 'String', num2str(sdThresh));
 
 segNum = handles.segNum;
-C = handles.C;
-
-ca = C(segNum,:);
-fps = 15;
-if handles.pkMethod == 0
-handles.pksCell{segNum} = clayCaTransients(ca, fps, 0, sdThresh);
-elseif handles.pkMethod == 1
-[jessTransStruc] = runJessTransDet(ca, fps, sdThresh, 0);
-handles.pksCell{segNum} = find(jessTransStruc.cell_events~=0);
-elseif handles.pkMethod == 2
-    [vals, locs] = findpeaks(ca, 'MinPeakProminence', sdThresh*std(ca), 'MinPeakDistance', fps);  % this finds the local peaks
-    %epoch =    % and this finds the location of max rise slope approaching this peak
-    handles.pksCell{segNum} = locs;
-end
-
 handles.segSdThresh(segNum) = sdThresh;
 
+handles = calcPksTuning(hObject, handles);
+
 plotTemp(hObject, handles);
-
-numBins = 100;
-pos = handles.treadPos;
-segNum = handles.segNum;
-c = handles.C(segNum, :); t = 1:length(c);
-binCa = binByLocation(c, pos, numBins);
-pks = handles.pksCell{segNum};
-spks = zeros(1,length(c));
-spks(pks) = 1;
-binSpks = binByLocation(spks, pos, numBins);
-handles.posRates(segNum,1:numBins) = binSpks;
-
 %try
 plotSegTuning(hObject, handles);
 plotPopTuning(hObject, handles);
@@ -535,7 +513,7 @@ end
 posRates = posRates(inds,:);
 plot(handles.popAvgAxes, handles.binVel/20, 'g.');
 hold(handles.popAvgAxes, 'on');
-plot(handles.popAvgAxes, mean(posRates,1));
+plot(handles.popAvgAxes, nanmean(posRates,1));
 hold(handles.popAvgAxes, 'off');
 imagesc(handles.goodPosTuneAxes, posRates);
 %catch
@@ -607,6 +585,7 @@ set(handles.findPksCheckbox, 'Value', 0);
 end
 
 handles.pkMethod = pkMethod;
+handles = calcPksTuning(hObject, handles);
 
 guidata(hObject, handles);
 
@@ -622,3 +601,46 @@ elseif int32(get(handles.pkMethodCheckbox, 'Value')) == 1
 end
 
 handles.pkMethod = pkMethod;
+handles = calcPksTuning(hObject, handles);
+
+guidata(hObject, handles);
+
+
+%%
+function handles = calcPksTuning(hObject, handles)
+
+segNum = handles.segNum;
+C = handles.C;
+sdThresh = handles.segSdThresh(segNum);
+
+ca = C(segNum,:);
+fps = 15;
+if handles.pkMethod == 0
+handles.pksCell{segNum} = clayCaTransients(ca, fps, 0, sdThresh);
+elseif handles.pkMethod == 1
+[jessTransStruc] = runJessTransDet(ca, fps, sdThresh, 0);
+handles.pksCell{segNum} = find(jessTransStruc.cell_events~=0);
+elseif handles.pkMethod == 2
+    [vals, locs] = findpeaks(ca, 'MinPeakProminence', sdThresh*std(ca), 'MinPeakDistance', fps);  % this finds the local peaks
+    %epoch =    % and this finds the location of max rise slope approaching this peak
+    handles.pksCell{segNum} = locs;
+end
+
+handles.segPkMethod(segNum) = handles.pkMethod;
+
+numBins = 100;
+pos = handles.treadPos;
+segNum = handles.segNum;
+c = handles.C(segNum, :); t = 1:length(c);
+binCa = binByLocation(c, pos, numBins);
+pks = handles.pksCell{segNum};
+spks = zeros(1,length(c));
+spks(pks) = 1;
+binSpks = binByLocation(spks, pos, numBins);
+handles.posRates(segNum,1:numBins) = binSpks;
+
+plotTemp(hObject, handles);
+plotSegTuning(hObject, handles);
+plotPopTuning(hObject, handles);
+
+guidata(hObject, handles);
