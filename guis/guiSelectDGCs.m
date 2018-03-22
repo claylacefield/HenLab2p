@@ -65,6 +65,8 @@ handles.plotPks = 0;
 handles.pksCell = {};
 handles.plotTuning = 0;
 handles.pkMethod = 0; % for clayTransients vs. dombeck
+handles.segPkMethod = [];
+handles.posRates = [];
 
 % Update handles structure
 guidata(hObject, handles);
@@ -223,7 +225,12 @@ segSdThresh = handles.segSdThresh;
 segPkMethod = handles.segPkMethod;
 posRates = handles.posRates;
 
+try
 save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
+catch
+    [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
+    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
+end
 
 guidata(hObject, handles);
 

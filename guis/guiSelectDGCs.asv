@@ -65,6 +65,8 @@ handles.plotPks = 0;
 handles.pksCell = {};
 handles.plotTuning = 0;
 handles.pkMethod = 0; % for clayTransients vs. dombeck
+handles.segPkMethod = [];
+handles.posRates = [];
 
 % Update handles structure
 guidata(hObject, handles);
@@ -220,9 +222,13 @@ goodSeg = handles.goodSeg;
 greatSeg = handles.greatSeg;
 pksCell = handles.pksCell;
 segSdThresh = handles.segSdThresh;
+segPkMethod = handles.segPkMethod;
 posRates = handles.posRates;
 
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'posRates');
+try
+save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
+catch
+end
 
 guidata(hObject, handles);
 
@@ -413,6 +419,8 @@ set(handles.pkSlider, 'Value', handles.segSdThresh(handles.segNum));
 set(handles.sdTxt, 'String', num2str(handles.segSdThresh(handles.segNum)));
 plotTemp(hObject, handles);
 
+handles = calcPksTuning(hObject, handles);
+
 %try
 plotSegTuning(hObject, handles);
 plotPopTuning(hObject, handles);
@@ -510,7 +518,7 @@ end
 posRates = posRates(inds,:);
 plot(handles.popAvgAxes, handles.binVel/20, 'g.');
 hold(handles.popAvgAxes, 'on');
-plot(handles.popAvgAxes, mean(posRates,1));
+plot(handles.popAvgAxes, nanmean(posRates,1));
 hold(handles.popAvgAxes, 'off');
 imagesc(handles.goodPosTuneAxes, posRates);
 %catch
@@ -622,6 +630,8 @@ elseif handles.pkMethod == 2
     %epoch =    % and this finds the location of max rise slope approaching this peak
     handles.pksCell{segNum} = locs;
 end
+
+handles.segPkMethod(segNum) = handles.pkMethod;
 
 numBins = 100;
 pos = handles.treadPos;
