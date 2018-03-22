@@ -443,10 +443,10 @@ handles.segSdThresh(segNum) = sdThresh;
 
 handles = calcPksTuning(hObject, handles);
 
-plotTemp(hObject, handles);
-%try
-plotSegTuning(hObject, handles);
-plotPopTuning(hObject, handles);
+% plotTemp(hObject, handles);
+% %try
+% plotSegTuning(hObject, handles);
+% plotPopTuning(hObject, handles);
 % catch
 %     disp('Cant plot tuning');
 % end
@@ -646,7 +646,12 @@ spks(pks) = 1;
 binSpks = binByLocation(spks, pos, numBins);
 handles.posRates(segNum,1:numBins) = binSpks;
 
+Xrange = get(handles.temporalAxes, 'XLim');
+Yrange = get(handles.temporalAxes, 'YLim');
+%disp(int32(range));
 plotTemp(hObject, handles);
+set(handles.temporalAxes, 'XLim', Xrange);
+set(handles.temporalAxes, 'YLim', Yrange);
 plotSegTuning(hObject, handles);
 plotPopTuning(hObject, handles);
 
