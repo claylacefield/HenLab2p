@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 20-Mar-2018 23:37:25
+% Last Modified by GUIDE v2.5 23-Mar-2018 02:37:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,8 @@ handles.d1 = d1;
 handles.d2 = d2;
 handles.treadBehStruc = treadBehStruc;
 
+handles.deconvC = zeros(size(C));
+
 vel = fixVel(treadBehStruc.vel(1:2:end));
 vel = vel/max(vel(:));
 handles.vel = vel;
@@ -183,6 +185,8 @@ plotPopTuning(hObject, handles);
 
 set(handles.pkSlider, 'Value', handles.segSdThresh(segNum));
 set(handles.sdTxt, 'String', num2str(handles.segSdThresh(segNum)));
+
+set(handles.dffCheckbox, 'Value', 0);
 
 guidata(hObject, handles);
 
@@ -347,7 +351,16 @@ guidata(hObject, handles);
 %% Plot dF/F on temporal axes checkbox
 % --- Executes on button press in dffCheckbox.
 function dffCheckbox_Callback(hObject, eventdata, handles)
-handles.plotDff = int32(get(handles.dffCheckbox, 'Value'));
+plotDff = int32(get(handles.dffCheckbox, 'Value'));
+handles.plotDff = plotDff;
+if plotDff == 1 && max(handles.deconvC(handles.segNum,:))==0
+    ca = handles.C(handles.segNum,:);
+    disp('Deconvolving calcium for this segment');
+    tic;
+deconv = clayDeconvCa(ca, 0);
+handles.deconvC(handles.segNum, 1:length(ca)) = deconv/max(deconv)*max(ca);
+toc;
+end
 
 plotTemp(hObject, handles);
 
@@ -382,7 +395,7 @@ plot(handles.temporalAxes, max(c)*handles.vel, 'c');
 hold(handles.temporalAxes, 'on');
 end
 if handles.plotDff == 1
-plot(handles.temporalAxes, handles.dff(handles.segNum,:), 'g');
+plot(handles.temporalAxes, handles.deconvC(handles.segNum,:), 'g');
 hold(handles.temporalAxes, 'on');
 end
 plot(handles.temporalAxes, c);
@@ -655,4 +668,10 @@ set(handles.temporalAxes, 'YLim', Yrange);
 plotSegTuning(hObject, handles);
 plotPopTuning(hObject, handles);
 
+guidata(hObject, handles);
+
+
+% --- Executes on button press in resetTempAxesButton.
+function resetTempAxesButton_Callback(hObject, eventdata, handles)
+plotTemp(hObject, handles);
 guidata(hObject, handles);
