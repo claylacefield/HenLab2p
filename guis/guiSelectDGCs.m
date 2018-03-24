@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 23-Mar-2018 02:37:07
+% Last Modified by GUIDE v2.5 24-Mar-2018 04:06:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,6 +67,9 @@ handles.plotTuning = 0;
 handles.pkMethod = 0; % for clayTransients vs. dombeck
 handles.segPkMethod = [];
 handles.posRates = [];
+
+handles.deconvC = [];
+handles.posDeconv = [];
 
 % Update handles structure
 guidata(hObject, handles);
@@ -229,11 +232,14 @@ segSdThresh = handles.segSdThresh;
 segPkMethod = handles.segPkMethod;
 posRates = handles.posRates;
 
+deconvC = handles.deconvC;
+posDeconv = handles.posDeconv;
+
 try
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
+save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 catch
     [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
-    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates');
+    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'goodSeg', 'greatSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 end
 
 guidata(hObject, handles);
@@ -358,11 +364,16 @@ if plotDff == 1 && max(handles.deconvC(handles.segNum,:))==0
     disp('Deconvolving calcium for this segment');
     tic;
 deconv = clayDeconvCa(ca, 0);
-handles.deconvC(handles.segNum, 1:length(ca)) = deconv/max(deconv)*max(ca);
+deconv = deconv/max(deconv)*max(ca);
+handles.deconvC(handles.segNum, 1:length(ca)) = deconv;
+
+numBins = 100;
+handles.posDeconv(handles.segNum,1:numBins) = binByLocation(deconv, handles.treadPos, numBins);
 toc;
 end
 
 plotTemp(hObject, handles);
+plotSegTuning(hObject, handles);
 
 guidata(hObject, handles);
 
@@ -585,7 +596,11 @@ handles.posRates(segNum,1:numBins) = binSpks;
 plot(handles.posTuneAxes, handles.binVel/5, 'c.');
 hold(handles.posTuneAxes, 'on');
 plot(handles.posTuneAxes, binCa/2, 'g');
+if handles.plotDff 
+    plot(handles.posTuneAxes, handles.posDeconv(segNum,:));
+else
 plot(handles.posTuneAxes, binSpks);
+end
 hold(handles.posTuneAxes, 'off');
 %catch
 %end

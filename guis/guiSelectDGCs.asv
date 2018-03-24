@@ -357,7 +357,10 @@ if plotDff == 1 && max(handles.deconvC(handles.segNum,:))==0
     ca = handles.C(handles.segNum,:);
     disp('Deconvolving calcium for this segment');
     tic;
-handles.deconvC(handles.segNum, 1:length(ca)) = clayDeconvCa(ca, 0);
+deconv = clayDeconvCa(ca, 0);
+handles.deconvC(handles.segNum, 1:length(ca)) = deconv/max(deconv)*max(ca);
+
+binSpks = binByLocation(spks, pos, numBins);
 toc;
 end
 
