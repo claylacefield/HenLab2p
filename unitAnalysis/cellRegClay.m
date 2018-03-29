@@ -63,7 +63,11 @@ disp('Stage 1 - Loading sessions')
 % nUnits x d1 x d2
 for i = 1:length(multSessTuningStruc)
     A = permute(reshape(full(multSessTuningStruc(i).A), multSessTuningStruc(i).d1,multSessTuningStruc(i).d2, size(multSessTuningStruc(i).A,2)), [3 1 2]);
+    try
     spatial_footprints{i} = A(multSessTuningStruc(i).goodSegPosPkStruc.goodSeg,:,:);
+    catch
+        spatial_footprints{i} = A;
+    end
 end
 
 [footprints_projections]=compute_footprints_projections(spatial_footprints);
