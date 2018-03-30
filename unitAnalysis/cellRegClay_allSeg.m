@@ -1,4 +1,4 @@
-function [cell_registered_struct] = cellRegClay(multSessTuningStruc);
+function [cell_registered_struct] = cellRegClay_allSeg(multSessTuningStruc);
 
 %% USAGE: [cell_registered_struct] = cellRegClay(multSessTuningStruc);
 %% Clay 2017
@@ -55,7 +55,7 @@ figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
 
 % Defining the parameters:
 imaging_technique='two_photon'; % either 'one_photon' or 'two_photon'
-microns_per_pixel= 1.3; %2.4;
+microns_per_pixel=1.3;
 
 % Loading the data: (compile spatial_footprints from multSdessTuningStruc)
 disp('Stage 1 - Loading sessions')
@@ -63,11 +63,7 @@ disp('Stage 1 - Loading sessions')
 % nUnits x d1 x d2
 for i = 1:length(multSessTuningStruc)
     A = permute(reshape(full(multSessTuningStruc(i).A), multSessTuningStruc(i).d1,multSessTuningStruc(i).d2, size(multSessTuningStruc(i).A,2)), [3 1 2]);
-    try
-    spatial_footprints{i} = A(multSessTuningStruc(i).goodSegPosPkStruc.goodSeg,:,:);
-    catch
-        spatial_footprints{i} = A;
-    end
+    spatial_footprints{i} = A;
 end
 
 [footprints_projections]=compute_footprints_projections(spatial_footprints);
