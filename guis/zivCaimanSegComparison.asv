@@ -180,7 +180,7 @@ end
 try
     A3 = A{3};
     segNum3 = zivMat(zivRow,3);
-    set(handles.segNum3Txt, 'String', num2str(segNum3));
+    set(handles.segNum4Txt, 'String', num2str(segNum4));
     segA3 = A3(:, segNum3);
     imagesc(handles.axes3,reshape(segA3, d1, d2));
     C3 = C{3};
@@ -189,7 +189,6 @@ try
     hold(handles.temporalAxes, 'on');
 catch
     cla(handles.axes3);
-    set(handles.segNum3Txt, 'String', 'none');
 end
 
 try
