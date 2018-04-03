@@ -44,7 +44,7 @@ pks = LocalMinima(-dCa, timeoutSec*fps, -thresh);
 
 % now trying iterative re-baselining while subtracting epochs of current
 % spikes
-for j = 1:3
+for j = 1:2
     for i = 1:length(pks)
         try
             dCa(pks(i)-3*fps:pks(i)+2*fps) = NaN;
