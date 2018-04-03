@@ -57,5 +57,16 @@ colormap(jet);
 imagesc(posRates2);
 
 
+vel = treadBehStruc.vel(1:2:end);
+vel = fixVel(vel);
+posVel = binByLocation(vel, treadPos, 100);
+%figure; plot(posVel);
+
+figure; 
+plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
+hold on;
+plot(mean(posRates2,1));
+
+
 
 end
