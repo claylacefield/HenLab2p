@@ -35,7 +35,7 @@ title('goodSeg (spks>3)');
 %%
 
 % cells with low Rayleigh score
-wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
+wellTunedInd = find(circStatStruc.uniform(:,1)<0.99); %01);
 allR2 = allR(wellTunedInd);
 allPhi2 = allPhi(wellTunedInd);
 mw2 = max(allR2);
@@ -68,7 +68,7 @@ title('goodSeg, Rayleigh<0.01');
 %%
 
 % cells with low Rayleigh score
-wellTunedInd = find(circStatStruc.uniform(:,1)<0.001);
+wellTunedInd = find(circStatStruc.uniform(:,1)<0.98); %001);
 allR3 = allR(wellTunedInd);
 allPhi3 = allPhi(wellTunedInd);
 mw3 = max(allR);
