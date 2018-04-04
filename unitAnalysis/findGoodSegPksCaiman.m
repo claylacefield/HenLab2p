@@ -27,13 +27,15 @@ for i = 1:size(C,1) % go through all units
        ca = zeros(length(ca),1); % create vector of spikes from spk times
        ca(pks) = 1;
        [caPosVelStruc] = caVsPosVel(treadBehStruc, ca, numbins, 2);
-       goodSegPosPks(n,:) = caPosVelStruc.binYcaSum; % position binned spikes
+       %goodSegPosPks(n,:) = caPosVelStruc.binYcaSum; % position binned spikes
+       goodSegPosPks(n,:) = caPosVelStruc.binYcaAvg;
        
        if length(pks) >= greatSegMinPks
            m = m+1;
            greatSeg(m) = i;
            greatSegEvents{m}=pks;
-           greatSegPosPks(m,:) = caPosVelStruc.binYcaSum;
+           %greatSegPosPks(m,:) = caPosVelStruc.binYcaSum;
+           greatSegPosPks(m,:) = caPosVelStruc.binYcaAvg;
        end
        
    end
