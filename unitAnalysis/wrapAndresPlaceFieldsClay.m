@@ -8,7 +8,7 @@ shuffN = 100;
 % [file, path] = uigetfile('*.mat', 'Select segDict file to process');
 % cd(path);
 % load(file);
-load(findLatestFilename('_treadBehStruc_'));
+load(findLatestFilename('_treadBehStruc'));
 
 
 % if input is cell array of peaks
@@ -39,10 +39,14 @@ out = computePlaceTransVectorLapCircShuffWithEdges4(C, treadPos, T, lapVec, shuf
 
 
 %% plotting
-if toPlot
-% pcInd = find(out.Shuff.isPC);
-% 
-posRates = out.posRates;%(pcInd,:);
+if toPlot == 1 || toPlot == 2
+    
+    if toPlot == 2
+        pcInd = find(out.Shuff.isPC);
+        posRates = out.posRates(pcInd,:);
+    else
+        posRates = out.posRates;%(pcInd,:);
+    end
 
 [maxVal, maxInd] = max(posRates');
 [newInd, oldInd] = sort(maxInd);

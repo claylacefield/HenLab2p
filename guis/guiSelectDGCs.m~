@@ -391,14 +391,11 @@ disp('Calculating transients');
 tic;
 for seg = 1:size(C,1)
 pksCell{seg} = clayCaTransients(C(seg,:), 15);
-handles.segNum = seg;
-handles = calcPksTuning(hObject, handles);
 end
-handles.segNum = 1;
 toc;
 handles.pksCell = pksCell;
 
-
+handles = calcPksTuning(hObject, handles);
 
 guidata(hObject, handles);
 
