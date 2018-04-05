@@ -1,14 +1,8 @@
-function [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, varargin);
+function [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, minVel, toPlot);
 
 
 %% variables
 shuffN = 100;
-
-if ~isempty(varargin)
-    minVel = varargin{1};
-else
-    minVel = 5;
-end
 
 %% load other data
 % [file, path] = uigetfile('*.mat', 'Select segDict file to process');

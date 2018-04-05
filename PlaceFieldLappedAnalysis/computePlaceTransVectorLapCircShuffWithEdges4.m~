@@ -4,7 +4,7 @@ function out = computePlaceTransVectorLapCircShuffWithEdges4(activity, treadPos,
 % by Andres
 % (annotated by sebnem and clay 2018)
 % NOTE: you can use wrapAndresPlaceFieldsClay.m to run this directly from
-% segmented C and treadBehStruc
+% segmented C and treadB
 
 % Output:
 %   out = structure of output fields:
@@ -32,15 +32,7 @@ function out = computePlaceTransVectorLapCircShuffWithEdges4(activity, treadPos,
 
 excludeVec = [];
 if ~isempty(varargin)
-    
     excludeVec = varargin{1};
-    minVel = 5;
-    if length(varargin) == 2
-        minVel = varargin{2};
-    end
-    
-else
-    minVel = 5;
 end
 
 
@@ -57,7 +49,7 @@ trimRunStarts = 0.25; %to eliminate possible artifacts during run starts
 trimRunEnds = 0.25; %at the beginning and end of a run epoch, can set to 0
 minRunTime = 2; %min duration of a running bout
 minPFBins = 5; %min # of spatial bins a plce field needs to be above its shuffle value for it to count as a place cell
-%minVel = 5; %if -5 calculate vel<5 cm/s
+minVel = 5; %if -5 calculate vel<5 cm/s
 
 out = [];
 out.Params.RatePerc = 99;

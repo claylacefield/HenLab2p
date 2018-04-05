@@ -4,6 +4,10 @@ function PCLappedSess = computePlaceCellsLappedWithEdges2(spikes, treadPos, T, s
 %beginning of 2018.
 %spikes = rows are samples, and columns are neurons
 
+if size(spikes,2)>size(spikes,1)
+    spikes = spikes';
+end
+
 %minimum percentage of laps in which cell must fire above its mean rate, also
 %minumum number of laps that a bin must be occupied in order to be included
 %in the analyisis
@@ -14,15 +18,15 @@ lapPerc = lapPerc/100;
 lapMin = 3;
 
 %calculate which lap is which:
-[lapVec, ~] = calcLaps1(treadPos, T);
+[lapVec, ~] = calcLaps1(treadPos, T); % lap # for each frame
 
 %run the place field (with 0 shuffles) once to find the initial valid
 %time-points
 PCSimple = computePlaceTransVectorLapCircShuffWithEdges4(spikes, treadPos, T, lapVec, 0);
 
 nanPos = PCSimple.nanedPos;
-lapVec(isnan(nanPos)) = NaN;
-lapU = unique(lapVec(~isnan(lapVec)));
+lapVec(isnan(nanPos)) = NaN;    % NaN out lap vector
+lapU = unique(lapVec(~isnan(lapVec))); % 1:#laps
 
 
 %calculate the occupancy for each lap
