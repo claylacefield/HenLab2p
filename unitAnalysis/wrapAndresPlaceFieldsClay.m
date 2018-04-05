@@ -8,7 +8,7 @@ shuffN = 100;
 % [file, path] = uigetfile('*.mat', 'Select segDict file to process');
 % cd(path);
 % load(file);
-load(findLatestFilename('_treadBehStruc'));
+load(findLatestFilename('treadBehStruc'));
 
 
 % if input is cell array of peaks
