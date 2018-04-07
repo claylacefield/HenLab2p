@@ -9,10 +9,10 @@ function [lapXc] = xcorrLapActiv(PCLappedSess);
 numSegs = size(PCLappedSess.ByLap.posRateByLap,1);
 
 for i = 1:numSegs
-    lapActiv1 = max(squeeze(PCLappedSess.ByLap.posRateByLap(i,:,:)));%squeeze(nanmean(PCLappedSess.ByLap.posRateByLap(i,:,:),2));
+    lapActiv1 = squeeze(nanmean(PCLappedSess.ByLap.posRateByLap(i,:,:),2));
     %lapActiv1 = lapActiv1/max(lapActiv1);
     for j = 1:numSegs
-        lapActiv2 = max(squeeze(PCLappedSess.ByLap.posRateByLap(j,:,:)));%squeeze(nanmean(PCLappedSess.ByLap.posRateByLap(j,:,:),2));
+        lapActiv2 = max(squeeze(PCLappedSess.ByLap.posRateByLap(j,:,:));%squeeze(nanmean(PCLappedSess.ByLap.posRateByLap(j,:,:),2));
         %lapActiv2 = lapActiv2/max(lapActiv2);
         xc = xcorr(lapActiv1, lapActiv2, 'coeff'); % 'coeff' to normalize, but this is bad for low rate cells
         %[maxVal, maxInd] = max(abs(xc));
@@ -21,10 +21,6 @@ for i = 1:numSegs
     end
 end
 
-% lapXc = lapXc(:);
-% lapXc = lapXc(~isnan(lapXc));
-% lapXc = reshape(lapXc, sqrt(length(lapXc)), sqrt(length(lapXc)));
-
 figure;
-%colormap(jet);
+colormap(jet);
 imagesc(lapXc);
