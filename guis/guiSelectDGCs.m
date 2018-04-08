@@ -138,6 +138,8 @@ catch
     disp('No dF/F calc');
 end
 
+handles.segSdThresh = 6*ones(size(C,1),1);
+
 handles = calcTransientsGui(hObject, handles);
 
 disp('Calculating transients');
@@ -148,7 +150,7 @@ end
 toc;
 handles.pksCell = pksCell;
 
-handles.segSdThresh = 6*ones(size(C,1),1);
+
 set(handles.pkSlider, 'Value', 6);
 
 handles.binVel = binByLocation(vel, treadPos, 100);
