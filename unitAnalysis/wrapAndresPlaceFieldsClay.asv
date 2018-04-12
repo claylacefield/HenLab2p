@@ -8,8 +8,6 @@ if ~isempty(varargin)
     treadBehStruc = varargin{1};
     if length(varargin) == 2
     minVel = varargin{2};
-    else
-        minVel = 5;
     end
 else
     minVel = 5;
