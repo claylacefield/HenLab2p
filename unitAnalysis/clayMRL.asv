@@ -11,10 +11,10 @@ radBinSiz = 2*pi/numBins;
 for j = 1:size(binCaAvg,2)
     binCa = binCaAvg(:,j);
     xSum = 0; ySum = 0;
-    totalSpikes = sum(binCa);
+    totalSpikes = sum(
     for i = 1:numBins
-        xSum = xSum + binCa(i)*cos((i-1)*radBinSiz)/totalSpikes; % x = r*cos(theta);
-        ySum = ySum + binCa(i)*sin((i-1)*radBinSiz)/totalSpikes; % y = r*sin(theta);
+        xSum = xSum + binCa(i)*cos((i-1)*radBinSiz)/; % x = r*cos(theta);
+        ySum = ySum + binCa(i)*sin((i-1)*radBinSiz); % y = r*sin(theta);
     end
     
     xSumAll(j) = xSum;
@@ -37,7 +37,6 @@ end
 % figure;
 % polarplot([theta 0], [rho 0], '-o'); %meanLength);
 figure; compass(xSumAll', ySumAll');
-title('Normalized MRL');
 
     
     
