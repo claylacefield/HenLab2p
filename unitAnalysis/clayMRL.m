@@ -1,8 +1,10 @@
-function [meanLength, meanAngRad] = clayMRL(binCaAvg)
+function [meanLength, meanAngRad] = clayMRL(binCaAvg, toPlot);
 
-if size(binCaAvg,1)<size(binCaAvg,2)
-    binCaAvg = binCaAvg';
-end
+%% USAGE: [meanLength, meanAngRad] = clayMRL(binCaAvg(bins x #seg), toPlot);
+
+% if size(binCaAvg,1)<size(binCaAvg,2)
+%     binCaAvg = binCaAvg';
+% end
 
 numBins = size(binCaAvg,1);
 
@@ -34,10 +36,11 @@ for j = 1:size(binCaAvg,2)
     rho = meanLength;
 end
 
+if toPlot
 % figure;
 % polarplot([theta 0], [rho 0], '-o'); %meanLength);
 figure; compass(xSumAll', ySumAll');
 title('Normalized MRL');
-
+end
     
     

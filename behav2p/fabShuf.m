@@ -43,6 +43,7 @@ toc;
 if toPlot
 figure;
 hold on;
-plot(shufBinCaAvg);
-plot(binByLocation(ca, pos, numBins));
+plotMeanSEM(shufBinCaAvg, 'g');
+plot(binByLocation(ca, pos, numBins), 'b', 'LineWidth', 2);
+%plot(mean(shufBinCaAvg,2), 'g', 'LineWidth', 2);
 end
