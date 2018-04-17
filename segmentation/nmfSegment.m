@@ -162,7 +162,7 @@ clear Y;
 try
 %if toSave ~= 0
 
-save([basename '_segStruc_4_' date], 'segStruc');
+save([basename '_segStruc_b5_' date], 'segStruc');
     
 %end
 catch
