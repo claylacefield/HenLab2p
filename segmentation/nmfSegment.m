@@ -47,7 +47,8 @@ if length(varargin)>0
 else
 
 % ifSima = 1; numCh = 2; 
-segCh = 2; endFr = 0;  % to read all frames from Ch2 (GCaMP)
+segCh = 1; %2; 
+endFr = 0;  % to read all frames from Ch2 (GCaMP)
 filename = 0; %
 [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
 
@@ -161,7 +162,7 @@ clear Y;
 try
 %if toSave ~= 0
 
-save([basename '_segStruc_1_' date], 'segStruc');
+save([basename '_segStruc_4_' date], 'segStruc');
     
 %end
 catch
