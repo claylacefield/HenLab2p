@@ -22,7 +22,7 @@ function varargout = guiSelectDGCs(varargin)
 
 % Edit the above text to modify the response to help guiSelectDGCs
 
-% Last Modified by GUIDE v2.5 19-Apr-2018 15:57:10
+% Last Modified by GUIDE v2.5 20-Apr-2018 19:27:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -737,5 +737,3 @@ guidata(hObject, handles);
 function resetTempAxesButton_Callback(hObject, eventdata, handles)
 plotTemp(hObject, handles);
 guidata(hObject, handles);
-
-
