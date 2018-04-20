@@ -55,6 +55,8 @@ function guiSelectDGCs_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for guiSelectDGCs
 handles.output = hObject;
 
+handles.inSeg = [];
+handles.okSeg = [];
 handles.goodSeg = [];
 handles.greatSeg = [];
 handles.plotPos = 0;
