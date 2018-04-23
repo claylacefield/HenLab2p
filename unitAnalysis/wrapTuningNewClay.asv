@@ -1,7 +1,5 @@
 function wrapTuningNewClay()
 
-% calculate tuning pvalues based upon circular and non-circular methods
-
 % 042318
 % Just a prelim script- not working yet.
 
