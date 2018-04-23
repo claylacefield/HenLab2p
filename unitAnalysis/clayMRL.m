@@ -1,16 +1,16 @@
-function [meanLength, meanAngRad] = clayMRL(binCaAvg, toPlot);
+function [meanLength, meanAngRad] = clayMRL(binCaAvg, numBins, toPlot);
 
 %% USAGE: [meanLength, meanAngRad] = clayMRL(binCaAvg(bins x #seg), toPlot);
 
-% if size(binCaAvg,1)<size(binCaAvg,2)
-%     binCaAvg = binCaAvg';
-% end
+if size(binCaAvg,2)==numBins
+    binCaAvg = binCaAvg';
+end
 
-numBins = size(binCaAvg,1);
+%numBins = size(binCaAvg,1);
 
-radBinSiz = 2*pi/numBins;
+radBinSiz = 2*pi/numBins; % bin size in radians
 
-for j = 1:size(binCaAvg,2)
+for j = 1:size(binCaAvg,2) % for all units
     binCa = binCaAvg(:,j);
     xSum = 0; ySum = 0;
     totalSpikes = sum(binCa);
