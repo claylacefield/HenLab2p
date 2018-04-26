@@ -62,7 +62,7 @@ handles.greatSeg = [];
 handles.plotPos = 0;
 handles.plotVel = 0;
 handles.plotDff = 0;
-handles.sdThresh = 6;
+handles.sdThresh = 4;
 handles.plotPks = 0;
 handles.pksCell = {};
 handles.plotTuning = 0;
@@ -140,7 +140,7 @@ catch
     disp('No dF/F calc');
 end
 
-handles.segSdThresh = 6*ones(size(C,1),1);
+handles.segSdThresh = handles.sdThresh*ones(size(C,1),1);
 
 handles = calcTransientsGui(hObject, handles);
 
