@@ -9,9 +9,15 @@ function [unitTuningStruc] = wrapTuningNewClay(C, toPlot);
 
 numBins = 100;
 
+% place cell analysis (currently using Andres's but it's pretty much same
+% as my earlier one)
 [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, 1);
 unitTuningStruc.outPC = out;
 unitTuningStruc.PCLappedSess = PCLappedSess;
+
+% now for non-movement epochs
+[out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, 1);
+unitTuningStruc.outNonmovPC = out;
 
 disp('Calculating pval based upon shuffled position');
 
