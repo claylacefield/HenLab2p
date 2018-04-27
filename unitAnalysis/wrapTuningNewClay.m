@@ -43,7 +43,7 @@ disp('Calculating pval based upon shuffled position');
 %% Circular tuning
 
 [binCaAvg] = binByLocation(C, pos, numBins);
-[origMRL, origMRA] = clayMRL(binCaAvg, numBins, 0);
+[origMRL, origMRA] = clayMRL(binCaAvg, numBins, 1);
 mrl = origMRL; mra = origMRA;
 unitTuningStruc.mrl=mrl; unitTuningStruc.mra=mra;
 
