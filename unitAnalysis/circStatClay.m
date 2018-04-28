@@ -25,13 +25,17 @@ function [circStatStruc] = circStatClay(goodSegPosPks, toPlot);
 w = goodSegPosPks;
 numBins = size(w,2);
 
-ori = linspace(0, 180, numBins);
+%ori = linspace(0, 180, numBins);
+%ori = 0:numBins-1;
 
 % orientation of bins -> convert two directions
-ori = circ_axial(circ_ang2rad(ori),2);
+%ori = circ_axial(circ_ang2rad(ori),2);
+
+dori = 2*pi/numBins;
+ori = linspace(0,2*pi-dori,numBins);
 
 % spacing of bins
-dori = diff(ori(1:2));
+%dori = diff(ori(1:2));
 
 
 
@@ -49,6 +53,7 @@ for j = 1:k
     
     % compute and plot mean resultant vector length and direction
     %figure;
+    
     mw = max(w(j,:));
     allMax(j)=mw;
     r = circ_r(ori,w(j,:),dori,2) * mw;
@@ -57,6 +62,7 @@ for j = 1:k
     allPhi(j) = phi;
     
     if toPlot == 1
+        try
         if mod(j-1,25)==0
             figure;
             numFig = numFig + 1;
@@ -79,6 +85,8 @@ for j = 1:k
         set(gca,'xtick',[])
         set(gca,'ytick',[])
         title(j);
+        catch
+        end
     end
 end
 %% part 2: descriptive statistics
