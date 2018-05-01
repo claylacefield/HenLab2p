@@ -29,7 +29,7 @@ for segNum1 = 1:K
     
     for segNum2 = 1:K
         
-        if segNum2 < segNum1 % only calc triangular matrix
+        if segNum2 > segNum1 % only calc triangular matrix
             seg2 = C(:,segNum2);
             %seg2 = seg2/var(seg2);
             
@@ -37,7 +37,7 @@ for segNum1 = 1:K
             corrCoeff(segNum1, segNum2, 1:length(lags)) = xc;
             maxCorr(segNum1, segNum2) = max(xc);
         else
-            corrCoeff(segNum1, segNum2, 1:length(lags)) = zeros(length(lags),1);
+            corrCoeff(segNum1, segNum2, 1:length(lags)) = zeros(;
             maxCorr(segNum1, segNum2) = 0;
         end
         
