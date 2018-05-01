@@ -1,4 +1,4 @@
-function [yx] = findSegCentroid(A, d1, d2);
+function [yx, d] = findSegCentroid(A, d1, d2);
 
 %% USAGE: [yx] = findSegCentroid(A, d1, d2);
 % Finds Y,X coordinates of segment spatial component
