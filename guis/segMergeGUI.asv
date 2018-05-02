@@ -113,8 +113,8 @@ guidata(hObject, handles);
 % --- Executes on slider movement.
 function dupPairSlider_Callback(hObject, eventdata, handles)
 pairRow = int32(get(handles.dupPairSlider, 'Value'));
-set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup))]);
-handles.pairRow=pairRow;
+set(handles.pairNumTxt, 'String', num2str(pairRow));
+handles.pairRow;
 
 plotSpatial(hObject, handles);
 plotTemporal(hObject, handles);
@@ -138,7 +138,11 @@ function plotSpatial(hObject, handles);
 dupSegGroup = handles.dupSegGroup;
 pairRow = handles.pairRow;
 dupSegList = dupSegGroup{pairRow};
-spatial = reshape(squeeze(full(handles.A(:,dupSegList(handles.dispSeg)))),handles.d1, handles.d2);
+if handles.dispSeg == 1
+    spatial = reshape(squeeze(full(handles.A(:,handles.seg1))),handles.d1, handles.d2);
+else
+    spatial = reshape(squeeze(full(handles.A(:,handles.seg2))),handles.d1, handles.d2);
+end
 imagesc(handles.spatialAxes, spatial);
 
 
@@ -148,10 +152,9 @@ pairRow = handles.pairRow;
 dupSegList = dupSegGroup{pairRow};
 
 colors = {'r','g','b','c','m','y','k'};
-
+hold(handles.temporalAxes, 'on');
 for i=1:length(dupSegList)
 plot(handles.temporalAxes, handles.C(dupSegList(i),:), colors{i});
-hold(handles.temporalAxes, 'on');
 end
 hold(handles.temporalAxes, 'off');
 
@@ -163,7 +166,7 @@ function dispSegSlider_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 dispSeg = int32(get(handles.dispSegSlider, 'Value'));
-set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow}))]);
+set(handles.segTxt, 'String', num2str(dispSeg));
 handles.dispSeg = dispSeg;
 
 plotSpatial(hObject, handles);
