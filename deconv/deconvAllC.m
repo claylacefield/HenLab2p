@@ -1,6 +1,6 @@
-function [recon, sAll] = deconvC(C);
+function [recon, sAll] = deconvAllC(C);
 
-%% USAGE: [recon, sAll] = deconvC(C);
+%% USAGE: [recon, sAll] = deconvAllC(C);
 % Clay 2018
 % Perform OASIS deconvolution on all neurons in NMF C matrix.
 % NOTE: this takes a long time because it's single threaded
