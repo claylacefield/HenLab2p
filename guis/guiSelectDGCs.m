@@ -177,6 +177,8 @@ function segNumSlider_Callback(hObject, eventdata, handles)
 segNum = int32(get(handles.segNumSlider, 'Value'));
 set(handles.segTxt, 'String', num2str(segNum));
 handles.segNum = segNum;
+set(handles.dffCheckbox, 'Value', 0);
+handles.plotDff = 0;
 
 A = handles.A; C = handles.C;
 aSeg = reshape(full(A(:,segNum)),handles.d1,handles.d2);
@@ -194,7 +196,7 @@ plotPopTuning(hObject, handles);
 set(handles.pkSlider, 'Value', handles.segSdThresh(segNum));
 set(handles.sdTxt, 'String', num2str(handles.segSdThresh(segNum)));
 
-set(handles.dffCheckbox, 'Value', 0);
+%set(handles.dffCheckbox, 'Value', 0);
 
 guidata(hObject, handles);
 
@@ -640,11 +642,11 @@ handles.posRates(segNum,1:numBins) = binSpks;
 %handles.binVel = binByLocation(handles.vel, pos, numBins);
 
 %try
-plot(handles.posTuneAxes, handles.binVel/5, 'c.');
+plot(handles.posTuneAxes, handles.binVel/20, 'c.');
 hold(handles.posTuneAxes, 'on');
 plot(handles.posTuneAxes, binCa/2, 'g');
 if handles.plotDff 
-    plot(handles.posTuneAxes, handles.posDeconv(segNum,:));
+    plot(handles.posTuneAxes, handles.posDeconv(segNum,:)*3);
 else
 plot(handles.posTuneAxes, binSpks);
 end
