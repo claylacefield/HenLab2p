@@ -20,7 +20,7 @@ end
 try
 behCell = importdata([path filename], '\t');
 catch
-    disp('Trouble reading TDML so trying other method');
+    disp('Trouble reading TDML so try
     behCell = importdata(filename);
 end
 
@@ -72,13 +72,9 @@ for i=1:length(behCell)
         end
         
         % lick time/pos
-        try
-            if ~isempty(strfind(rowStr, '"lick"')) && ~isempty(strfind(rowStr, '"start"'))
-                lickTime = [lickTime currTime];
-                lickPos = [lickPos currY];
-            end
-        catch
-            disp('Dropping this lick because its before first pos reading');
+        if ~isempty(strfind(rowStr, '"lick"')) && ~isempty(strfind(rowStr, '"start"'))
+            lickTime = [lickTime currTime];
+            lickPos = [lickPos currY];
         end
         
         % rew zone enter/exit time/pos
