@@ -1,4 +1,4 @@
-function [sameCellTuningStruc] = sameCellTuning(multSessSegStruc, cell_registered_struct);
+function [sameCellTuningStruc] = sameCellTuning(multSessTuningStruc, cell_registered_struct);
 
 %% USAGE: [sameCellTuningStruc] = sameCellTuning(multSessTuningStruc, cell_registered_struct);
 %
@@ -23,7 +23,7 @@ zivCentroids = cell_registered_struct.registered_cells_centroids;
 for i = 1:size(mapInd,2)
     
     % find index of cellReg cells with respect to original C/A
-    goodSeg = multSessSegStruc(i).goodSeg;
+    goodSeg = multSessTuningStruc(i).goodSeg;
     cellRegArr = mapInd(:,i);
     
     for j = 1:length(cellRegArr) % for all cells in cellReg array from this session (0's for cells not in session)
@@ -39,10 +39,10 @@ for i = 1:size(mapInd,2)
 %     placeCellOrigInd{i} = greatSeg(multSessTuningStruc(i).placeCellStruc.goodRay);
     
     % find place cell info for cells in this session (from goodSegs)
-    [out, PCLappedSess] = wrapAndresPlaceFieldsClay(multSessSegStruc(i).pksCell(multSessSegStruc(i).goodSeg), 0, multSessSegStruc(i).treadBehStruc);
-    placeCellOrigInd{i} = goodSeg(find(PCLappedSess.Shuff.isPC));
-    multSessSegStruc(i).outPC = out;
-    multSessSegStruc(i).PCLapSess = PCLappedSess;
+    [out, PCLappedSess] = wrapAndresPlaceFieldsClay(multSessSegStruc(i).C(multSessSegStruc(i).goodSeg,:), 0, multSessSegStruc(i).treadBehStruc);
+    placeCellOrigInd{i} = goodSeg(PCLappedSess.Shuff.isPC)
+    multSessTuningStruc(i).outPC = out;
+    multSessTuningStruc(i).PCLapSess = PCLappedSess;
 end
 
 
@@ -77,7 +77,7 @@ placeCellAllOrigInd = cellsInAll(placeCellsInAll,:);
 
 %% Save useful vars to output struc
 
-sameCellTuningStruc.multSessTuningStruc = multSessSegStruc; % just save orig struc (not too huge)
+sameCellTuningStruc.multSessTuningStruc = multSessTuningStruc; % just save orig struc (not too huge)
 sameCellTuningStruc.unitSpatCell = unitSpatCell;  % cell array of spatial profiles of ziv cells
 sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
@@ -91,12 +91,12 @@ sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index 
 figure; color = {'r' 'g' 'b'};
 % for all cells
 for i = 1:length(placeCellsInAll)
-    subplot(5,5,i);
+    subplot(3,3,i);
     hold on;
     for j = 1:size(placeCellAllOrigInd,2)
         origInd = placeCellAllOrigInd(i,j); % orig C/A index of this cell
-        goodSegInd = find(multSessSegStruc(j).goodSeg == origInd);
-        posPks = multSessSegStruc(j).outPC.posRates(goodSegInd,:);
+        goodSegInd = find(multSessTuningStruc(j).goodSeg == origInd);
+        posPks = multSessTuningStruc(j).outPC.pos(goodSegInd,:);
         samePlacePosPks(i,j,:) = posPks;
         plot(posPks, color{j});
     end
@@ -133,17 +133,14 @@ imshow(rgb2);
 % for all cells
 for i = 1:size(mapInd2,1)
     for j = 1:size(mapInd2,2)
-        try
         origInd = mapInd2(i,j); % orig C/A index of this cell
         if origInd ~= 0
-        goodSegInd = find(multSessSegStruc(j).goodSeg == origInd);
-        posPks = multSessSegStruc(j).outPC.posRates(goodSegInd,:);
+        goodSegInd = find(multSessTuningStruc(j).goodSegPosPkStruc.goodSeg == origInd);
+        posPks = multSessTuningStruc(j).goodSegPosPkStruc.goodSegPosPks(goodSegInd,:);
         else
            posPks = zeros(40,1); 
         end
         allPlacePosPks(i,j,:) = posPks;
-        catch
-        end
     end
 end
 

@@ -70,7 +70,11 @@ while stillAdding
                 disp('No okSegs or INs');
             end
             
-            
+            multSessSegStruc(numSess).pksCell = pksCell;
+            multSessSegStruc(numSess).deconvC = deconvC;
+            multSessSegStruc(numSess).posRates = posRates;
+            multSessSegStruc(numSess).posDeconv = posDeconv;
+
 %             multSessTuningStruc(numSess).goodSegPosPkStruc = goodSegPosPkStruc;
 %             wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
 %             multSessTuningStruc(numSess).placeCellStruc.goodRay = wellTunedInd;
