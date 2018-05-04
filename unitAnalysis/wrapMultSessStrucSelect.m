@@ -28,7 +28,7 @@ while stillAdding
         cd(path);
         
         try
-            [goodSegName, path] = uigetfile('*.mat', 'Select goodSeg file for this segDict');
+            goodSegName = uigetfile('*.mat', 'Select goodSeg file for this segDict');
             
             disp(['Adding ' segDictName ' to multSessTuningStruc']);
         
@@ -46,10 +46,12 @@ while stillAdding
             % xxxxx
             
             numSess = numSess + 1;
-            slashInds = strfind(foldername, '/');
-            multSessSegStruc(numSess).mouseName = foldername(slashInds(end-2)+1:slashInds(end-1)-1);
-            multSessSegStruc(numSess).dayName = foldername(slashInds(end-1)+1:slashInds(end)-1);
-            multSessSegStruc(numSess).sessName = foldername(slashInds(end)+1:end);
+            slashInds = strfind(path, '/');
+            multSessSegStruc(numSess).mouseName = path(slashInds(end-3)+1:slashInds(end-2)-1);
+            multSessSegStruc(numSess).dayName = path(slashInds(end-2)+1:slashInds(end-1)-1);
+            multSessSegStruc(numSess).sessName = path(slashInds(end-1)+1:end-1);
+            multSessSegStruc(numSess).segDictName = segDictName;
+            multSessSegStruc(numSess).goodSegName = goodSegName;
             %multSessTuningStruc(numSess).sessPath = foldername;
             multSessSegStruc(numSess).C = C;
             multSessSegStruc(numSess).A = A;
@@ -81,6 +83,8 @@ while stillAdding
     catch
         stillAdding = 0;
         disp('Canceled folder selection so aborting.');
+        saveFilename = ['/data/sebnem/DG_data/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
+        save(saveFilename, 'multSessSegStruc');
     end
     cd ..;
 end

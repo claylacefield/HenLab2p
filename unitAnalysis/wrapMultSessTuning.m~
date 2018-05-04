@@ -1,6 +1,6 @@
-function [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
+function [multSessSegStruc] = wrapMultSessTuning(varargin)
 
-%% USAGE: [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
+%% USAGE: [multSessTuningStruc] = wrapMultSessTuning(varargin);
 % Start with multSessTuninStruc or create new, selecting folders to
 % compile.
 % NOTE: abort file open dialog to stop adding new sessions.
@@ -31,6 +31,7 @@ while stillAdding
             [goodSegName, path] = uigetfile('*.mat', 'Select goodSeg file for this segDict');
             
             disp(['Adding ' segDictName ' to multSessTuningStruc']);
+            
         
             load(segDictName);
             
@@ -39,8 +40,8 @@ while stillAdding
             
             [treadBehStruc] = procHen2pBehav('auto');
             
-%             numBins = 100 ; rayThresh = 0.05;
-%             [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, numBins, rayThresh);
+            numBins = 100 ; rayThresh = 0.05;
+            [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, numBins, rayThresh);
             
             % put other things to calculate here, e.g.
             % xxxxx
