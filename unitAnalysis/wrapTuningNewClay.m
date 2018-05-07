@@ -81,6 +81,7 @@ figure;
 subplot(2,2,1);
 colormap(jet);
 imagesc(posRates2);
+xlabel('position');
 
 
 vel = treadBehStruc.vel(1:30/fps:end);
@@ -94,9 +95,17 @@ plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
 hold on;
 plot(mean(posRates2,1));
 plot(mean(outNon.posRates,1), 'r');
-title('movement cells (b), non-movement (r), vs. vel (g)');
+title('mov. epoch (b), non-mov. (r), vel (g)');
+ylabel('mean rate');
+xlabel('position');
 
 subplot(2,2,2);
 compass(mrl.*cos(mra), mrl.*sin(mra));
+title('unit tuning vector');
+
+subplot(2,2,4);
+hist(maxInd);
+ylabel('#units');
+xlabel('position');
 
 end
