@@ -1,4 +1,4 @@
-function [sameCellTuningStruc] = sameCellTuning(multSessSegStruc, cell_registered_struct);
+function [sameCellTuningStruc] = sameCellTuning(multSessSegStruc, cell_registered_struct, toPlot);
 
 %% USAGE: [sameCellTuningStruc] = sameCellTuning(multSessTuningStruc, cell_registered_struct);
 %
@@ -89,6 +89,7 @@ sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index 
 % sessions
 
 figure; color = {'r' 'g' 'b'};
+%title('Place cells in all sessions');
 % for all cells
 for i = 1:length(placeCellsInAll)
     subplot(5,5,i);
@@ -101,7 +102,7 @@ for i = 1:length(placeCellsInAll)
         plot(posPks, color{j});
     end
 end
-
+title('Place cells in all sessions');
 
 %%
 %save spatial profiles of cells from all sessions, aligned with ziv
@@ -131,6 +132,7 @@ imshow(rgb2);
 
 
 % for all cells
+if toPlot == 2
 for i = 1:size(mapInd2,1)
     for j = 1:size(mapInd2,2)
         try
@@ -146,6 +148,7 @@ for i = 1:size(mapInd2,1)
         end
     end
 end
+
 
 color = {'r' 'g' 'b'};
 %figure;
@@ -163,7 +166,7 @@ for i = 1:size(allPlacePosPks,1)
         plot(squeeze(allPlacePosPks(i,j,:)), color{j});
    end
 end
-
+end
 
 %% 
 % and from this I see that some cells seem to have consistent apparent place fields
