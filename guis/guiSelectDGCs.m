@@ -640,7 +640,7 @@ handles.posRates(segNum,1:numBins) = binSpks;
 %handles.binVel = binByLocation(handles.vel, pos, numBins);
 
 %try
-plot(handles.posTuneAxes, handles.binVel/5, 'c.');
+plot(handles.posTuneAxes, handles.binVel/20, 'c.');
 hold(handles.posTuneAxes, 'on');
 plot(handles.posTuneAxes, binCa/2, 'g');
 if handles.plotDff 

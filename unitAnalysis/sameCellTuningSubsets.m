@@ -17,10 +17,10 @@ for i = 1:size(sameCellPlaceBool,1)
     elseif pcs==[0,1,1]
         m=m+1;
         lastTwoOnly(m) = i;
-        elseif pcs==[0,1,0]
+    elseif pcs==[0,1,0]
         p=p+1;
         secondOnly(p) = i;
-        elseif pcs==[0,0,1]
+    elseif pcs==[0,0,1]
         q=q+1;
         lastOnly(q) = i;
     end
