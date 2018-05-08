@@ -10,7 +10,11 @@ function [unitTuningStruc] = wrapTuningNewClay(C, fps, toPlot, calcPvals);
 numBins = 100;
 
 % load behavior from latest file in current directory
+try
 load(findLatestFilename('treadBehStruc'));
+catch
+    [treadBehStruc] = procHen2pBehav(1);
+end
 
 % if input is cell array of peaks, make matrix
 if iscell(C)
