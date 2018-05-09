@@ -1,4 +1,4 @@
-function [recon, sAll] = deconvAllC(C);
+function [sAll, recon] = deconvAllC(C);
 
 %% USAGE: [recon, sAll] = deconvAllC(C);
 % Clay 2018
