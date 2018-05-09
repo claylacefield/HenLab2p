@@ -2,8 +2,9 @@
 % Clay Dec. 2017
 % script to take intermediate step of Ziv registration on DG place cells
 % and find cells active in subsets of sessions (or are place cells in
-% subsets of
-% sessions?)
+% subsets of sessions?)
+% May2018
+% Now including more followup analyses
 
 figure; pie([229 35 8 42]);
 

@@ -77,12 +77,15 @@ placeCellAllOrigInd = cellsInAll(placeCellsInAll,:);
 
 %% Save useful vars to output struc
 
-sameCellTuningStruc.multSessTuningStruc = multSessSegStruc; % just save orig struc (not too huge)
+sameCellTuningStruc.multSessSegStruc = multSessSegStruc; % just save orig struc (not too huge)
 sameCellTuningStruc.unitSpatCell = unitSpatCell;  % cell array of spatial profiles of ziv cells
 sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
 sameCellTuningStruc.cellsInAll = cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
 sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
+sameCellTuningStruc.regMapOrigInd = mapInd2; % orig C/A ind for all cells in ziv mat
+sameCellTuningStruc.regMapGoodSegInd = mapInd;
+sameCellTuningStruc.sameCellPlaceBool = sameCellPlaceBool;  % boolean for this mat
 
 %% Plotting
 % plot tuning of cells that are place cells (Rayleigh<0.01) in all

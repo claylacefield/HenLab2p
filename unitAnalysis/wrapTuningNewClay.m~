@@ -52,13 +52,13 @@ mrl = origMRL; mra = origMRA;
 unitTuningStruc.mrl=mrl; unitTuningStruc.mra=mra;
 
 if calcPvals == 1
-    for i = 1:size(C,1)
-        %ca = cells(i,:);
-        ca = C(i,:);
-        disp(['Processing cell ' num2str(i) ' out of ' num2str(size(C,1))]);
-        pvals(i) = unitCircTuningClay(ca, pos, numBins, 0);
-    end
-    unitTuningStruc.pvals = pvals;
+for i = 1:size(C,1)
+%ca = cells(i,:);
+ca = C(i,:);
+disp(['Processing cell ' num2str(i) ' out of ' num2str(size(C,1))]);
+pvals(i) = unitCircTuningClay(ca, pos, numBins, 0);
+end
+unitTuningStruc.pvals = pvals;
 end
 
 %% plotting
@@ -72,47 +72,46 @@ if toPlot == 1 || toPlot == 2
     else
         posRates = out.posRates;%(pcInd,:);
     end
+
+    nullRows = 
     
-    notNullRows = find(sum(posRates,2)~=0);
-    posRates2 = posRates(notNullRows,:);
-    
-    [maxVal, maxInd] = max(posRates2');
-    [newInd, oldInd] = sort(maxInd);
-    posRates2 = posRates2(oldInd,:);
-    
-    % for i = 1:size(posRates,1)
-    %     posRates2(i,:) = posRates2(i,:)/max(posRates2(i,:));
-    % end
-    
-    figure;
-    subplot(2,2,1);
-    colormap(jet);
-    imagesc(posRates2);
-    xlabel('position');
-    
-    
-    vel = treadBehStruc.vel(1:30/fps:end);
-    vel = fixVel(vel);
-    posVel = binByLocation(vel, pos, numBins);
-    %figure; plot(posVel);
-    
-    %figure;
-    subplot(2,2,3);
-    plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
-    hold on;
-    plot(mean(posRates2,1));
-    plot(mean(outNon.posRates,1), 'r');
-    title('mov. epoch (b), non-mov. (r), vel (g)');
-    ylabel('mean rate');
-    xlabel('position');
-    
-    subplot(2,2,2);
-    compass(mrl.*cos(mra), mrl.*sin(mra));
-    title('unit tuning vector');
-    
-    subplot(2,2,4);
-    hist(maxInd);
-    ylabel('#units');
-    xlabel('position');
-    
+[maxVal, maxInd] = max(posRates');
+[newInd, oldInd] = sort(maxInd);
+posRates2 = posRates(oldInd,:);
+
+% for i = 1:size(posRates,1)
+%     posRates2(i,:) = posRates2(i,:)/max(posRates2(i,:));
+% end
+
+figure; 
+subplot(2,2,1);
+colormap(jet);
+imagesc(posRates2);
+xlabel('position');
+
+
+vel = treadBehStruc.vel(1:30/fps:end);
+vel = fixVel(vel);
+posVel = binByLocation(vel, pos, numBins);
+%figure; plot(posVel);
+
+%figure; 
+subplot(2,2,3);
+plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
+hold on;
+plot(mean(posRates2,1));
+plot(mean(outNon.posRates,1), 'r');
+title('mov. epoch (b), non-mov. (r), vel (g)');
+ylabel('mean rate');
+xlabel('position');
+
+subplot(2,2,2);
+compass(mrl.*cos(mra), mrl.*sin(mra));
+title('unit tuning vector');
+
+subplot(2,2,4);
+hist(maxInd);
+ylabel('#units');
+xlabel('position');
+
 end
