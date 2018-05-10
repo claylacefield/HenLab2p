@@ -15,7 +15,7 @@ placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (
 cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
 placeCellAllOrigInd = sameCellTuningStruc.placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
 regMapOrigInd = sameCellTuningStruc.regMapOrigInd; % orig C/A ind for all cells in ziv mat
-sameCellTuningStruc.regMapGoodSegInd = mapInd;
+regMapGoodSegInd = sameCellTuningStruc.regMapGoodSegInd;
 sameCellPlaceBool = sameCellTuningStruc.sameCellPlaceBool;  % boolean for this mat (no its not)
 
 
@@ -46,7 +46,7 @@ end
 for i = 1:length(multSessSegStruc)
 pcInds = find(multSessSegStruc(i).outPC.Shuff.isPC);
 numPCs(i) = length(pcInds);
-fracPCs(i) = numPCs/length(multSessSegStruc(i).goodSeg);
+fracPCs(i) = numPCs(i)/length(multSessSegStruc(i).goodSeg);
 end
 
 
@@ -57,9 +57,15 @@ end
 for i = 1:size(placeCellAllOrigInd,1)
     for j = 1:length(multSessSegStruc)
         placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
+        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
     end
 end
 
+rates = [];
+for i = 1:size(posRatesCell,2)
+    rates = [rates; posRatesCell{2,i}];
+end
+coef = corrcoef(rates');
 
 remapStruc.x=1;
 

@@ -57,9 +57,17 @@ end
 for i = 1:size(placeCellAllOrigInd,1)
     for j = 1:length(multSessSegStruc)
         placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
+        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
     end
 end
 
+for i = 1:size(posRatesCell,1)
+rates = [];
+for j = 1:size(posRatesCell,2)
+    rates = [rates; posRatesCell{i,j}];
+end
+[coef{i}, p{i}] = corrcoef(rates');
+end
 
 remapStruc.x=1;
 
