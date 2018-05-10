@@ -11,18 +11,20 @@ yTimes = treadBehStruc.yTimes;
 %    tCa = tCa(2:2:end); 
 % end
 
-tCa = tCa(1:dsFactor:end);
-tCa = tCa(1:length(ca));
 
 ca = ca/max(ca); % normalize calcium
 
 % calculate velocity over each frame (at 30hz)
-resampY = interp1(yTimes, y, tCa);
-vel = abs(diff(resampY));
-vel(vel>30) = 0;
-vel = [0 vel];
+% tCa = tCa(1:dsFactor:end);
+% tCa = tCa(1:length(ca));
+% resampY = interp1(yTimes, y, tCa);
+% vel = abs(diff(resampY));
+% vel(vel>30) = 0;
+% vel = [0 vel];
+vel = treadBehStruc.vel(1:dsFactor:end);
+vel = fixVel(vel);
 
-
+resampY = treadBehStruc.resampY(1:dsFactor:end);
 yRel = resampY/max(resampY);
 
 velRel = vel/max(vel);
@@ -31,7 +33,7 @@ velRel = vel/max(vel);
 %numbins = 20;
 binSize = 1/numbins;
 for i = 1:numbins
-    try
+    %try
         loVal = (i-1)*binSize;
         hiVal = i*binSize;
         inds = find(yRel>=loVal & yRel<hiVal);
@@ -46,9 +48,9 @@ for i = 1:numbins
         caPosVelStruc.binVelCaSum(i) = sum(ca(inds));
         caPosVelStruc.numVelBinFr(i) = length(inds);
         caPosVelStruc.binVelSem(i) = std(ca(inds))/sqrt(length(inds));
-    catch
-        disp(['Prob with bin ' num2str(i)]);
-    end
+%     catch
+%         disp(['Prob with bin ' num2str(i)]);
+%     end
 end
 
 % figure;

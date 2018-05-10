@@ -12,13 +12,13 @@ frInds = knnsearch(frTimes', rewStartTimes'); % don't know why but must transpos
 for i = 1:length(frInds)
     for j = 1:size(ca,1)
     try
-    periEvent(j,:,i) = ca(j,frInds(i)-5*fps:frInds(i)+10*fps);
+    periEvent(j,:,i) = ca(j,frInds(i)-10*fps:frInds(i)+20*fps);
     
     catch
     end
     end
     try
-    periEventVel(:,i) = vel(frInds(i)-5*fps:frInds(i)+10*fps);
+    periEventVel(:,i) = vel(frInds(i)-10*fps:frInds(i)+20*fps);
     catch
     end
 end

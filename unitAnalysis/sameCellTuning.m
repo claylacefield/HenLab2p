@@ -119,8 +119,13 @@ end
 %cellRegIndInAll
 
 % mark centroids of place cells in all
+try
 rgb2 = insertMarker(10*rgb, zivCentroids(cellRegIndInAll(placeCellsInAll),:));
 %rgb2 = insertMarker(10*rgb, zivCentroids);
+catch
+    rgb2=rgb;
+end
+
 figure;
 imshow(rgb2);
 
