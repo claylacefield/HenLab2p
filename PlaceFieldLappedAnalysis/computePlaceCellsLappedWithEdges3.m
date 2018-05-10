@@ -4,6 +4,10 @@ function PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, s
 %beginning of 2018.
 %spikes = rows are samples, and columns are neurons
 
+if size(spikes,2)>size(spikes,1)
+    spikes = spikes';
+end
+
 %minimum percentage of laps in which cell must fire above its mean rate, also
 %minumum number of laps that a bin must be occupied in order to be included
 %in the analyisis

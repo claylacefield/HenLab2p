@@ -13,7 +13,11 @@ if ~isempty(varargin)
     end
 else
     minVel = 5;
+    try
     load(findLatestFilename('treadBehStruc'));
+    catch
+        treadBehStruc = procHen2pBehav('auto');
+    end
 end
 
 %% load other data
@@ -59,38 +63,35 @@ if toPlot == 1 || toPlot == 2
     else
         posRates = out.posRates;%(pcInd,:);
     end
-
-[maxVal, maxInd] = max(posRates');
-[newInd, oldInd] = sort(maxInd);
-posRates2 = posRates(oldInd,:);
-
-% for i = 1:size(posRates,1)
-%     posRates2(i,:) = posRates2(i,:)/max(posRates2(i,:));
-% end
-
-figure; 
-subplot(2,1,1);
-colormap(jet);
-imagesc(posRates2);
-
-
-vel = treadBehStruc.vel(1:2:end);
-vel = fixVel(vel);
-posVel = binByLocation(vel, treadPos, 100);
-%figure; plot(posVel);
-
-%figure; 
-subplot(2,1,2);
-plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
-hold on;
-plot(mean(posRates2,1));
-
-
-
+    
+    [maxVal, maxInd] = max(posRates');
+    [newInd, oldInd] = sort(maxInd);
+    posRates2 = posRates(oldInd,:);
+    
+    % for i = 1:size(posRates,1)
+    %     posRates2(i,:) = posRates2(i,:)/max(posRates2(i,:));
+    % end
+    
+    figure;
+    subplot(2,1,1);
+    colormap(jet);
+    imagesc(posRates2);
+    
+    vel = treadBehStruc.vel(1:2:end);
+    vel = fixVel(vel);
+    posVel = binByLocation(vel, treadPos, 100);
+    %figure; plot(posVel);
+    
+    %figure;
+    subplot(2,1,2);
+    plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
+    hold on;
+    plot(mean(posRates2,1));
+    
 end
 
 
 %% But I think this might be another wrapper script
 spikes = C;
-PCLappedSess = computePlaceCellsLappedWithEdges2(spikes, treadPos, T, shuffN);
+PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, shuffN);
  
