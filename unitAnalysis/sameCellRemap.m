@@ -45,8 +45,8 @@ end
 
 for i = 1:length(multSessSegStruc)
 pcInds = find(multSessSegStruc(i).outPC.Shuff.isPC);
-numPCs(i) = length(pcInds);
-fracPCs(i) = numPCs(i)/length(multSessSegStruc(i).goodSeg);
+remapStruc.numPCs(i) = length(pcInds);
+remapStruc.fracPCs(i) = remapStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
 end
 
 
@@ -61,15 +61,15 @@ for i = 1:size(placeCellAllOrigInd,1)
     end
 end
 
+% correlate tuning for cells that are place cells in all sessions
 for i = 1:size(posRatesCell,1)
-rates = [];
-for j = 1:size(posRatesCell,2)
-    rates = [rates; posRatesCell{i,j}];
+    rates = [];
+    for j = 1:size(posRatesCell,2)
+        rates = [rates; posRatesCell{i,j}];
+    end
+    [remapStruc.coef{i}, remapStruc.p{i}] = corrcoef(rates');
 end
-[coef{i}, p{i}] = corrcoef(rates');
-end
-
-remapStruc.x=1;
 
 
-figure; pie([229 35 8 42]);
+
+%figure; pie([229 35 8 42]);
