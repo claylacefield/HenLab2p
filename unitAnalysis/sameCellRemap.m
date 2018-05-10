@@ -53,7 +53,6 @@ end
 %% tuning xcorr
 
 % find goodSeg indices (for extracting tuning from outPC)
-
 for i = 1:size(placeCellAllOrigInd,1)
     for j = 1:length(multSessSegStruc)
         placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
@@ -67,9 +66,25 @@ for i = 1:size(posRatesCell,1)
     for j = 1:size(posRatesCell,2)
         rates = [rates; posRatesCell{i,j}];
     end
-    [remapStruc.coef{i}, remapStruc.p{i}] = corrcoef(rates');
+    [remapStruc.pcInAllCoef{i}, remapStruc.pcInAllPval{i}] = corrcoef(rates');
 end
 
 
+%% now for all cells present in all sessions
+for i = 1:size(cellsInAll,1)
+    for j = 1:length(multSessSegStruc)
+        placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == cellsInAll(i,j));
+        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
+    end
+end
+
+% correlate tuning for cells that are place cells in all sessions
+for i = 1:size(posRatesCell,1)
+    rates = [];
+    for j = 1:size(posRatesCell,2)
+        rates = [rates; posRatesCell{i,j}];
+    end
+    [remapStruc.cellsInAllCoef{i}, remapStruc.cellsInAllPval{i}] = corrcoef(rates');
+end
 
 %figure; pie([229 35 8 42]);

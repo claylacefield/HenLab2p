@@ -14,7 +14,8 @@ zivCentroids = sameCellTuningStruc.zivCentroids;    % centroids of these cells
 placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
 cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
 placeCellAllOrigInd = sameCellTuningStruc.placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
-regMapOrigInd = sameCellTuningStruc.mapInd2; % orig C/A ind for all cells in ziv mat
+regMapOrigInd = sameCellTuningStruc.regMapOrigInd; % orig C/A ind for all cells in ziv mat
+regMapGoodSegInd = sameCellTuningStruc.regMapGoodSegInd;
 sameCellPlaceBool = sameCellTuningStruc.sameCellPlaceBool;  % boolean for this mat (no its not)
 
 
@@ -44,20 +45,32 @@ end
 
 for i = 1:length(multSessSegStruc)
 pcInds = find(multSessSegStruc(i).outPC.Shuff.isPC);
-numPCs(i) = length(pcInds);
-fracPCs(i) = numPCs/length(multSessSegStruc(i).goodSeg);
+remapStruc.numPCs(i) = length(pcInds);
+remapStruc.fracPCs(i) = remapStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
 end
 
 
 %% tuning xcorr
 
 % find goodSeg indices (for extracting tuning from outPC)
-for i = 1:length(multSessSegStruc)
-placeCellAllOrigInd
+for i = 1:size(placeCellAllOrigInd,1)
+    for j = 1:length(multSessSegStruc)
+        placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
+        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
+    end
+end
+
+% correlate tuning for cells that are place cells in all sessions
+for i = 1:size(posRatesCell,1)
+    rates = [];
+    for j = 1:size(posRatesCell,2)
+        rates = [rates; posRatesCell{i,j}];
+    end
+    [remapStruc.coef{i}, remapStruc.p{i}] = corrcoef(rates');
+end
 
 
+%% now for all cells present in all sessions
 
-remapStruc.x=1;
 
-
-figure; pie([229 35 8 42]);
+%figure; pie([229 35 8 42]);
