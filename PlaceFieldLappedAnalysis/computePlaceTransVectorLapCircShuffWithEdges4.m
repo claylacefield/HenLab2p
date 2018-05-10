@@ -1,46 +1,9 @@
-function out = computePlaceTransVectorLapCircShuffWithEdges4(activity, treadPos, T, lapVec, shuffN, varargin)
+function [out, ratesAllShuff] = computePlaceTransVectorLapCircShuffWithEdges4(activity, treadPos, T, lapVec, shuffN, varargin)
 %function out = computePlaceTransVectorLapCircShuffWithEdges4(activity, treadPos, T, lapVec, shuffN, excludeVec(opt))
-
-% by Andres
-% (annotated by sebnem and clay 2018)
-% NOTE: you can use wrapAndresPlaceFieldsClay.m to run this directly from
-% segmented C and treadBehStruc
-
-% Output:
-%   out = structure of output fields:
-%       .runTimes = start(1)/stop(2) times of running epochs (after various
-%       adjustments, e.g. min run epoch duration)
-%       .nandPos = pos vector with NaNs when animal isn't running
-%       .rawOccupancy = for each position bin, #frames*frameInterval (dT)
-%       .posSums = sum of spikes for each neuron, for each spatial bin
-%       .rawPosRates = sum of apikes/bin / occupancy of that bin
-%       .Occupancy = gaussian filtered occupancy of spatial bins
-%       .posRates = gaussian filtered spikes/bin / gaussian filtered
-%       occupancy
-%       .Shuff.RatePerc = threshold percentile of shuffled firing rates
-%       .Shuff.ThreshRate = 95% percentile rate for shuffled pos spikes for
-%       each cell
-%       .
-
-% Inputs:
-% activity = bool of spikes for each neuron for each time (single neuron or
-% multiple, also can be something other than spikes, e.g. deconv.)
-% T = vector of frame times
-% treadPos = vector of position, interpolated to frame times (and normalized)
-% shuffN = ? (number of shuffles) 
-
 
 excludeVec = [];
 if ~isempty(varargin)
-    
     excludeVec = varargin{1};
-    minVel = 5;
-    if length(varargin) == 2
-        minVel = varargin{2};
-    end
-    
-else
-    minVel = 5;
 end
 
 
@@ -57,7 +20,7 @@ trimRunStarts = 0.25; %to eliminate possible artifacts during run starts
 trimRunEnds = 0.25; %at the beginning and end of a run epoch, can set to 0
 minRunTime = 2; %min duration of a running bout
 minPFBins = 5; %min # of spatial bins a plce field needs to be above its shuffle value for it to count as a place cell
-%minVel = 5; %if -5 calculate vel<5 cm/s
+minVel = 5; %if -5 calculate vel<5 cm/s
 
 out = [];
 out.Params.RatePerc = 99;
