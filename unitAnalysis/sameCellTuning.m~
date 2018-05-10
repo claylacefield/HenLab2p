@@ -94,9 +94,8 @@ sameCellTuningStruc.sameCellPlaceBool = sameCellPlaceBool;  % boolean for this m
 figure; color = {'r' 'g' 'b'};
 %title('Place cells in all sessions');
 % for all cells
-dim = ceil(sqrt(length(placeCellsInAll)));
 for i = 1:length(placeCellsInAll)
-    subplot(dim,dim,i);
+    subplot(5,5,i);
     hold on;
     for j = 1:size(placeCellAllOrigInd,2)
         origInd = placeCellAllOrigInd(i,j); % orig C/A index of this cell
