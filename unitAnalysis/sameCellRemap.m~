@@ -66,11 +66,31 @@ for i = 1:size(posRatesCell,1)
     for j = 1:size(posRatesCell,2)
         rates = [rates; posRatesCell{i,j}];
     end
-    [remapStruc.coef{i}, remapStruc.p{i}] = corrcoef(rates');
+    [remapStruc.pcInAllCoef{i}, remapStruc.pcInAllPval{i}] = corrcoef(rates');
 end
 
-
+A1A2=[]; A1B=[]; A2B=[];
+for i = 1:length(remapStruc.cellsInAllCoef)
+A1A2 = [A1A2; remapStruc.cellsInAllCoef{i}(2)];
+A1B = [A1B; remapStruc.cellsInAllCoef{i}(3)];
+A2B = [A2B; remapStruc.cellsInAllCoef{i}(6)];
+remapStruc.121323 = [A1A2, A1B, A2B];
+end
 %% now for all cells present in all sessions
+for i = 1:size(cellsInAll,1)
+    for j = 1:length(multSessSegStruc)
+        placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == cellsInAll(i,j));
+        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
+    end
+end
 
+% correlate tuning for cells that are place cells in all sessions
+for i = 1:size(posRatesCell,1)
+    rates = [];
+    for j = 1:size(posRatesCell,2)
+        rates = [rates; posRatesCell{i,j}];
+    end
+    [remapStruc.cellsInAllCoef{i}, remapStruc.cellsInAllPval{i}] = corrcoef(rates');
+end
 
 %figure; pie([229 35 8 42]);
