@@ -45,13 +45,13 @@ pe = nanmean(periEvent,3)';
 figure('Position', [0 0 1000 400]); 
 subplot(1,3,1);
 plotMeanSEMshaderr(pe,'b'); 
-hold on; line([10*fps 10*fps], [0.5e4 1e4]);
+hold on; line([10*fps 10*fps], [min(pe(:)) max(pe(:))]);
 xlim([0 30*fps]);
 title('Rew trig av over cells');
 
 subplot(1,3,2);
 plot(pe);
-hold on; line([10*fps 10*fps], [-1e4 1e5]);
+hold on; line([10*fps 10*fps], [min(pe(:)) max(pe(:))]);
 xlim([0 30*fps]);
 title('Rew trig activity in indiv cells');
 
