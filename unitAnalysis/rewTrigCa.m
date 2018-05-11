@@ -35,10 +35,10 @@ pe = nanmean(periEvent,3)';
 figure('Position', [0 0 1000 400]); 
 subplot(1,2,1);
 plotMeanSEMshaderr(pe,'b'); 
-%hold on; line([76 76], [0.5e4 2e4]);
-xlim([0 226]);
+hold on; line([10*fps 10*fps], [0.5e4 1e4]);
+xlim([0 30*fps]);
 subplot(1,2,2);
-plot(x,pe);
+plot(pe);
 %hold on; line([0 0], [-2e4 16e4]);
 
 
