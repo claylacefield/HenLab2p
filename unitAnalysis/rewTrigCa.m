@@ -1,4 +1,7 @@
-function [periEvent] = rewTrigCa(ca, treadBehStruc); %, event)
+function [periEvent] = rewTrigCa(C, treadBehStruc); %, event)
+
+%% USAGE: [periEvent] = rewTrigCa(C, treadBehStruc);
+
 
 fps=15;
 
@@ -12,9 +15,9 @@ rewStartTimes = rewTime([1 find(diff(rewTime)>10)+1]);
 frInds = knnsearch(frTimes', rewStartTimes'); % don't know why but must transpose both
 
 for i = 1:length(frInds)
-    for j = 1:size(ca,1)
+    for j = 1:size(C,1)
     try
-    periEvent(j,:,i) = ca(j,frInds(i)-10*fps:frInds(i)+20*fps);
+    periEvent(j,:,i) = C(j,frInds(i)-10*fps:frInds(i)+20*fps);
     
     catch
     end
