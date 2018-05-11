@@ -1,5 +1,7 @@
 function [periEvent] = rewTrigCa(ca, treadBehStruc); %, event)
 
+fps=15;
+
 rewTime = treadBehStruc.rewTime;
 frTimes = treadBehStruc.adjFrTimes(1:2:end);
 vel = treadBehStruc.vel(1:2:end);
