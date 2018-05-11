@@ -5,6 +5,16 @@ function [periEvent] = rewTrigCa(C, treadBehStruc); %, event)
 
 fps=15;
 
+% if input is cell array of peaks
+if iscell(C)
+    cCell = C;
+    C = zeros(length(C),round(length(treadBehStruc.resampY)/2));
+    for i = 1:length(cCell)
+        C(i,cCell{i})=1;
+    end
+end
+
+% behav vars
 rewTime = treadBehStruc.rewTime;
 frTimes = treadBehStruc.adjFrTimes(1:2:end);
 vel = treadBehStruc.vel(1:2:end);
