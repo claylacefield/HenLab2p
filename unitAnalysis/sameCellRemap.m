@@ -69,7 +69,13 @@ for i = 1:size(posRatesCell,1)
     [remapStruc.pcInAllCoef{i}, remapStruc.pcInAllPval{i}] = corrcoef(rates');
 end
 
-
+A1A2=[]; A1B=[]; A2B=[];
+for i = 1:length(remapStruc.pcInAllCoef)
+    A1A2 = [A1A2; remapStruc.pcInAllCoef{i}(2)];
+    A1B = [A1B; remapStruc.pcInAllCoef{i}(3)];
+    A2B = [A2B; remapStruc.pcInAllCoef{i}(6)];
+end
+remapStruc.PCCorrCoeff121323 = [A1A2, A1B, A2B];
 %% now for all cells present in all sessions
 for i = 1:size(cellsInAll,1)
     for j = 1:length(multSessSegStruc)
@@ -87,4 +93,11 @@ for i = 1:size(posRatesCell,1)
     [remapStruc.cellsInAllCoef{i}, remapStruc.cellsInAllPval{i}] = corrcoef(rates');
 end
 
+A1A2=[]; A1B=[]; A2B=[];
+for i = 1:length(remapStruc.cellsInAllCoef)
+    A1A2 = [A1A2; remapStruc.cellsInAllCoef{i}(2)];
+    A1B = [A1B; remapStruc.cellsInAllCoef{i}(3)];
+    A2B = [A2B; remapStruc.cellsInAllCoef{i}(6)];
+end
+remapStruc.AllCorrCoeff121323 = [A1A2, A1B, A2B];
 %figure; pie([229 35 8 42]);

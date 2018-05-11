@@ -2,7 +2,7 @@ function [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, varargin);
 
 %% USAGE: [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, treadBehStruc, minVel, );
 %% variables
-shuffN = 100;
+shuffN = 1000;
 
 if ~isempty(varargin)
     treadBehStruc = varargin{1};
