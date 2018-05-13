@@ -1,6 +1,6 @@
 function [lickPosRate] = lickTuning(treadBehStruc, toPlot);
 
-%% USAGE: [lickPosRate] = lickTuning(treadBehStruc);
+%% USAGE: [lickPosRate] = lickTuning(treadBehStruc, toPlot);
 
 
 lickTime = treadBehStruc.lickTime;
@@ -19,7 +19,7 @@ lickSig(inds) = 1;
 lickPosRate = binByLocation(lickSig, pos, 100)*15;
 
 if toPlot
-    figure; 
+    figure('Position', [100, 100, 800, 300]); 
     subplot(1,2,1);
     plot(lickPosRate);
     title(['Lick tuning for ' treadBehStruc.tdmlName]);
