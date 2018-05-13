@@ -19,8 +19,19 @@ lickSig(inds) = 1;
 lickPosRate = binByLocation(lickSig, pos, 100)*15;
 
 if toPlot
-    figure; plot(lickPosRate);
+    figure; 
+    subplot(1,2,1);
+    plot(lickPosRate);
     title(['Lick tuning for ' treadBehStruc.tdmlName]);
     xlabel('position');
     ylabel('licks/sec');
+    subplot(1,2,2);
+    [mrl, mra] = clayMRL(lickPosRate,100,0);
+    compass(mrl*cos(mra), mrl*sin(mra));
 end
+
+%% now circular tuning
+
+
+
+
