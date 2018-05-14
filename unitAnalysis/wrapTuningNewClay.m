@@ -34,24 +34,32 @@ pos = treadPos/max(treadPos);  % normalize position vector
 
 % place cell analysis (currently using Andres's but it's pretty much same
 % as my earlier one)
+disp('Analyzing tuning for movement epochs');
+tic;
 [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, 0, treadBehStruc);
 unitTuningStruc.outPC = out;
 unitTuningStruc.PCLappedSess = PCLappedSess;
+toc;
 
 % now for non-movement epochs
+disp('...and non-movement');
+tic;
 [outNon, PCLappedSess] = wrapAndresPlaceFieldsClay(C, 0, treadBehStruc, -3);
 unitTuningStruc.outNonmovPC = outNon;
-
-disp('Calculating pval based upon shuffled position');
+toc;
 
 %% Circular tuning
-
+disp('Computing circular tuning');
+tic;
 [binCaAvg] = binByLocation(C, pos, numBins);
 [origMRL, origMRA] = clayMRL(binCaAvg, numBins, 0);
+toc;
 mrl = origMRL; mra = origMRA;
 unitTuningStruc.mrl=mrl; unitTuningStruc.mra=mra;
 
 if calcPvals == 1
+    
+disp('Calculating pval based upon shuffled position');
     for i = 1:size(C,1)
         %ca = cells(i,:);
         ca = C(i,:);
@@ -85,11 +93,16 @@ if toPlot == 1 || toPlot == 2
     % end
     
     figure;
-    subplot(2,2,1);
+    subplot(2,3,1);
     colormap(jet);
     imagesc(posRates2);
+    title('mov epochs');
     xlabel('position');
     
+    subplot(2,3,2);
+    imagesc(outNon.posRates(oldInd,:));
+    title('non-mov');
+    xlabel('position');
     
     vel = treadBehStruc.vel(1:30/fps:end);
     vel = fixVel(vel);
@@ -97,7 +110,7 @@ if toPlot == 1 || toPlot == 2
     %figure; plot(posVel);
     
     %figure;
-    subplot(2,2,3);
+    subplot(2,3,4);
     plot(posVel/max(posVel)*max(mean(posRates2,1)),'g');
     hold on;
     plot(mean(posRates2,1));
@@ -106,11 +119,11 @@ if toPlot == 1 || toPlot == 2
     ylabel('mean rate');
     xlabel('position');
     
-    subplot(2,2,2);
+    subplot(2,3,3);
     compass(mrl.*cos(mra), mrl.*sin(mra));
     title('unit tuning vector');
     
-    subplot(2,2,4);
+    subplot(2,3,5);
     hist(maxInd);
     ylabel('#units');
     xlabel('position');
