@@ -4,6 +4,13 @@ function [out, ratesAllShuff] = computePlaceTransVectorLapCircShuffWithEdges4(ac
 excludeVec = [];
 if ~isempty(varargin)
     excludeVec = varargin{1};
+    if length(varargin)==2
+        minVel = varargin{2};
+    else
+        minVel = 5;
+    end
+else
+    minVel = 5;
 end
 
 
@@ -20,7 +27,7 @@ trimRunStarts = 0.25; %to eliminate possible artifacts during run starts
 trimRunEnds = 0.25; %at the beginning and end of a run epoch, can set to 0
 minRunTime = 2; %min duration of a running bout
 minPFBins = 5; %min # of spatial bins a plce field needs to be above its shuffle value for it to count as a place cell
-minVel = 5; %if -5 calculate vel<5 cm/s
+%minVel = 5; %if -5 calculate vel<5 cm/s
 
 out = [];
 out.Params.RatePerc = 99;
