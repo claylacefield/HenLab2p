@@ -27,7 +27,8 @@ trimRunStarts = 0.25; %to eliminate possible artifacts during run starts
 trimRunEnds = 0.25; %at the beginning and end of a run epoch, can set to 0
 minRunTime = 2; %min duration of a running bout
 minPFBins = 5; %min # of spatial bins a plce field needs to be above its shuffle value for it to count as a place cell
-%minVel = 5; %if -5 calculate vel<5 cm/s
+%minVel = 5; %if -5 calculate vel<5 cm/s (now put this in as a varargin or
+%is set automatically above)
 
 out = [];
 out.Params.RatePerc = 99;
