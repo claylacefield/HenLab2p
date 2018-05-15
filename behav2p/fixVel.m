@@ -12,7 +12,7 @@ lastGoodVal = 0;
 tic;
 for i = 1:length(vel)
     try
-        if vel(i)>nanstd(vel) || isnan(vel(i))
+        if vel(i)>nanstd(vel) || isnan(vel(i)) || vel(i)<0
             vel(i) = lastGoodVel;
         else
             lastGoodVel = vel(i);

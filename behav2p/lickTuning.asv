@@ -1,6 +1,6 @@
-function [lickPosRate, mrl, mra, pval] = lickTuning(treadBehStruc, toPlot);
+function [lickPosRate, mrl, mra] = lickTuning(treadBehStruc, toPlot);
 
-%% USAGE: [lickPosRate, mrl, mra, pval] = lickTuning(treadBehStruc, toPlot);
+%% USAGE: [lickPosRate, mrl, mra] = lickTuning(treadBehStruc, toPlot);
 
 
 lickTime = treadBehStruc.lickTime;
@@ -16,12 +16,9 @@ inds = dsearchn(frTimes', lickTime');
 lickSig = zeros(1,length(pos));
 lickSig(inds) = 1;
 
-% binned lick rates
 lickPosRate = binByLocation(lickSig, pos, 100)*15;
 
-% lick circular tuning
 [mrl, mra] = clayMRL(lickPosRate,100,0);
-[pval] = unitCircTuningClay(lickSig, pos, 100, 0);
 
 if toPlot
     figure('Position', [100, 100, 800, 300]); 
@@ -32,8 +29,10 @@ if toPlot
     ylabel('licks/sec');
     subplot(1,2,2);
     compass(mrl*cos(mra), mrl*sin(mra));
-    title(['p= ' num2str(pval)]);
 end
+
+%% now circular tuning
+
 
 
 
