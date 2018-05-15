@@ -48,5 +48,5 @@ vel = [vel vel(end)];  % just repeat last vel to make same length as fr
 treadBehStruc.y = y2;
 treadBehStruc.yTimes = yTimes2;
 treadBehStruc.resampY = resampY; % NOTE that times will be = adjFrTimes
-treadBehStruc.vel = vel;
+treadBehStruc.vel = vel*30; % units now mm/sec
 
