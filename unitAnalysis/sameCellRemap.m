@@ -169,11 +169,13 @@ end
 
 figure('Position', [50 50 800 400]); 
 subplot(1,2,1);
-bar([nanmean(firstTwoP) nanmean(lastTwoP)]); hold on;
-sem12 = nanstd(firstTwoP)/sqrt(length(firstTwoP));
-sem23 = nanstd(lastTwoP)/sqrt(length(lastTwoP));
-errorbar([nanmean(firstTwoP) nanmean(lastTwoP)],[sem12 sem23], '.');
-title('mean pval for tuning correl, sess 1-2 vs. 2-3');
+f = firstTwoCorr(firstTwoP<0.05);
+l = lastTwoCorr(lastTwoP<0.05);
+bar([nanmean(f) nanmean(l)]); hold on;
+sem12 = nanstd(f)/sqrt(length(f));
+sem23 = nanstd(l)/sqrt(length(l));
+errorbar([nanmean(f) nanmean(l)],[sem12 sem23], '.');
+title('mean tuning correl, sig pval, sess 1-2 vs. 2-3');
 
 subplot(1,2,2);
 bar([nanmean(firstTwoCorr) nanmean(lastTwoCorr)]); hold on;
