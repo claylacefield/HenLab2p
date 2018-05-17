@@ -53,6 +53,10 @@ for i = 1:size(zivMatBool,1)
 end
 remapStruc.sessComb = sessComb;
 
+figure;
+bar([length(sessComb.firstTwoOnly) length(sessComb.lastTwoOnly)]);
+title('#Reg cells in 1-2, 2-3 (may be affected by reg)');
+
 %% Fractions of cells
 % note that tuning in outPC struc only performed for goodSeg
 
@@ -61,6 +65,14 @@ for i = 1:length(multSessSegStruc)
     remapStruc.numPCs(i) = length(pcInds);
     remapStruc.fracPCs(i) = remapStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
 end
+
+figure; 
+subplot(1,2,1);
+bar(remapStruc.numPCs);
+title('numPCs');
+subplot(1,2,2);
+bar(remapStruc.fracPCs);
+title('fracPCs');
 
 
 %% tuning xcorr
@@ -116,7 +128,7 @@ remapStruc.AllCorrCoeff121323 = [A1A2, A1B, A2B];
 %figure; pie([229 35 8 42]);
 
 
-%% find posRates for all cells in mapInd2 (for extracting tuning from outPC)
+%% find posRates for all cells in mapInd2/regMapOrigInd (ziv regist matr) 
 for i = 1:size(regMapOrigInd,1)
     for j = 1:length(multSessSegStruc)
         try
@@ -136,3 +148,36 @@ for i = 1:size(posRatesCell,1)
     end
     [remapStruc.allZivCorrCoef{i}, remapStruc.allZivCorrPval{i}] = corrcoef(rates');
 end
+
+
+%% now use this to compare correlations bet. 1-2, 2-3
+% 
+firstTwoPcell = remapStruc.allZivCorrPval(remapStruc.sessComb.firstTwoOnly);
+firstTwoCorrCell = remapStruc.allZivCorrCoef(remapStruc.sessComb.firstTwoOnly);
+for i = 1:length(firstTwoPcell)
+    firstTwoP(i)=firstTwoPcell{i}(2);
+    firstTwoCorr(i)=firstTwoCorrCell{i}(2);
+end
+
+lastTwoPcell = remapStruc.allZivCorrPval(remapStruc.sessComb.lastTwoOnly);
+lastTwoCorrCell = remapStruc.allZivCorrCoef(remapStruc.sessComb.lastTwoOnly);
+for i = 1:length(lastTwoPcell)
+    lastTwoP(i)=lastTwoPcell{i}(2);
+    lastTwoCorr(i)=lastTwoCorrCell{i}(2);
+end
+
+
+figure('Position', [50 50 800 400]); 
+subplot(1,2,1);
+bar([nanmean(firstTwoP) nanmean(lastTwoP)]); hold on;
+sem12 = nanstd(firstTwoP)/sqrt(length(firstTwoP));
+sem23 = nanstd(lastTwoP)/sqrt(length(lastTwoP));
+errorbar([nanmean(firstTwoP) nanmean(lastTwoP)],[sem12 sem23], '.');
+title('mean pval for tuning correl, sess 1-2 vs. 2-3');
+
+subplot(1,2,2);
+bar([nanmean(firstTwoCorr) nanmean(lastTwoCorr)]); hold on;
+sem12b = nanstd(firstTwoCorr)/sqrt(length(firstTwoCorr));
+sem23b = nanstd(lastTwoCorr)/sqrt(length(lastTwoCorr));
+errorbar([nanmean(firstTwoCorr) nanmean(lastTwoCorr)],[sem12b sem23b], '.');
+title('mean tuning correl, sess 1-2 vs. 2-3');
