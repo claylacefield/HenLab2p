@@ -1,11 +1,16 @@
 function [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
+%% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
 % Clay Dec. 2017
 % find cells active in subsets of sessions (or are place cells in
 % subsets of sessions?)
 % May2018
 % Now including more followup analyses
+% remapStruc.sessComb = ziv rows with cells present in diff combin of sess
+% remapStruc.allZivCorrCoef = cell array of corr coeff for all ziv cells
+% 
+
 
 %% unpack some variables
 multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
@@ -21,32 +26,40 @@ sameCellPlaceBool = sameCellTuningStruc.sameCellPlaceBool;  % boolean for this m
 
 %% find place cells in diff combin of sessions
 % NOTE: indices reference ziv array, e.g. regMapOrigInd
-n=0;m=0;p=0;q=0;
-
-for i = 1:size(sameCellPlaceBool,1)
-    pcs = sameCellPlaceBool(i,:); % whether cell present in all sessions is a place cell in each
+n=0;m=0;p=0;q=0;r=0;s=0;
+zivMatBool = regMapOrigInd;
+zivMatBool(zivMatBool~=0)=1;
+for i = 1:size(zivMatBool,1)
+    pcs = zivMatBool(i,:);
     if pcs==[1,0,0]
         n=n+1;
-        firstOnly(n) = i;
+        sessComb.firstOnly(n) = i;
+    elseif pcs==[1,1,0]
+        r=r+1;
+        sessComb.firstTwoOnly(r) = i;
     elseif pcs==[0,1,1]
         m=m+1;
-        lastTwoOnly(m) = i;
+        sessComb.lastTwoOnly(m) = i;
     elseif pcs==[0,1,0]
         p=p+1;
-        secondOnly(p) = i;
+        sessComb.secondOnly(p) = i;
     elseif pcs==[0,0,1]
         q=q+1;
-        lastOnly(q) = i;
+        sessComb.lastOnly(q) = i;
+        elseif pcs==[1,1,1]
+        s=s+1;
+        sessComb.allSess(s) = i;
     end
 end
+remapStruc.sessComb = sessComb;
 
 %% Fractions of cells
 % note that tuning in outPC struc only performed for goodSeg
 
 for i = 1:length(multSessSegStruc)
-pcInds = find(multSessSegStruc(i).outPC.Shuff.isPC);
-remapStruc.numPCs(i) = length(pcInds);
-remapStruc.fracPCs(i) = remapStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
+    pcInds = find(multSessSegStruc(i).outPC.Shuff.isPC);
+    remapStruc.numPCs(i) = length(pcInds);
+    remapStruc.fracPCs(i) = remapStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
 end
 
 
@@ -101,3 +114,25 @@ for i = 1:length(remapStruc.cellsInAllCoef)
 end
 remapStruc.AllCorrCoeff121323 = [A1A2, A1B, A2B];
 %figure; pie([229 35 8 42]);
+
+
+%% find posRates for all cells in mapInd2 (for extracting tuning from outPC)
+for i = 1:size(regMapOrigInd,1)
+    for j = 1:length(multSessSegStruc)
+        try
+            goodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == regMapOrigInd(i,j));
+            posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(goodSegInd(i,j),:);
+        catch
+            posRatesCell{i,j} = [];
+        end
+    end
+end
+
+% correlate tuning for all cells in ziv matrix
+for i = 1:size(posRatesCell,1)
+    rates = [];
+    for j = 1:size(posRatesCell,2)
+        rates = [rates; posRatesCell{i,j}];
+    end
+    [remapStruc.allZivCorrCoef{i}, remapStruc.allZivCorrPval{i}] = corrcoef(rates');
+end
