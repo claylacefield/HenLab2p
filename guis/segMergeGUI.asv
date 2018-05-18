@@ -22,7 +22,7 @@ function varargout = segMergeGUI(varargin)
 
 % Edit the above text to modify the response to help segMergeGUI
 
-% Last Modified by GUIDE v2.5 01-May-2018 16:34:54
+% Last Modified by GUIDE v2.5 03-May-2018 16:20:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,22 +82,50 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in loadSegDictButton.
 function loadSegDictButton_Callback(hObject, eventdata, handles)
-[file, path] = uigetfile('*.mat');
+[file1, path] = uigetfile('*.mat', 'Select segDict file to process');
 cd(path);
-load([path file]);
-handles.file = file;
+load([path file1]); % load goodSeg file
+handles.file = file1;
 handles.path = path;
-set(handles.segDictTxt, 'String', file);
+set(handles.segDictTxt, 'String', file1);
+disp(['Loading ' file1]);
 
+[file, path] = uigetfile('*.mat', 'Select corresponding goodSeg file to process');
+cd(path);
+load([path file]); % load goodSeg file
 basename = file(1:strfind(file,'.mat')-1);
 set(handles.editBasename, 'String', basename);
 handles.basename = basename;
 handles.fileBasename = basename;
+disp(['Loading ' file]);
+
+C = C(goodSeg,:);
+A = A(:,goodSeg);
 
 handles.C = C;
 handles.A = A;
 handles.d1 = d1;
 handles.d2 = d2;
+
+handles.goodSeg = goodSeg;
+handles.greatSeg = greatSeg;
+set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
+
+handles.pksCell = pksCell;
+handles.segSdThresh = segSdThresh;
+handles.segPkMethod = segPkMethod;
+handles.posRates = posRates;
+handles.deconvC = deconvC;
+handles.posDeconv = posDeconv;
+
+try
+handles.okSeg = okSeg;
+handles.inSeg = inSeg;
+catch
+    handles.okSeg = [];
+handles.inSeg = [];
+end
+
 
 dupPairs = findDuplSeg(A,C,d1,d2, 0);
 dupSegGroup = findDupSegGroup(dupPairs);
@@ -113,8 +141,8 @@ guidata(hObject, handles);
 % --- Executes on slider movement.
 function dupPairSlider_Callback(hObject, eventdata, handles)
 pairRow = int32(get(handles.dupPairSlider, 'Value'));
-set(handles.pairNumTxt, 'String', num2str(pairRow));
-handles.pairRow;
+set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup)) ': ' num2str(handles.dupSegGroup{pairRow})]);
+handles.pairRow=pairRow;
 
 plotSpatial(hObject, handles);
 plotTemporal(hObject, handles);
@@ -138,11 +166,7 @@ function plotSpatial(hObject, handles);
 dupSegGroup = handles.dupSegGroup;
 pairRow = handles.pairRow;
 dupSegList = dupSegGroup{pairRow};
-if handles.dispSeg == 1
-    spatial = reshape(squeeze(full(handles.A(:,handles.seg1))),handles.d1, handles.d2);
-else
-    spatial = reshape(squeeze(full(handles.A(:,handles.seg2))),handles.d1, handles.d2);
-end
+spatial = reshape(squeeze(full(handles.A(:,dupSegList(handles.dispSeg)))),handles.d1, handles.d2);
 imagesc(handles.spatialAxes, spatial);
 
 
@@ -152,9 +176,10 @@ pairRow = handles.pairRow;
 dupSegList = dupSegGroup{pairRow};
 
 colors = {'r','g','b','c','m','y','k'};
-hold(handles.temporalAxes, 'on');
+
 for i=1:length(dupSegList)
 plot(handles.temporalAxes, handles.C(dupSegList(i),:), colors{i});
+hold(handles.temporalAxes, 'on');
 end
 hold(handles.temporalAxes, 'off');
 
@@ -166,7 +191,7 @@ function dispSegSlider_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 dispSeg = int32(get(handles.dispSegSlider, 'Value'));
-set(handles.segTxt, 'String', num2str(dispSeg));
+set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow})) ': #' ]);
 handles.dispSeg = dispSeg;
 
 plotSpatial(hObject, handles);
@@ -185,22 +210,30 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
-
-
-
-
-% --- Executes on button press in discardSeg1.
-function discardSeg1_Callback(hObject, eventdata, handles)
-% hObject    handle to discardSeg1 (see GCBO)
+% --- Executes on button press in discardSegButton.
+function discardSegButton_Callback(hObject, eventdata, handles)
+% hObject    handle to discardSegButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+dupSegGroup = handles.dupSegGroup;
+pairRow = handles.pairRow;
+dispSeg = handles.dispSeg;
+dupSegList = dupSegGroup{pairRow};
+discardSegNum = dupSegList(dispSeg); % get number of seg to discard (one currently selected)
 
-% --- Executes on button press in discardSeg2.
-function discardSeg2_Callback(hObject, eventdata, handles)
-% hObject    handle to discardSeg2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+handles.dupSegGroup{pairRow} = dupSegList(dupSegList ~= discardSegNum);
+handles.goodSeg = handles.goodSeg(handles.goodSeg ~= discardSegNum);
+handles.greatSeg = handles.greatSeg(handles.greatSeg ~= discardSegNum);
+set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
+
+set(handles.dispSegSlider, 'Value', 1);
+handles.dispSeg=1;
+
+plotSpatial(hObject, handles);
+plotTemporal(hObject, handles);
+
+guidata(hObject, handles);
 
 
 % --- Executes on button press in mergeButton.
@@ -222,11 +255,32 @@ function dispMergeCheckbox_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in saveButton.
 function saveButton_Callback(hObject, eventdata, handles)
-% hObject    handle to saveButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+file = handles.file;
+path = handles.path;
+goodSeg = handles.goodSeg;
+greatSeg = handles.greatSeg;
+pksCell = handles.pksCell;
+segSdThresh = handles.segSdThresh;
+segPkMethod = handles.segPkMethod;
+posRates = handles.posRates;
 
+% try
+okSeg = handles.okSeg;
+inSeg = handles.inSeg;
+% catch
+% end
 
+deconvC = handles.deconvC;
+posDeconv = handles.posDeconv;
+
+try
+save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+catch
+    [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
+    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+end
+
+guidata(hObject, handles);
 
 function editBasename_Callback(hObject, eventdata, handles)
 % hObject    handle to editBasename (see GCBO)

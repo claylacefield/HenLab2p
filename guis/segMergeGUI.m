@@ -71,24 +71,21 @@ guidata(hObject, handles);
 % --- Outputs from this function are returned to the command line.
 function varargout = segMergeGUI_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
 
-
 % --- Executes on button press in loadSegDictButton.
 function loadSegDictButton_Callback(hObject, eventdata, handles)
-[file, path] = uigetfile('*.mat', 'Select segDict file to process');
+[file1, path] = uigetfile('*.mat', 'Select segDict file to process');
 cd(path);
-load([path file]); % load goodSeg file
-handles.file = file;
+load([path file1]); % load goodSeg file
+handles.segDictFile = file1;
 handles.path = path;
-set(handles.segDictTxt, 'String', file);
-disp(['Loading ' file]);
+set(handles.segDictTxt, 'String', file1);
+disp(['Loading ' file1]);
 
 [file, path] = uigetfile('*.mat', 'Select corresponding goodSeg file to process');
 cd(path);
@@ -109,14 +106,22 @@ handles.d2 = d2;
 
 handles.goodSeg = goodSeg;
 handles.greatSeg = greatSeg;
-handles.okSeg = okSeg;
-handles.inSeg = inSeg;
+set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
+
 handles.pksCell = pksCell;
 handles.segSdThresh = segSdThresh;
 handles.segPkMethod = segPkMethod;
 handles.posRates = posRates;
 handles.deconvC = deconvC;
 handles.posDeconv = posDeconv;
+
+try
+handles.okSeg = okSeg;
+handles.inSeg = inSeg;
+catch
+    handles.okSeg = [];
+handles.inSeg = [];
+end
 
 
 dupPairs = findDuplSeg(A,C,d1,d2, 0);
@@ -133,7 +138,7 @@ guidata(hObject, handles);
 % --- Executes on slider movement.
 function dupPairSlider_Callback(hObject, eventdata, handles)
 pairRow = int32(get(handles.dupPairSlider, 'Value'));
-set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup))]);
+set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup)) ': ' num2str(handles.dupSegGroup{pairRow})]);
 handles.pairRow=pairRow;
 
 plotSpatial(hObject, handles);
@@ -144,9 +149,6 @@ guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function dupPairSlider_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to dupPairSlider (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -178,12 +180,9 @@ hold(handles.temporalAxes, 'off');
 
 % --- Executes on slider movement.
 function dispSegSlider_Callback(hObject, eventdata, handles)
-% hObject    handle to dispSegSlider (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 dispSeg = int32(get(handles.dispSegSlider, 'Value'));
-set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow}))]);
+set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow})) ': #' num2str(handles.dupSegGroup{handles.pairRow}(dispSeg))]);
 handles.dispSeg = dispSeg;
 
 plotSpatial(hObject, handles);
@@ -217,6 +216,7 @@ discardSegNum = dupSegList(dispSeg); % get number of seg to discard (one current
 handles.dupSegGroup{pairRow} = dupSegList(dupSegList ~= discardSegNum);
 handles.goodSeg = handles.goodSeg(handles.goodSeg ~= discardSegNum);
 handles.greatSeg = handles.greatSeg(handles.greatSeg ~= discardSegNum);
+set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
 
 set(handles.dispSegSlider, 'Value', 1);
 handles.dispSeg=1;
@@ -255,8 +255,11 @@ segSdThresh = handles.segSdThresh;
 segPkMethod = handles.segPkMethod;
 posRates = handles.posRates;
 
+% try
 okSeg = handles.okSeg;
 inSeg = handles.inSeg;
+% catch
+% end
 
 deconvC = handles.deconvC;
 posDeconv = handles.posDeconv;
