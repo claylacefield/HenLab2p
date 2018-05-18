@@ -77,7 +77,7 @@ function varargout = segMergeGUI_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in loadSegDictButton.
+%% --- Executes on button press in loadSegDictButton.
 function loadSegDictButton_Callback(hObject, eventdata, handles)
 [file1, path] = uigetfile('*.mat', 'Select segDict file to process');
 cd(path);
@@ -155,6 +155,7 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 
+%% Plotting functions
 
 function plotSpatial(hObject, handles);
 dupSegGroup = handles.dupSegGroup;
@@ -178,7 +179,7 @@ end
 hold(handles.temporalAxes, 'off');
 
 
-% --- Executes on slider movement.
+%% --- Executes on slider movement.
 function dispSegSlider_Callback(hObject, eventdata, handles)
 
 dispSeg = int32(get(handles.dispSegSlider, 'Value'));
@@ -191,9 +192,6 @@ guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function dispSegSlider_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to dispSegSlider (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -201,14 +199,11 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
-% --- Executes on button press in discardSegButton.
+%% --- Executes on button press in discardSegButton.
 function discardSegButton_Callback(hObject, eventdata, handles)
-% hObject    handle to discardSegButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-dupSegGroup = handles.dupSegGroup;
-pairRow = handles.pairRow;
+dupSegGroup = handles.dupSegGroup; % cell array of possibly dupl cells
+pairRow = handles.pairRow;  % current row of dupSegGroup (all from one cell)
 dispSeg = handles.dispSeg;
 dupSegList = dupSegGroup{pairRow};
 discardSegNum = dupSegList(dispSeg); % get number of seg to discard (one currently selected)
@@ -227,22 +222,15 @@ plotTemporal(hObject, handles);
 guidata(hObject, handles);
 
 
-% --- Executes on button press in mergeButton.
+%% --- Executes on button press in mergeButton. (ToDo)
 function mergeButton_Callback(hObject, eventdata, handles)
 % hObject    handle to mergeButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-% --- Executes on button press in dispMergeCheckbox.
+%% --- Executes on button press in dispMergeCheckbox.
 function dispMergeCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to dispMergeCheckbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of dispMergeCheckbox
-
-
 
 % --- Executes on button press in saveButton.
 function saveButton_Callback(hObject, eventdata, handles)
@@ -265,7 +253,7 @@ deconvC = handles.deconvC;
 posDeconv = handles.posDeconv;
 
 try
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+save([handles.editBasename '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 catch
     [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
     save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
@@ -274,20 +262,12 @@ end
 guidata(hObject, handles);
 
 function editBasename_Callback(hObject, eventdata, handles)
-% hObject    handle to editBasename (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % Hints: get(hObject,'String') returns contents of editBasename as text
 %        str2double(get(hObject,'String')) returns contents of editBasename as a double
 
 
 % --- Executes during object creation, after setting all properties.
 function editBasename_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editBasename (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
