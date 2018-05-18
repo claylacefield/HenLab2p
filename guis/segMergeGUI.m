@@ -241,7 +241,7 @@ function dispMergeCheckbox_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in saveButton.
 function saveButton_Callback(hObject, eventdata, handles)
-file = handles.file;
+segDictFile = handles.segDictFile;
 path = handles.path;
 goodSeg = handles.goodSeg;
 greatSeg = handles.greatSeg;
@@ -260,10 +260,10 @@ deconvC = handles.deconvC;
 posDeconv = handles.posDeconv;
 
 try
-save([handles.editBasename '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 catch
     [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
-    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+    save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 end
 
 guidata(hObject, handles);
