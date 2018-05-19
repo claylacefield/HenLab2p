@@ -105,6 +105,7 @@ handles.d1 = d1;
 handles.d2 = d2;
 
 handles.goodSeg = goodSeg;
+handles.goodSegOrig = goodSeg;
 handles.greatSeg = greatSeg;
 set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
 
@@ -124,7 +125,7 @@ handles.inSeg = [];
 end
 
 
-dupPairs = findDuplSeg(A,C,d1,d2, 0);
+dupPairs = findDuplSeg(A,C,d1,d2, 0); % note this is index of goodSegs now
 dupSegGroup = findDupSegGroup(dupPairs);
 handles.dupSegGroup = dupSegGroup;
 % handles.seg1 = handles.dupPairs(1,1);
@@ -138,8 +139,12 @@ guidata(hObject, handles);
 % --- Executes on slider movement.
 function dupPairSlider_Callback(hObject, eventdata, handles)
 pairRow = int32(get(handles.dupPairSlider, 'Value'));
-set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup)) ': ' num2str(handles.dupSegGroup{pairRow})]);
 handles.pairRow=pairRow;
+set(handles.pairNumTxt, 'String', ['Group ' num2str(pairRow) ' out of ' num2str(length(handles.dupSegGroup)) ': ' num2str(handles.goodSegOrig(handles.dupSegGroup{pairRow}))]);
+set(handles.dispSegSlider, 'Value', 1);
+handles.dispSeg=1;
+set(handles.segTxt, 'String', ['Seg ' num2str(handles.dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow})) ': #' num2str(handles.goodSegOrig(handles.dupSegGroup{handles.pairRow}(handles.dispSeg)))]);
+
 
 plotSpatial(hObject, handles);
 plotTemporal(hObject, handles);
@@ -183,7 +188,7 @@ hold(handles.temporalAxes, 'off');
 function dispSegSlider_Callback(hObject, eventdata, handles)
 
 dispSeg = int32(get(handles.dispSegSlider, 'Value'));
-set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow})) ': #' num2str(handles.dupSegGroup{handles.pairRow}(dispSeg))]);
+set(handles.segTxt, 'String', ['Seg ' num2str(dispSeg) ' out of ' num2str(length(handles.dupSegGroup{handles.pairRow})) ': #' num2str(handles.goodSegOrig(handles.dupSegGroup{handles.pairRow}(dispSeg)))]);
 handles.dispSeg = dispSeg;
 
 plotSpatial(hObject, handles);
@@ -207,10 +212,12 @@ pairRow = handles.pairRow;  % current row of dupSegGroup (all from one cell)
 dispSeg = handles.dispSeg;
 dupSegList = dupSegGroup{pairRow};
 discardSegNum = dupSegList(dispSeg); % get number of seg to discard (one currently selected)
+% note, if only goodSeg are used, this is index of orig goodSeg, thus
+origDiscSegNum = handles.goodSegOrig(discardSegNum);
 
 handles.dupSegGroup{pairRow} = dupSegList(dupSegList ~= discardSegNum);
-handles.goodSeg = handles.goodSeg(handles.goodSeg ~= discardSegNum);
-handles.greatSeg = handles.greatSeg(handles.greatSeg ~= discardSegNum);
+handles.goodSeg = handles.goodSeg(handles.goodSeg ~= origDiscSegNum);
+handles.greatSeg = handles.greatSeg(handles.greatSeg ~= origDiscSegNum);
 set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
 
 set(handles.dispSegSlider, 'Value', 1);
@@ -231,10 +238,33 @@ function mergeButton_Callback(hObject, eventdata, handles)
 %% --- Executes on button press in dispMergeCheckbox.
 function dispMergeCheckbox_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of dispMergeCheckbox
+dispMerge = get(hObject, 'Value');
+handles.dispMerge = dispMerge;
+
+% display potential merge
+if dispMerge == 1
+    dupSegGroup = handles.dupSegGroup;
+    pairRow = handles.pairRow;
+    dupSegList = dupSegGroup{pairRow};
+    spatial = reshape(squeeze(mean(full(handles.A(:,dupSegList)),2)),handles.d1, handles.d2);
+    imagesc(handles.spatialAxes, spatial);
+    
+    colors = {'r','g','b','c','m','y','k'};
+    
+    for i=1:length(dupSegList)
+        plot(handles.temporalAxes, handles.C(dupSegList(i),:), colors{i});
+        hold(handles.temporalAxes, 'on');
+    end
+    plot(handles.temporalAxes, mean(handles.C(dupSegList,:),1), colors{i+1});
+    hold(handles.temporalAxes, 'off');
+    
+end
+
+guidata(hObject, handles);
 
 % --- Executes on button press in saveButton.
 function saveButton_Callback(hObject, eventdata, handles)
-file = handles.file;
+segDictFile = handles.segDictFile;
 path = handles.path;
 goodSeg = handles.goodSeg;
 greatSeg = handles.greatSeg;
@@ -253,10 +283,10 @@ deconvC = handles.deconvC;
 posDeconv = handles.posDeconv;
 
 try
-save([handles.fileBasename '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 catch
     [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
-    save([savPath savFile '_goodSeg_' date '.mat'], 'file', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+    save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
 end
 
 guidata(hObject, handles);

@@ -238,6 +238,36 @@ function mergeButton_Callback(hObject, eventdata, handles)
 %% --- Executes on button press in dispMergeCheckbox.
 function dispMergeCheckbox_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of dispMergeCheckbox
+dispMerge = get(hObject, 'Value');
+handles.dispMerge = dispMerge;
+
+% display potential merge
+if dispMerge == 1
+    dupSegGroup = handles.dupSegGroup;
+    pairRow = handles.pairRow;
+    dupSegList = dupSegGroup{pairRow};
+    
+    % plot spatial merge
+    spatial = reshape(squeeze(mean(full(handles.A(:,dupSegList)),2)),handles.d1, handles.d2);
+    imagesc(handles.spatialAxes, spatial);
+    
+    % plot temporal merge
+    colors = {'r','g','b','c','m','y','k'};
+    
+    for i=1:length(dupSegList)
+        plot(handles.temporalAxes, handles.C(dupSegList(i),:), colors{i});
+        hold(handles.temporalAxes, 'on');
+    end
+    plot(handles.temporalAxes, mean(handles.C(dupSegList,:),1), colors{i+1});
+    hold(handles.temporalAxes, 'off');
+    
+else
+    
+plotSpatial(hObject, handles);
+plotTemporal(hObject, handles);
+end
+
+guidata(hObject, handles);
 
 % --- Executes on button press in saveButton.
 function saveButton_Callback(hObject, eventdata, handles)
