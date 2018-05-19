@@ -60,6 +60,8 @@ handles.output = hObject;
 handles.dispSeg = 1;
 handles.pairRow = 1;
 
+handles.mergC =[];
+handles.mergA = [];
 
 % Update handles structure
 guidata(hObject, handles);
@@ -235,10 +237,18 @@ dupSegGroup = handles.dupSegGroup;
     pairRow = handles.pairRow;
     dupSegList = dupSegGroup{pairRow};
     
-    % plot spatial merge
-    handles.mergA = mean(handles.A(:,dupSegList),2);
+    % merge spatial and temporal, save (but need to append to list, and save)
+    mergSpat = mean(handles.A(:,dupSegList),2);
+    handles.mergA = [handles.mergA mergSpat];
+    mergTemp = mean(handles.C(dupSegList,:),1);
+    handles.mergC = [handles.mergC; mergTemp];
     
-    handles.mergC = mean(handles.C(dupSegList,:),1);
+    %handles.dupSegGroup{pairRow} = ;
+    
+    % ToDo:
+    % 1.) append mergA/C to list (and add to save)
+    % 2.) replace dupSegGroup/List with merged
+    % 3.) think about option to only take spatial from one segment
     
     guidata(hObject, handles);
 
@@ -297,11 +307,14 @@ inSeg = handles.inSeg;
 deconvC = handles.deconvC;
 posDeconv = handles.posDeconv;
 
+mergA = handles.mergA;
+mergC = handles.mergC;
+
 try
-save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
 catch
     [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
-    save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv');
+    save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
 end
 
 guidata(hObject, handles);

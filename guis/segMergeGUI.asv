@@ -60,6 +60,8 @@ handles.output = hObject;
 handles.dispSeg = 1;
 handles.pairRow = 1;
 
+handles.mergC =[];
+handles.mergA = [];
 
 % Update handles structure
 guidata(hObject, handles);
@@ -235,9 +237,18 @@ dupSegGroup = handles.dupSegGroup;
     pairRow = handles.pairRow;
     dupSegList = dupSegGroup{pairRow};
     
-    % plot spatial merge
-    spatial = reshape(squeeze(mean(full(handles.A(:,dupSegList)),2)),handles.d1, handles.d2);
+    % merge spatial and temporal, save (but need to append to list, and save)
+    handles.mergA = [handles.mergA mean(handles.A(:,dupSegList),2)];
+    handles.mergC = [handles.mergC; mean(handles.C(dupSegList,:),1)];
     
+    %handles.dupSegGroup{pairRow} = ;
+    
+    % ToDo:
+    % 1.) append mergA/C to list 
+    % 2.) replace dupSegGroup/List with merged
+    % 3.) think about option to only take spatial from one segment
+    
+    guidata(hObject, handles);
 
 
 %% --- Executes on button press in dispMergeCheckbox.
