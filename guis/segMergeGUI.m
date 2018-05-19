@@ -231,9 +231,17 @@ guidata(hObject, handles);
 
 %% --- Executes on button press in mergeButton. (ToDo)
 function mergeButton_Callback(hObject, eventdata, handles)
-% hObject    handle to mergeButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+dupSegGroup = handles.dupSegGroup;
+    pairRow = handles.pairRow;
+    dupSegList = dupSegGroup{pairRow};
+    
+    % plot spatial merge
+    handles.mergA = mean(handles.A(:,dupSegList),2);
+    
+    handles.mergC = mean(handles.C(dupSegList,:),1);
+    
+    guidata(hObject, handles);
+
 
 %% --- Executes on button press in dispMergeCheckbox.
 function dispMergeCheckbox_Callback(hObject, eventdata, handles)

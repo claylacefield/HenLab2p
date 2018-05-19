@@ -231,9 +231,14 @@ guidata(hObject, handles);
 
 %% --- Executes on button press in mergeButton. (ToDo)
 function mergeButton_Callback(hObject, eventdata, handles)
-% hObject    handle to mergeButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+dupSegGroup = handles.dupSegGroup;
+    pairRow = handles.pairRow;
+    dupSegList = dupSegGroup{pairRow};
+    
+    % plot spatial merge
+    spatial = reshape(squeeze(mean(full(handles.A(:,dupSegList)),2)),handles.d1, handles.d2);
+    
+
 
 %% --- Executes on button press in dispMergeCheckbox.
 function dispMergeCheckbox_Callback(hObject, eventdata, handles)
@@ -246,9 +251,12 @@ if dispMerge == 1
     dupSegGroup = handles.dupSegGroup;
     pairRow = handles.pairRow;
     dupSegList = dupSegGroup{pairRow};
+    
+    % plot spatial merge
     spatial = reshape(squeeze(mean(full(handles.A(:,dupSegList)),2)),handles.d1, handles.d2);
     imagesc(handles.spatialAxes, spatial);
     
+    % plot temporal merge
     colors = {'r','g','b','c','m','y','k'};
     
     for i=1:length(dupSegList)
@@ -258,6 +266,10 @@ if dispMerge == 1
     plot(handles.temporalAxes, mean(handles.C(dupSegList,:),1), colors{i+1});
     hold(handles.temporalAxes, 'off');
     
+else
+    
+plotSpatial(hObject, handles);
+plotTemporal(hObject, handles);
 end
 
 guidata(hObject, handles);
