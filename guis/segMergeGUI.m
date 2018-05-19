@@ -243,7 +243,10 @@ dupSegGroup = handles.dupSegGroup;
     mergTemp = mean(handles.C(dupSegList,:),1);
     handles.mergC = [handles.mergC; mergTemp];
     
-    %handles.dupSegGroup{pairRow} = ;
+    %handles.dupSegGroup{pairRow} = {'merged', nRow} ;
+    %handles.A = [handles.A mergSpat];
+    %handles.C = [handles.C mergTemp];
+    %plot (but have to change plot funcs a little)
     
     % ToDo:
     % 1.) append mergA/C to list (and add to save)
