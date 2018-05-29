@@ -10,5 +10,5 @@ vel = fixVel(vel);
 vel = vel(1:2:end);
 
 v2 = runmean(vel,15);
-v2 = rumean(v2,30);
+v2 = runmean(v2,30);
 
