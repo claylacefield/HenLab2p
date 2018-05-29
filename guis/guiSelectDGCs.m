@@ -107,12 +107,12 @@ set(handles.editBasename, 'String', basename);
 handles.basename = basename;
 handles.fileBasename = basename;
 
-try
-load(findLatestFilename('treadBehStruc'));
-catch
-    disp('Cant find treadBehStruc file so calculating');
-    [treadBehStruc] = procHen2pBehav(1);
-end
+% try
+% load(findLatestFilename('treadBehStruc'));
+% catch
+%     disp('Cant find treadBehStruc file so calculating');
+    [treadBehStruc] = procHen2pBehav('auto');
+% end
 treadPos = treadBehStruc.resampY(1:2:end);
 
 C = C/max(C(:));
