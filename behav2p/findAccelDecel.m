@@ -20,11 +20,11 @@ sdv = std(dv); % standard dev
 [vals, decelPks] = findpeaks(-dv, 'MinPeakProminence', sdv*2, 'MinPeakDistance', 100);
 
 if toPlot
-t = 1:length(dv);
-figure; plot(dv); 
+t = 1:length(vel);
+figure; plot(vel); 
 hold on; 
-plot(t(accelPks), dv(accelPks), 'g*');
-plot(t(decelPks), dv(decelPks), 'r*');
+plot(t(accelPks), vel(accelPks), 'g*');
+plot(t(decelPks), vel(decelPks), 'r*');
 end
 
 
