@@ -1,0 +1,23 @@
+function plotTreadBeh(treadBehStruc);
+
+%% USAGE: plotTreadBeh(treadBehStruc);
+% Plot position, velocity, and rewards for treadmill behavior.
+
+vel = treadBehStruc.vel(1:2:end);
+vel = fixVel(vel);
+
+y = treadBehStruc.resampY(1:2:end);
+y = y/max(y);
+frTimes = treadBehStruc.adjFrTimes(1:2:end);
+
+rewTimes = treadBehStruc.rewTime;
+
+[rewInds] = findNearestFr(rewTimes, frTimes);
+
+t = 
+
+figure; 
+plot(5*y); 
+hold on;
+plot(vel);
+

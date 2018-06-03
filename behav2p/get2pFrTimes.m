@@ -27,6 +27,8 @@ for i=1:length(xmCell)
         indexInd = strfind(rowStr, 'index');
         parInd = strfind(rowStr, 'parameterSet');
         
+        % NOTE: times extracted based upon current character indices within
+        % Bruker XML frame info strings 
         relTime = str2num(rowStr(relTimeInd+14:absTimeInd-3));
         absTime = str2num(rowStr(absTimeInd+14:indexInd-3));
         index = str2num(rowStr(indexInd+7:parInd-3));
