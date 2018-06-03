@@ -9,6 +9,7 @@ function [lapFrInds] = findLaps(y)
 % outputs:
 % lapFrInds = frame indices of treadmill lap crossings
 
+y = y/max(y);
 
 %dy = diff(y);
 
