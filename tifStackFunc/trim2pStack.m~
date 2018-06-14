@@ -30,14 +30,14 @@ for i = 1:size(Y,3)-1
     dim2 = mean(diff1,2); %runmean(movingvar(nanmean(diff1,2), 4),3);
     
     
-    hor_first = find(dim1(1:round(d2/2))==0,1,'last')+1;
-    hor_last = find(dim1(round(d2/2):end)==0,1,'first')+round(d2/2)-1; %-8;
+    hor_first = find(dim2(1:round(d2/2))==0,1,'last');
+    hor_last = find(dim2(round(d2/2):end)==0,1,'first')+round(d2/2); %-8;
     
     minX = max([minX hor_first]);
     maxX = min([maxX hor_last]);
     
-    ver_first = find(dim2(1:round(d1/2))==0,1,'last')+1; %+8;
-    ver_last = find(dim2(round(d1/2):end)==0,1,'first')+round(d1/2)-1;
+    ver_first = find(dim1(1:round(d1/2))==0,1,'last'); %+8;
+    ver_last = find(dim1(round(d1/2):end)==0,1,'first')+round(d1/2);
     
     minY = max([minY ver_first]);
     maxY = min([maxY ver_last]);
