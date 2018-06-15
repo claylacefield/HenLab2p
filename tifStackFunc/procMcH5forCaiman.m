@@ -78,7 +78,7 @@ catch
 end
 
 disp('Saving Ch2 avg tif');
-avCh2 = squeeze(mean(Y,3));    % avg green channel
+avCh2 = squeeze(nanmean(Y,3));    % avg green channel
 imwrite(double(avCh2/max(avCh2(:))), [basename '_avCh2.tif']); % save tif
 
 %% filter stack
@@ -108,7 +108,7 @@ Y = im2uint16(Y/max(Y(:)));
 %Y = Y(:,:,1:end-50); % hack to trim off some frames from end because of conv2
 
 disp('Saving Ch2ds avg tif');
-avCh2ds = squeeze(mean(Y,3));    % avg green channel
+avCh2ds = squeeze(nanmean(Y,3));    % avg green channel
 imwrite(double(avCh2ds/max(avCh2ds(:))), [basename '_avCh2ds.tif']); % save tif
 
 %% save filtered, downsampled stack (in tzyxc order)
@@ -132,7 +132,7 @@ if saveRed
     
     disp('Saving Ch1 avg tif');
     %segStruc.avCh1 = squeeze(mean(Y,3));
-    avCh1 = squeeze(mean(Y,3));    % avg green channel
+    avCh1 = squeeze(nanmean(Y,3));    % avg green channel
     imwrite(double(avCh1/max(avCh1(:))), [basename '_avCh1.tif']); % save tif
     
     if toDownsample
@@ -140,7 +140,7 @@ if saveRed
         
         disp('Saving Ch1ds avg tif');
         %segStruc.avCh1ds = squeeze(mean(Y,3));
-        avCh1ds = squeeze(mean(Y,3));    % avg green channel
+        avCh1ds = squeeze(nanmean(Y,3));    % avg green channel
         imwrite(double(avCh1ds/max(avCh1ds(:))), [basename '_avCh1ds.tif']); % save tif
     end
 end
