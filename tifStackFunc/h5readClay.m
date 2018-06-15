@@ -21,7 +21,7 @@ end
 
 %nam_mat = [path, filename, '.mat'];
 
-disp('reading in SIMA H5 file (exported motion corrected)'); tic;
+disp(['reading in H5 file:' filename]); tic;
 %endFr = 2000;   % frame to truncate data at (for testing)
 info = h5info(filename); %nam);
 

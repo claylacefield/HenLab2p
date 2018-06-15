@@ -37,13 +37,8 @@ if length(varargin)>0
         end
         
     elseif length(varargin)==2
-            flag = varargin{1};
-            if strfind(flag, 'auto')
-                filename = findLatestFilename('Cycle');
-            else
-                filename = flag;
-            end
-            segCh = varargin{2};
+            
+            
     end
     
 else
