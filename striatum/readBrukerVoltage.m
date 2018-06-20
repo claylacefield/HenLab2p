@@ -8,6 +8,6 @@ inStruc = importdata(filename);
 v = inStruc.data(:,2);
 vTimes = inStruc.data(:,1);
 
-[vals, ttlOn] = findpeaks(diff(v), vTimes, 'MinPeakProminence',3, 'MinPeakDistance', 500);
+[vals, ttlOn] = findpeaks(diff(v), vTimes(2:end), 'MinPeakProminence',3, 'MinPeakDistance', 500);
 
-[vals, ttlOff] = findpeaks(-diff(v), vTimes, 'MinPeakProminence',3, 'MinPeakDistance', 500);
+[vals, ttlOff] = findpeaks(-diff(v), vTimes(2:end), 'MinPeakProminence',3, 'MinPeakDistance', 500);
