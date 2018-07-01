@@ -76,7 +76,8 @@ segStruc.trimYX = trimYX;
 toTrim = 0; % already trimmed in separate step
 tau = 10;
 sigma = 0;
-Y = caSpatTempFilt(Y, toTrim, tau, sigma);
+%Y = caSpatTempFilt(Y, toTrim, tau, sigma);
+Y = double(Y);
 
 segStruc.filtParams.tau = tau;
 segStruc.filtParams.sigma = sigma;
