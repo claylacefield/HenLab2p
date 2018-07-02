@@ -7,13 +7,13 @@ mouseDir = dir;
 for j=3:length(mouseDir)
     dayName = mouseDir(j).name;
     try
-    cd(dayName);
+    cd([mousePath '/' dayName]);
     dayDir = dir;
     
     for i = 3:length(dayDir)
         try
             if strfind(dayDir(i).name, '18') % 'TSeries')
-                cd(dayDir(i).name);
+                cd([mousePath '/' dayName '/' dayDir(i).name]);
                 %sessDir = dir;
                 try
                     test = findLatestFilename('eMC');
