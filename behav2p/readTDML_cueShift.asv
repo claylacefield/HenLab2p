@@ -37,7 +37,6 @@ treadBehStruc.tdmlName = filename;
 % initialize variables
 time = [];
 y = [];
-currY = NaN;
 lap = 0;
 yTimes = [];
 lickTime = [];
@@ -51,7 +50,6 @@ rewZoneStopPos = [];
 
 olfTime = []; olfPos = []; olfLap = [];
 toneTime = []; tonePos = []; toneLap = [];
-rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 
 tic;
 for i=1:length(behCell)
@@ -125,7 +123,7 @@ for i=1:length(behCell)
         end
         
         % olfactory stim time/pos
-        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 3'))
+        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin":3'))
             olfTime = [olfTime currTime];
             olfPos = [olfPos currY];
             olfLap = [olfLap lap];
@@ -143,7 +141,7 @@ for i=1:length(behCell)
             rfidTime = [rfidTime currTime];
             rfidPos = [rfidPos currY];
             rfidLap = [rfidLap lap];
-            rfidName = {rfidName rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)};
+            rfidName = [rfidName rowStr(strfind(rowStr, '"tag"'):strfind(rowStr, ))];
         end
         
         % other events: debug timeout,
@@ -168,13 +166,12 @@ treadBehStruc.yTimes = yTimes;
 treadBehStruc.lickTime = lickTime;
 treadBehStruc.lickPos = lickPos;
 treadBehStruc.lapTime = lapTime;
-treadBehStruc.rewTime = rewTime; treadBehStruc.rewPos = rewPos;treadBehStruc.rewLap = rewLap;
+treadBehStruc.rewTime = rewTime;
+treadBehStruc.rewPos = rewPos;
 treadBehStruc.rewZoneStartTime = rewZoneStartTime;
 treadBehStruc.rewZoneStartPos = rewZoneStartPos;
 treadBehStruc.rewZoneStopTime = rewZoneStopTime;
 treadBehStruc.rewZoneStopPos = rewZoneStopPos;
 
-treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.olfLap = olfLap;
-treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
-treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
+
 
