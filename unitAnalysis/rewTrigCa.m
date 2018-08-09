@@ -1,6 +1,6 @@
-function [periEvent] = rewTrigCa(C, treadBehStruc); %, event)
+function [periEvent, periEventVel] = rewTrigCa(C, treadBehStruc); %, event)
 
-%% USAGE: [periEvent] = rewTrigCa(C, treadBehStruc);
+%% USAGE: [periEvent, periEventVel] = rewTrigCa(C, treadBehStruc);
 
 
 fps=15;
