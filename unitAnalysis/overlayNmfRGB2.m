@@ -16,7 +16,7 @@ rgb(:,:,2) = segStruc.avCh2;
 
 allSegIm = zeros(d1,d2);
 for seg = 1:length(goodSeg)
-    allSegIm = allSegIm + reshape(A(goodSeg(seg),:),d1,d2);
+    allSegIm(:,:,seg) = reshape(A(goodSeg(seg),:),d1,d2);
 end
 
 rgb(:,:,3) = allSegIm/max(allSegIm(:));
