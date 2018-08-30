@@ -46,6 +46,7 @@ tic;
 for i=1:length(behCell)
     rowStr = behCell{i}; % load in the string for this event
     
+    try
     
     % sync pin (2p trigger ON)
     if ~isempty(strfind(rowStr, '"settings"'))
@@ -115,6 +116,11 @@ for i=1:length(behCell)
         
         % other events: debug timeout,
         
+    end
+    
+    catch
+        disp(['Problem processing behCell line #' num2str(i)]);
+        disp(rowStr);
     end
     
 end
