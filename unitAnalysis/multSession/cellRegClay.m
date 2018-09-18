@@ -1,4 +1,4 @@
-function [cell_registered_struct] = cellRegClay(multSessTuningStruc);
+function [cell_registered_struct] = cellRegClay(multSessSegStruc);
 
 %% USAGE: [cell_registered_struct] = cellRegClay(multSessTuningStruc);
 %% Clay 2017
@@ -61,10 +61,10 @@ microns_per_pixel= 1.3; %2.4;
 disp('Stage 1 - Loading sessions')
 
 % nUnits x d1 x d2
-for i = 1:length(multSessTuningStruc)
-    A = permute(reshape(full(multSessTuningStruc(i).A), multSessTuningStruc(i).d1,multSessTuningStruc(i).d2, size(multSessTuningStruc(i).A,2)), [3 1 2]);
+for i = 1:length(multSessSegStruc)
+    A = permute(reshape(full(multSessSegStruc(i).A), multSessSegStruc(i).d1,multSessSegStruc(i).d2, size(multSessSegStruc(i).A,2)), [3 1 2]);
     try
-    spatial_footprints{i} = A(multSessTuningStruc(i).goodSeg,:,:);
+    spatial_footprints{i} = A(multSessSegStruc(i).goodSeg,:,:);
     catch
         spatial_footprints{i} = A;
     end

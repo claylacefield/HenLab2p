@@ -66,12 +66,14 @@ end
 
 %%
 % cellRegInd(cellsInAll) for cells present in all sessions, that are place cells in all
-placeCellsInAll = find(min(sameCellPlaceBool, [], 2)); % index in array of only cells present in all sessions
-notPlaceCellsInAll = find(~max(sameCellPlaceBool, [], 2)); % or cells present in all sessions that are place cells in none
-
+placeCellsInAll = find(min(sameCellPlaceBool, [], 2)); % index in array of only place cells present in all sessions
+placeCellsInNone = find(~max(sameCellPlaceBool, [], 2)); % or cells present in all sessions that are place cells in none
+placeCellsInAny = find (max(sameCellPlaceBool,[],2));% or cells present in all sessions that are place cells in at least one
 %%
 % tuning in placeCellsInAll
 placeCellAllOrigInd = cellsInAll(placeCellsInAll,:);
+placeCellInNoneOrigInd = cellsInAll(placeCellsInNone,:);
+placeCellInAnyOrigInd = cellsInAll(placeCellsInAny,:);
 %= cellRegIndInAll(placeCellsInAll,:);
 
 
@@ -83,6 +85,8 @@ sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
 sameCellTuningStruc.cellsInAll = cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
 sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
+sameCellTuningStruc.placeCellInNoneOrigInd = placeCellInNoneOrigInd; % orig C/A index of all cells that are not place cells in all sessions
+sameCellTuningStruc.placeCellInAnyOrigInd = placeCellInAnyOrigInd; % orig C/A index of all cells that are place cells in at least one session
 sameCellTuningStruc.regMapOrigInd = mapInd2; % orig C/A ind for all cells in ziv mat
 sameCellTuningStruc.regMapGoodSegInd = mapInd;
 sameCellTuningStruc.sameCellPlaceBool = sameCellPlaceBool;  % boolean for this mat
