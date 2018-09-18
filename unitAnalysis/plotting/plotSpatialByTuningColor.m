@@ -1,9 +1,9 @@
-%function plotSpatialByTuningColor()
+function plotSpatialByTuningColor(A, C, d1, d2, unitTuningStruc, goodSeg)
 
 % plot spatial profiles of place cells based upon their tuning (posRates)
 
 %
-goodSegPCinds = find(unitTuningStruc.outPC.Shuff.isPC);
+goodSegPCinds = find(unitTuningStruc.PCLappedSess.Shuff.isPC==1);
 origPCinds = goodSeg(goodSegPCinds);
 
 posRates = unitTuningStruc.outPC.posRates(goodSegPCinds,:);
@@ -38,4 +38,7 @@ for i = 1:k
     gc2(i,:) = gc(i,:)/max(gc(i,:));
     
 end
-figure; image(rgb);
+figure; subplot(1,2,1); 
+image(rgb);
+subplot(1,2,2);
+imagesc(posRates(inds2,:));
