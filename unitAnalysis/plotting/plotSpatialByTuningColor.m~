@@ -41,4 +41,4 @@ end
 figure; subplot(1,2,1); 
 image(rgb);
 subplot(1,2,2);
-imagesc(posRates(inds2,:));
+imagesc(posRates());
