@@ -2,14 +2,14 @@ function [remapStrucSubsets] = sameCellRemapSubsets(sameCellTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
-% Clay Dec. 2017, modified Sebnem Sept 2018
-% find cells active in subsets of sessions (or are place cells in
-% subsets of sessions?)
+% Clay Dec. 2017, 
 % May2018
 % Now including more followup analyses
 % remapStruc.sessComb = ziv rows with cells present in diff combin of sess
 % remapStruc.allZivCorrCoef = cell array of corr coeff for all ziv cells
-% 
+% Sebnem Sept 2018
+% find cells active during reward areas in outNonPC, and registers across
+% sessions
 
 
 %% unpack some variables
@@ -63,22 +63,21 @@ figure;
 bar([length(sessComb.firstTwoOnly) length(sessComb.lastTwoOnly)]);
 title('#Reg cells in 1-2, 2-3 (may be affected by reg)');
 
-%% Fractions of cells
-% note that tuning in PCLapSess struc only performed for goodSeg
+%% Fractions of all reward cells
+
 
 for i = 1:length(multSessSegStruc)
-    pcInds = find(multSessSegStruc(i).PCLapSess.Shuff.isPC);
-    remapStrucSubsets.numPCs(i) = length(pcInds);
-    remapStrucSubsets.fracPCs(i) = remapStrucSubsets.numPCs(i)/length(multSessSegStruc(i).goodSeg);
+    remapStrucSubsets.numRCs(i) = length(rewCellOrigInd{i});
+    remapStrucSubsets.fracRCs(i) = remapStrucSubsets.numRCs(i)/length(multSessSegStruc(i).goodSeg);
 end
 
 figure; 
 subplot(1,2,1);
-bar(remapStrucSubsets.numPCs);
-title('numPCs');
+bar(remapStrucSubsets.numRCs);
+title('numRewCs');
 subplot(1,2,2);
-bar(remapStrucSubsets.fracPCs);
-title('fracPCs');
+bar(remapStrucSubsets.fracRCs);
+title('fracRewCs');
 
 %% for cells with reward related activity in nonmove periods in at least one session (rewCellAny)
 
@@ -128,7 +127,7 @@ for i = 1:3
     subplot(1, 3, i);
     imagesc(RewMatchedAny{i});
 end
-
+suptitle('nonNormRates');
 %normalize each by max firing rate
 for i = 1:length(RewMatchedAny)
     for ii = 1:size(RewMatchedAny{i}, 1)
@@ -142,15 +141,14 @@ for i = 1:3
     subplot(1, 3, i);
     imagesc(RewMatchedAny{i});
 end
-
-
-
-%% find posRates for all cells in mapInd2/regMapOrigInd (ziv regist matr) 
+suptitle('NormRates');
+colormap jet;
+%% from outNonPC find posRates for all cells in mapInd2/regMapOrigInd (ziv regist matr) 
 for i = 1:size(regMapOrigInd,1)
     for j = 1:length(multSessSegStruc)
         try
             goodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == regMapOrigInd(i,j));
-            posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(goodSegInd(i,j),:);
+            posRatesCell{i,j} = multSessSegStruc(j).outNonPC.posRates(goodSegInd(i,j),:);
         catch
             posRatesCell{i,j} = [];
         end
