@@ -47,31 +47,24 @@ end
 
 %% plot sorted units
 
-pc = find(unitTuningStruc.PCLappedSess.Shuff.isPC==1);
+posRates2 = posRateLap1avg(:,find(unitTuningStruc.PCLappedSess.Shuff.isPC==1))';
 
-posRates1 = posRateLap1avg(:,pc)';
-
-    [maxVal, maxInd] = max(posRates1');
+    [maxVal, maxInd] = max(posRates2');
     [newInd, oldInd] = sort(maxInd);
     
-    posRates1 = posRates1(oldInd,:);
+    posRates2 = posRates2(oldInd,:);
     
     figure;
-    subplot(1,2,1);
-    colormap(jet);
-    imagesc(posRates1);
-    xlabel('position');
-
-posRates2 = posRateLap2avg(:,pc)';
-posRates2 = posRates2(oldInd,:);
-    
-    %figure;
-    subplot(1,2,2);
+    %subplot(2,3,1);
     colormap(jet);
     imagesc(posRates2);
     xlabel('position');
+
+posRates2 = posRateLap2avg(:,find(unitTuningStruc.PCLappedSess.Shuff.isPC==1))';
+posRates2 = posRates2(oldInd,:);
     
     figure;
-    plot(mean(posRates1,1));
-    hold on; 
-    plot(mean(posRates2,1),'g');
+    %subplot(2,3,1);
+    colormap(jet);
+    imagesc(posRates2);
+    xlabel('position');
