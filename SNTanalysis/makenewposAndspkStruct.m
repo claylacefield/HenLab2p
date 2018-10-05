@@ -9,8 +9,8 @@ for i = 1:length(badInd)
 end
 
 [treadBehStruc] = procHen2pBehav();
-BigposAndSpkArray {1,3}.C=C;
-BigposAndSpkArray {1,3}.pksgoodSeg=pksgoodSeg;
-BigposAndSpkArray {1,3}.treadBehStruct=treadBehStruc;
-BigposAndSpkArray {1,3}.filename='XIR.0718.02_500-003';
+BigposAndSpkArray {1,10}.C=C;
+BigposAndSpkArray {1,10}.pksgoodSeg=pksgoodSeg;
+BigposAndSpkArray {1,10}.treadBehStruct=treadBehStruc;
+BigposAndSpkArray {1,10}.filename='1217_MM7_1500-001';
 

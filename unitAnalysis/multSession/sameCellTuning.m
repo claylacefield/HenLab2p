@@ -48,7 +48,7 @@ for i = 1:size(mapInd,2)
     multSessSegStruc(i).outNonPC = outNon;
     RewLoc =[(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStartPos)/20)):1:(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStopPos)/20))))];
     multSessSegStruc(i).RewLoc = RewLoc;
-    rewCellOrigInd{i} = find(nanmean(outNon.posRates(:,RewLoc),2)>0);
+    rewCellOrigInd{i} = goodSeg(find(nanmean(outNon.posRates(:,RewLoc),2)>0));
 end
 
 %%

@@ -1,4 +1,4 @@
-function [remapSubsetsStruc] = sameCellRemapSubsets(sameCellTuningStruc);
+function [remapSubsetsStruc] = sameCellRemapSubsets1(sameCellTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
@@ -15,7 +15,7 @@ function [remapSubsetsStruc] = sameCellRemapSubsets(sameCellTuningStruc);
 %% unpack some variables
 multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
 unitSpatCell = sameCellTuningStruc.unitSpatCell;  % cell array of spatial profiles of ziv cells
-zivCentroids = sameCellTuningStruc.zivCentroids;    % centroids of these cells
+zivCentroids = sstameCellTuningStruc.zivCentroids;    % centroids of these cells
 placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
 rewCellOrigInd = sameCellTuningStruc.rewCellOrigInd;
 cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
@@ -63,21 +63,34 @@ figure;
 bar([length(sessComb.firstTwoOnly) length(sessComb.lastTwoOnly)]);
 title('#Reg cells in 1-2, 2-3 (may be affected by reg)');
 
-%% Fractions of all reward cells
+%% Fractions of all reward and place cells
 
-
+remapSubsetsStruc.isRCinPC = {};
 for i = 1:length(multSessSegStruc)
     remapSubsetsStruc.numRCs(i) = length(rewCellOrigInd{i});
+    pcInds = find(multSessSegStruc(i).PCLapSess.Shuff.isPC);
+    remapSubsetsStruc.numPCs(i) = length(pcInds);
+    remapSubsetsStruc.fracPCs(i) = remapSubsetsStruc.numPCs(i)/length(multSessSegStruc(i).goodSeg);
     remapSubsetsStruc.fracRCs(i) = remapSubsetsStruc.numRCs(i)/length(multSessSegStruc(i).goodSeg);
+    remapSubsetsStruc.isRCinPC{i} = rewCellOrigInd{i}(ismember(rewCellOrigInd{i}, placeCellOrigInd{i}));
+    remapSubsetsStruc.fracPCinRC(i) = sum(ismember(rewCellOrigInd{i}, placeCellOrigInd{i}))/remapSubsetsStruc.numRCs(i);                             
+    remapSubsetsStruc.fracOverlap(i) = sum(ismember(placeCellOrigInd{i}, rewCellOrigInd{i}))/length(multSessSegStruc(i).goodSeg);                              
+    
 end
 
 figure; 
-subplot(1,2,1);
-bar(remapSubsetsStruc.numRCs);
-title('numRewCs');
-subplot(1,2,2);
+subplot(1,4,1);
+bar(remapSubsetsStruc.fracPCs);
+title('fracPCs');
+subplot(1,4,2);
 bar(remapSubsetsStruc.fracRCs);
 title('fracRewCs');
+subplot(1,4,3);
+bar(remapSubsetsStruc.fracPCinRC);
+title('fracPCinRC');
+subplot(1,4,4);
+bar(remapSubsetsStruc.fracOverlap);
+title('fracOverlap');
 
 %% for cells with reward related activity in nonmove periods in at least one session (rewCellAny)
 
@@ -85,7 +98,7 @@ title('fracRewCs');
 for i = 1:size(rewCellAnyOrigInd,1)
     for j = 1:length(multSessSegStruc)
         rewCellAnyGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == rewCellAnyOrigInd(i,j));
-        posRatesCellAnyRew{i,j} = multSessSegStruc(j).outNonPC.posRates(rewCellAnyGoodSegInd(i,j),:);
+        posRatesCellAnyRew{i,j} = multSessSegStruc(j).PCLapSess.posRates(rewCellAnyGoodSegInd(i,j),:);
     end
 end
 
@@ -140,71 +153,6 @@ figure;
 for i = 1:3
     subplot(1, 3, i);
     imagesc(RewMatchedAny{i});
-end
-suptitle('NormRates');
-colormap jet;
-
-%% for cells with reward related activity in nonmove periods in all sessions (rewCellAll)
-
-% find goodSeg indices (for extracting tuning from )
-for i = 1:size(rewCellAllOrigInd,1)
-    for j = 1:length(multSessSegStruc)
-        rewCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == rewCellAllOrigInd(i,j));
-        posRatesCellAllRew{i,j} = multSessSegStruc(j).outNonPC.posRates(rewCellAllGoodSegInd(i,j),:);
-    end
-end
-
-% correlate tuning for AnyPC
-for i = 1:size(posRatesCellAllRew,1)
-    rates = [];
-    for j = 1:size(posRatesCellAllRew,2)
-        rates = [rates; posRatesCellAllRew{i,j}];
-    end
-    [remapSubsetsStruc.rewInAllCoef{i}, remapSubsetsStruc.rewInAllPval{i}] = corrcoef(rates');
-end
-
-A1A2=[]; A1B=[]; A2B=[];
-for i = 1:length(remapSubsetsStruc.rewInAnyCoef)
-    A1A2 = [A1A2; remapSubsetsStruc.rewInAnyCoef{i}(2)];
-    A1B = [A1B; remapSubsetsStruc.rewInAnyCoef{i}(3)];
-    A2B = [A2B; remapSubsetsStruc.rewInAnyCoef{i}(6)];
-end
-remapSubsetsStruc.RewAllCorrCoeff121323 = [A1A2, A1B, A2B];
-
-%plot tunig sorted by sess2
-RewMatchedAll = {};% make a cell array of all posRates together
-for i = 1:size(posRatesCellAllRew, 2)
-    RewMatchedAll{i} = [];
-    for ii = 1:size(posRatesCellAllRew, 1)
-        RewMatchedAll{i} = [RewMatchedAll{i}; posRatesCellAllRew{ii, i}];
-    end
-end
-remapSubsetsStruc.RewMatchedAll = [RewMatchedAll];
-
-%sort second column and match 1 and 3 accordingly: 
-[~, s1] = nanmax(RewMatchedAll{2}, [], 2);
-[~, s2] = sort(s1);
-for i = 1:length(RewMatchedAll)
-    RewMatchedAll{i} = RewMatchedAll{i}(s2, :);
-end
-figure;
-for i = 1:3
-    subplot(1, 3, i);
-    imagesc(RewMatchedAll{i});
-end
-suptitle('nonNormRates');
-%normalize each by max firing rate
-for i = 1:length(RewMatchedAll)
-    for ii = 1:size(RewMatchedAll{i}, 1)
-        RewMatchedAll{i}(ii, :) = RewMatchedAll{i}(ii, :)/nanmax(RewMatchedAll{i}(ii, :));
-    end
-    RewMatchedAll{i}(isnan(RewMatchedAll{i})) = 0;
-end
-
-figure;
-for i = 1:3
-    subplot(1, 3, i);
-    imagesc(RewMatchedAll{i});
 end
 suptitle('NormRates');
 colormap jet;

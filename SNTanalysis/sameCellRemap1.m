@@ -1,4 +1,4 @@
-function [remapStruc] = sameCellRemap(sameCellTuningStruc);
+function [remapStruc] = sameCellRemap1(sameCellTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
@@ -83,7 +83,7 @@ title('fracPCs');
 for i = 1:size(placeCellAllOrigInd,1)
     for j = 1:length(multSessSegStruc)
         placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
-        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAllGoodSegInd(i,j),:);
+        posRatesCell{i,j} = multSessSegStruc(j).outNonPC.posRates(placeCellAllGoodSegInd(i,j),:);
     end
 end
 
@@ -146,7 +146,7 @@ suptitle('NormRates');
 for i = 1:size(placeCellAnyOrigInd,1)
     for j = 1:length(multSessSegStruc)
         placeCellAnyGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == placeCellAnyOrigInd(i,j));
-        posRatesCellAnyPC{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAnyGoodSegInd(i,j),:);
+        posRatesCellAnyPC{i,j} = multSessSegStruc(j).outNonPC.posRates(placeCellAnyGoodSegInd(i,j),:);
     end
 end
 

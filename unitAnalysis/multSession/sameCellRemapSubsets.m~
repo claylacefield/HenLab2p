@@ -160,7 +160,7 @@ for i = 1:size(posRatesCellAllRew,1)
     for j = 1:size(posRatesCellAllRew,2)
         rates = [rates; posRatesCellAllRew{i,j}];
     end
-    [remapSubsetsStruc.rewInAllCoef{i}, remapSubsetsStruc.rewInAllPval{i}] = corrcoef(rates');
+    [remapSubsetsStruc.rewInAnyCoef{i}, remapSubsetsStruc.rewInAnyPval{i}] = corrcoef(rates');
 end
 
 A1A2=[]; A1B=[]; A2B=[];
@@ -169,42 +169,42 @@ for i = 1:length(remapSubsetsStruc.rewInAnyCoef)
     A1B = [A1B; remapSubsetsStruc.rewInAnyCoef{i}(3)];
     A2B = [A2B; remapSubsetsStruc.rewInAnyCoef{i}(6)];
 end
-remapSubsetsStruc.RewAllCorrCoeff121323 = [A1A2, A1B, A2B];
+remapSubsetsStruc.RewAnyCorrCoeff121323 = [A1A2, A1B, A2B];
 
 %plot tunig sorted by sess2
-RewMatchedAll = {};% make a cell array of all posRates together
-for i = 1:size(posRatesCellAllRew, 2)
-    RewMatchedAll{i} = [];
-    for ii = 1:size(posRatesCellAllRew, 1)
-        RewMatchedAll{i} = [RewMatchedAll{i}; posRatesCellAllRew{ii, i}];
+RewMatchedAny = {};% make a cell array of all posRates together
+for i = 1:size(posRatesCellAnyRew, 2)
+    RewMatchedAny{i} = [];
+    for ii = 1:size(posRatesCellAnyRew, 1)
+        RewMatchedAny{i} = [RewMatchedAny{i}; posRatesCellAnyRew{ii, i}];
     end
 end
-remapSubsetsStruc.RewMatchedAll = [RewMatchedAll];
+remapSubsetsStruc.RewMatchedAny = [RewMatchedAny];
 
 %sort second column and match 1 and 3 accordingly: 
-[~, s1] = nanmax(RewMatchedAll{2}, [], 2);
+[~, s1] = nanmax(RewMatchedAny{2}, [], 2);
 [~, s2] = sort(s1);
-for i = 1:length(RewMatchedAll)
-    RewMatchedAll{i} = RewMatchedAll{i}(s2, :);
+for i = 1:length(RewMatchedAny)
+    RewMatchedAny{i} = RewMatchedAny{i}(s2, :);
 end
 figure;
 for i = 1:3
     subplot(1, 3, i);
-    imagesc(RewMatchedAll{i});
+    imagesc(RewMatchedAny{i});
 end
 suptitle('nonNormRates');
 %normalize each by max firing rate
-for i = 1:length(RewMatchedAll)
-    for ii = 1:size(RewMatchedAll{i}, 1)
-        RewMatchedAll{i}(ii, :) = RewMatchedAll{i}(ii, :)/nanmax(RewMatchedAll{i}(ii, :));
+for i = 1:length(RewMatchedAny)
+    for ii = 1:size(RewMatchedAny{i}, 1)
+        RewMatchedAny{i}(ii, :) = RewMatchedAny{i}(ii, :)/nanmax(RewMatchedAny{i}(ii, :));
     end
-    RewMatchedAll{i}(isnan(RewMatchedAll{i})) = 0;
+    RewMatchedAny{i}(isnan(RewMatchedAny{i})) = 0;
 end
 
 figure;
 for i = 1:3
     subplot(1, 3, i);
-    imagesc(RewMatchedAll{i});
+    imagesc(RewMatchedAny{i});
 end
 suptitle('NormRates');
 colormap jet;
