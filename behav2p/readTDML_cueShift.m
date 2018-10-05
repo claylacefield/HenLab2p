@@ -93,13 +93,15 @@ for i=1:length(behCell)
         end
         
         % rew zone enter/exit time/pos
-        if ~isempty(strfind(rowStr, '"reward"'))
-            if ~isempty(strfind(rowStr, '"start"'))
-                rewZoneStartTime = [rewZoneStartTime currTime];
-                rewZoneStartPos = [rewZoneStartPos currY];
-            elseif ~isempty(strfind(rowStr, '"stop"'))
-                rewZoneStopTime = [rewZoneStopTime currTime];
-                rewZoneStopPos = [rewZoneStopPos currY];
+        if ~isempty(strfind(rowStr, 'context'))
+            if ~isempty(strfind(rowStr, 'reward'))
+                if ~isempty(strfind(rowStr, '"start"'))
+                    rewZoneStartTime = [rewZoneStartTime currTime];
+                    rewZoneStartPos = [rewZoneStartPos currY];
+                elseif ~isempty(strfind(rowStr, '"stop"'))
+                    rewZoneStopTime = [rewZoneStopTime currTime];
+                    rewZoneStopPos = [rewZoneStopPos currY];
+                end
             end
         end
         
