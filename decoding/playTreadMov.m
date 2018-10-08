@@ -9,6 +9,7 @@ function playTreadMov(pos)
 
 
 figure('pos', [50,50,2400,200]);
+xlim([0 2200]);
 rectangle('Position', [0,0,2200,100]);
 hold on;
 
