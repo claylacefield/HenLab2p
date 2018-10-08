@@ -17,4 +17,4 @@ pos = [pos pos];
 
 pos_times = treadBehStruc.adjFrTimes(1:2:end); % should be 1 x #fr
 
-save(uigetfile(),'spike_times', 'pos', 'pos_times');
+%save(uigetfile(),'spike_times', 'pos', 'pos_times');
