@@ -16,3 +16,5 @@ spike_times = pksCell'; % should be #cells x 1
 pos = [pos pos];
 
 pos_times = treadBehStruc.adjFrTimes(1:2:end); % should be 1 x #fr
+
+save(uigetfile(),'spike_times', 'pos', 'pos_times');
