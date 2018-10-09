@@ -6,8 +6,8 @@ xmlName = findLatestFilename('.xml');
 basename = xmlName(1:end-4);
 
 % load in unit data (with pksCell and goodSeg)
-load(findLatestFilename('goodSeg'));
-if nargin == 1
+load(findLatestFilename('_goodSeg_'));
+if nargin == 2
     pksCell = pksCell(goodSeg(varargin{1})); % e.g. if you want to only use PCs
 else
     pksCell = pksCell(goodSeg);
@@ -56,6 +56,6 @@ pos_times1 = frTimes(1:length(pos1)); % just create pseudo-frTimes length of lap
 
 [spike_times, pos, pos_times] = preFormatForDecoding(pksCell1, treadBehStruc, pos1, pos_times1);
 
-save([basename '_pcsForDecoding' tag '_' date], 'spike_times', 'pos', 'pos_times');
+save([basename '_pcsForDecoding' tag '_' date '.mat'], 'spike_times', 'pos', 'pos_times');
 
 
