@@ -1,4 +1,4 @@
-function [Y2, badFrStart] = fix2pLines(Y); %, tag)
+function [Y2, badFrStart] = fix2pLines(); %, tag)
 
 % Clay 2018
 % This is an attempt to fix some 2p acquisition sessions where
@@ -8,6 +8,13 @@ function [Y2, badFrStart] = fix2pLines(Y); %, tag)
 
 % NOTE: that now the offsets are determined manually by looking
 % at the bad frames, so this is what we have to do right now
+% UPDATE: now finds shifts automatically but need to test on multiple
+% datasets
+
+% ToDo:
+% - if it seems to work in general case, make it save corrected H5
+% - may be able to save data at edges because it seems to be bidirectional
+% scan offset (i.e. end of one line is tacked onto previous)
 
 % initOk = 1;
 % 
@@ -17,6 +24,10 @@ function [Y2, badFrStart] = fix2pLines(Y); %, tag)
 %     badFrStart = 1;
 % end
 tic;
+
+filename = uigetfile('*.h5', 'Select raw .h5 data to fix scan lines');
+[Y, Ysiz, filename] = h5readClay(1,0,filename);
+
 Y = permute(Y,[2 1 3]); % now should look like original imaging frame
 
 % find start of bad section by big discontinuity in middle of frame (faster
