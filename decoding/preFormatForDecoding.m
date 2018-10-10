@@ -16,6 +16,15 @@ end
 
 spike_times = pksCell'; % should be #cells x 1
 
+
+for i = 1:length(spike_times)
+    spkTimes = pos_times(spike_times{i});
+    if size(spike_times{1},1)>size(spike_times{2})
+        spkTimes = spkTimes';
+    end
+    spike_times{i} = spkTimes';
+end
+
 % pos = treadBehStruc.resampY(1:2:end)'; % should be #fr x 2 (code is set up for X,Y so just double belt pos)
 pos = [pos pos];
 
