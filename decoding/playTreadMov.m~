@@ -1,0 +1,27 @@
+function playTreadMov(pos)
+
+%
+% Function to play a movie of mouse positions
+
+
+
+
+
+
+figure('pos', [50,50,2200,200]);
+rectangle('Position', [0,0,2000,100]);
+
+
+for i = 1:length(pos)
+    try
+        set(gca, 'NextPlot', 'replacechildren');
+    rectangle('Position', [0,0,2000,100]);
+    rectangle('Position', [pos(i),0,50,100], 'FaceColor', 'r');
+    pause(1/15);
+    catch
+    end
+end
+
+
+
+

@@ -1,4 +1,4 @@
-function [lapFrInds] = findLaps(y)
+function [lapFrInds, lapEpochs] = findLaps(y)
 
 %% USAGE: 
 % Clay 2018
@@ -8,6 +8,7 @@ function [lapFrInds] = findLaps(y)
 %
 % outputs:
 % lapFrInds = frame indices of treadmill lap crossings
+% lapEpochs = start and end frames of each lap
 
 y = y/max(y);
 
@@ -15,6 +16,12 @@ y = y/max(y);
 
 % use matlab builtin findpeaks to see when mouse reaches end of belt
 [pks, lapFrInds] = findpeaks(y, 'MinPeakProminence', 0.8); % , 'MinPeakDistance', 100);
+
+lapEpochs = [1 lapFrInds(1)-1];
+for i = 2:length(lapFrInds)
+lapEpochs(i,:) = [lapFrInds(i-1) lapFrInds(i)-1];
+end
+lapEpochs(length(lapFrInds)+1,:) = [lapFrInds(end) length(y)];
 
 
 % plot to check
