@@ -1,4 +1,4 @@
-function [Y2, badFrStart] = fix2pLines(); %, tag)
+function [Y2, badFrStart] = fix2pLines(varargin); %, tag)
 
 % Clay 2018
 % This is an attempt to fix some 2p acquisition sessions where
@@ -25,10 +25,13 @@ function [Y2, badFrStart] = fix2pLines(); %, tag)
 % end
 tic;
 
-filename = uigetfile('*.h5', 'Select raw .h5 data to fix scan lines');
-[Y, Ysiz, filename] = h5readClay(1,0,filename);
-
-Y = permute(Y,[2 1 3]); % now should look like original imaging frame
+if nargin == 0
+    filename = uigetfile('*.h5', 'Select raw .h5 data to fix scan lines');
+    [Y, Ysiz, filename] = h5readClay(1,0,filename);
+    Y = permute(Y,[2 1 3]); % now should look like original imaging frame
+else
+    Y = varargin{1};
+end
 
 % find start of bad section by big discontinuity in middle of frame (faster
 % than computing frame xcorr for all)
