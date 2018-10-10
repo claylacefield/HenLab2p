@@ -20,13 +20,18 @@ pos = treadBehStruc.resampY(1:2:end)'; % extract position data
 
 [lapFrInds, lapEpochs] = findLaps(pos); % find laps (uses pos pks, not RFID)
 
+
+frTimes = treadBehStruc.adjFrTimes(1:2:end);
+
 % strip out laps of a type
-pos1 = [];pos2 = [];
+pos1 = [];pos2 = []; pos_times1 = []; pos_times2 = [];
 for i = 1:length(lapFrInds)+1
     if mod(i,5)~=0
         pos1 = [pos1; pos(lapEpochs(i,1):lapEpochs(i,2))];
+        pos_times1 = [pos_times1 frTimes(lapEpochs(i,1):lapEpochs(i,2))];
     else
         pos2 = [pos2; pos(lapEpochs(i,1):lapEpochs(i,2))];
+        pos_times2 = [pos_times2 frTimes(lapEpochs(i,1):lapEpochs(i,2))];
     end
 end
 
@@ -34,24 +39,29 @@ end
 % NOTE: I thought about just NaNing switch laps which would be easier in
 % many ways, but might not be ideal in the end (e.g. when predicting switch
 % laps)
-%pksCell1 = {};
+pksCell1 = {};
 for i = 1:length(pksCell)
-    selPks = [];
-    spks = pksCell{i};
+    selPks = []; newSpkInds = [];
+    spkInds = pksCell{i}; % NOTE this is w.re. to indices in orig array
+    spkTimes = frTimes(spkInds);
     for j = 1:size(lapEpochs,1)
-    if mod(j,5)~=0
-        try
-        selPks = [selPks spks(find(spks>=lapEpochs(j,1) & spks<=lapEpochs(j,2)))];
-        catch
+        if mod(j,5)~=0
+            try
+                selPks = [selPks spkTimes(find(spkInds>=lapEpochs(j,1) & spkInds<=lapEpochs(j,2)))];
+            catch
+            end
+            
         end
-        
     end
+    
+    for k = 1:length(selPks)
+       newSpkInds(k) = find(pos_times1==selPks(k)); 
     end
-    pksCell1{i} = selPks;
+    pksCell1{i} = newSpkInds;
+    %clear newSpkInds;
 end
 
 
-frTimes = treadBehStruc.adjFrTimes(1:2:end);
 pos_times1 = frTimes(1:length(pos1)); % just create pseudo-frTimes length of lap subset
 
 [spike_times, pos, pos_times] = preFormatForDecoding(pksCell1, treadBehStruc, pos1, pos_times1);

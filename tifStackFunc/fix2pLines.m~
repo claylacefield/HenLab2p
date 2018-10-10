@@ -53,7 +53,7 @@ disp('Fixing x axis scan line shift');
 %shift = 215; %86;
 
 %xShift = shift;  % number of pixels to shift scan lines
-%yShift = shift;   % number of pixels to fix Y (BUT note that the lines collected at the end may be from next frame)
+yShift = shift;   % number of pixels to fix Y (BUT note that the lines collected at the end may be from next frame)
 
 Y2 = zeros(size(Y,1), size(Y,2)+xShift, size(Y,3), 'uint16');
 
@@ -88,8 +88,6 @@ imagesc(mean(Y2,3));
 title(['scan lines adj by ' num2str(xShift) ' px']);
 
 %% trim x borders
-% NOTE: may be able to rescue some data from edges because it seems some
-% recopying of data at 
 
 disp('Trimming x borders');
 
@@ -106,18 +104,14 @@ title('trim x axis');
 
 disp('Fixing Y axis discontinuity');
 
-% need to make this automatic but manual for now
-%yShift = 215; %100;
-
-% auto
 avYax = mean(mean(Y2,3),2);
-[val, yShift] = max([0; diff(avYax)]);
+
+yShift = 215; %100;
 
 %Y2 = [Y2(size(Y2,1)-yShift:end,:,:); Y2(1:size(Y2,1)-yShift,:,:)];
 % NOTE: to save memory, need to do this frame by frame I think
 for fr = 1:size(Y2,3)
-    Y2(:,:,fr) = [Y2(yShift:end,:,fr); Y2(1:yShift-1,:,fr)];
-    %Y2(:,:,fr) = [Y2(size(Y2,1)-yShift:end,:,fr); Y2(1:size(Y2,1)-yShift-1,:,fr)];
+    Y2(:,:,fr) = [Y2(size(Y2,1)-yShift:end,:,fr); Y2(1:size(Y2,1)-yShift-1,:,fr)];
 end
 
 %clear Y2;

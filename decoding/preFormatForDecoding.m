@@ -4,9 +4,9 @@ function [spike_times, pos, pos_times] = preFormatForDecoding(pksCell, treadBehS
 % Pre-format data for Kording decoding examples
 % Clay Oct. 2018
 
-if nargin==1
+if nargin==3
     pos = varargin{1}; % e.g. for pos with nonmov. NaNs
-elseif nargin == 2
+elseif nargin == 4
     pos = varargin{1}; % e.g. for pos from only certain laps
     pos_times = varargin{2};
 else
