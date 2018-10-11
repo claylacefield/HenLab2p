@@ -43,7 +43,7 @@ dMid = abs(dMid-mean(dMid));
 [val, badFrStart] = max(dMid);
 %figure; plot(dMid);
 
-Yinit = Y(:,:,1:badFrStart-10);
+Yinit = Y(:,:,1:badFrStart-1);
 
 Ybad = Y(:,:,badFrStart:end);
 avBadFr = mean(Ybad,3);
@@ -52,13 +52,16 @@ avBadFrY = mean(avBadFr,2);
 
 % find bright point to use for shift
 [val, maxYind] = max(avBadFrY);
-xShift = round(avBadFrY(maxYind) - avBadFrY(maxYind+1));
+%xShift = round(avBadFrY(maxYind) - avBadFrY(maxYind+1));
 
 xc = xcorr(avBadFr(maxYind,:), avBadFr(maxYind+1,:));
 %figure; plot(xc);
 [val, maxShift] = max(xc);
 xShift = round(length(xc)/2 - abs(maxShift))+4;
 
+if mod(xShift,2)==1
+    xShift = xShift+1; % just make an even number to make other stuff easier
+end
 
 %% fix X line shift
 
@@ -70,9 +73,10 @@ disp('Fixing x axis scan line shift');
 %yShift = shift;   % number of pixels to fix Y (BUT note that the lines collected at the end may be from next frame)
 
 Y2 = zeros(size(Y,1), size(Y,2)+xShift, size(Y,3), 'uint16');
+Y2(:,xShift/2:end-xShift/2-1,1:badFrStart-1) = Yinit;
 
 %tic;
-for t = badFrStart+1:size(Y,3)
+for t = badFrStart:size(Y,3)
     for y = 1:size(Y,1)
         % even to the left of odd lines
         
@@ -98,7 +102,7 @@ title('mean of bad frames');
 
 
 subplot(3,2,3);
-imagesc(mean(Y2,3));
+imagesc(mean(Y2(:,:,badFrStart:end),3));
 title(['scan lines adj by ' num2str(xShift) ' px']);
 
 %% trim x borders
@@ -112,7 +116,7 @@ Y2 = Y2(:,xShift:size(Y2,2)-xShift,:); % trim line borders
 %clear Y3;
 
 subplot(3,2,4);
-imagesc(mean(Y2,3));
+imagesc(mean(Y2(:,:,badFrStart:end),3));
 title('trim x axis');
 
 %% fix Y discontinuity
@@ -129,7 +133,7 @@ avYax = mean(mean(Y2,3),2);
 
 %Y2 = [Y2(size(Y2,1)-yShift:end,:,:); Y2(1:size(Y2,1)-yShift,:,:)];
 % NOTE: to save memory, need to do this frame by frame I think
-for fr = 1:size(Y2,3)
+for fr = badFrStart:size(Y2,3)
     Y2(:,:,fr) = [Y2(yShift:end,:,fr); Y2(1:yShift-1,:,fr)];
     %Y2(:,:,fr) = [Y2(size(Y2,1)-yShift:end,:,fr); Y2(1:size(Y2,1)-yShift-1,:,fr)];
 end
@@ -137,7 +141,7 @@ end
 %clear Y2;
 
 subplot(3,2,5);
-imagesc(mean(Y2,3));
+imagesc(mean(Y2(:,:,badFrStart:end),3));
 title(['Y discont corr (' num2str(yShift) ' pix)']);
 
 toc;

@@ -113,7 +113,7 @@ toc;
 
 %% trim if necessary
 try
-    if size(Y,1)>510
+    if size(Y,1)>512 %510
         [Y, trimYX] = trim2pStack(Y);
     else
         trimYX = 0;
@@ -123,7 +123,7 @@ catch
 end
 
 disp('Saving Calcium channel avg tif');
-avCh2 = squeeze(nanmean(Y,3));    % avg green channel
+avCh2 = squeeze(nanmean(Y,3))';    % avg green channel
 imwrite(double(avCh2/max(avCh2(:))), [basename '_avCaCh.tif']); % save tif
 
 %% filter stack

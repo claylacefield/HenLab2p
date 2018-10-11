@@ -113,7 +113,7 @@ toc;
 
 %% trim if necessary
 try
-    if size(Y,1)>510
+    if size(Y,1)>512 %510
         [Y, trimYX] = trim2pStack(Y);
     else
         trimYX = 0;
