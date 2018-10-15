@@ -26,7 +26,8 @@ function [Y2, badFrStart] = fix2pLines(varargin); %, tag)
 tic;
 
 if nargin == 0
-    filename = uigetfile('*.h5', 'Select raw .h5 data to fix scan lines');
+    [filename, path] = uigetfile('*.h5', 'Select raw .h5 data to fix scan lines');
+    cd(path);
     [Y, Ysiz, filename] = h5readClay(1,0,filename);
     Y = permute(Y,[2 1 3]); % now should look like original imaging frame
 else

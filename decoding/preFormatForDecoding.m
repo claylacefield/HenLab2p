@@ -16,13 +16,21 @@ end
 
 spike_times = pksCell'; % should be #cells x 1
 
-
+% transpose pksCell/spike_times if necessary (not cell array, but the
+% sub-arrays), also turn spike indices in pksCell into spike times
+j=0;
 for i = 1:length(spike_times)
     spkTimes = pos_times(spike_times{i});
     if size(spike_times{1},1)>size(spike_times{2})
         spkTimes = spkTimes';
     end
-    spike_times{i} = spkTimes';
+    
+    % and throw out units with few spikes before halftime (because that's
+    % what decoder uses for training)
+    if length(find(spkTimes<pos_times(end)/2))>2
+        j=j+1;
+        spike_times{j} = spkTimes';
+    end
 end
 
 % pos = treadBehStruc.resampY(1:2:end)'; % should be #fr x 2 (code is set up for X,Y so just double belt pos)

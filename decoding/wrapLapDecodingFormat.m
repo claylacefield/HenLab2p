@@ -39,7 +39,7 @@ end
 % NOTE: I thought about just NaNing switch laps which would be easier in
 % many ways, but might not be ideal in the end (e.g. when predicting switch
 % laps)
-pksCell1 = {};
+pksCell1 = {}; n =0;
 for i = 1:length(pksCell)
     selPks = []; newSpkInds = [];
     spkInds = pksCell{i}; % NOTE this is w.re. to indices in orig array
@@ -57,7 +57,11 @@ for i = 1:length(pksCell)
     for k = 1:length(selPks)
        newSpkInds(k) = find(pos_times1==selPks(k)); 
     end
-    pksCell1{i} = newSpkInds;
+    
+    if ~isempty(selPks)
+        n = n+1;
+    pksCell1{n} = newSpkInds;
+    end
     %clear newSpkInds;
 end
 
