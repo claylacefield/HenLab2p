@@ -19,9 +19,9 @@ for i = 1:length(pos)
     try
         cla;
     rectangle('Position', [0,0,2200,100]);
-    rectangle('Position', [pos(i)-25-min(pos),0,50,100], 'FaceColor', 'b');
+    rectangle('Position', [min(pos)pos(i)-25,0,50,100], 'FaceColor', 'b');
     if nargin==2
-        rectangle('Position', [pos2(i)-10-min(pos),0,20,100], 'FaceColor', 'r');
+        rectangle('Position', [pos2(i)-10,0,20,100], 'FaceColor', 'r');
     end
     pause(1/15);
     catch
