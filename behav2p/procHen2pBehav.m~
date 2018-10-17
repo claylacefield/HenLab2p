@@ -51,7 +51,6 @@ treadBehStruc.yTimes = yTimes2; % and the times of TDML position from this epoch
 treadBehStruc.resampY = resampY; % NOTE that times will be = adjFrTimes
 treadBehStruc.vel = vel*30; % units now mm/sec
 
-% save 
-xmlName = findLatestFilename('.xml');
-basename = xmlName(1:strfind(xmlName,'.xml')-1);
-save([basename '_treadBehStruc_' date], 'treadBehStruc');
+% save
+currDir = dir;
+if ~strmatch('treadBehStruc')
