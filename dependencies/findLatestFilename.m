@@ -16,9 +16,14 @@ fileTypeInd = find(cellfun(@length, strfind(dirFilenames, fileTag)));
 %                 segInd = intersect(segInd, filterInd);
 %             end
 
+if ~isempty(fileTypeInd)
+
 % find the latest file index
 fileDatenums = [currDir(fileTypeInd).datenum];
 [maxDatenum, latestInd] = max(fileDatenums);
 latestDirInd = fileTypeInd(latestInd);
 
 filename = currDir(latestDirInd).name;
+else
+    filename = [];
+end
