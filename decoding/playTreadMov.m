@@ -10,7 +10,15 @@ end
 
 
 
-figure('pos', [50,50,2400,200]);
+figure('pos', [50,50,2400,400]);
+subplot(2,1,1);
+plot(pos);
+hold on;
+if nargin==2
+plot(pos2, 'r');
+end
+
+subplot(2,1,2);
 xlim([0 2200]);
 rectangle('Position', [0,0,2200,100]);
 hold on;

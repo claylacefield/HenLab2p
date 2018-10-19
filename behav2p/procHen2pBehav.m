@@ -13,6 +13,11 @@ switch nargin
         
         % find 2p frame times
         [relFrTimes, absFrTimes, frInds] = get2pFrTimes('auto');
+    case 2 % if two inputs, then 'auto' and cue task
+         % read behavioral events and times
+        [treadBehStruc] = readTDML_cueShift('auto');
+        % find 2p frame times
+        [relFrTimes, absFrTimes, frInds] = get2pFrTimes('auto');
     otherwise
         % read behavioral events and times
         [treadBehStruc] = readTDML();
@@ -54,4 +59,4 @@ treadBehStruc.vel = vel*30; % units now mm/sec
 % save 
 xmlName = findLatestFilename('.xml');
 basename = xmlName(1:strfind(xmlName,'.xml')-1);
-save([basename '_treadBehStruc_' date], 'treadBehStruc');
+save([basename '_treadBehStruc_' date '.mat'], 'treadBehStruc');
