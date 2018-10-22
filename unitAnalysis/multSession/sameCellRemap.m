@@ -208,7 +208,7 @@ colormap jet;
 for i = 1:size(cellsInAll,1)
     for j = 1:length(multSessSegStruc)
         placeCellAllGoodSegInd(i,j) = find(multSessSegStruc(j).goodSeg == cellsInAll(i,j));
-        posRatesCell{i,j} = multSessSegStruc(j).outPC.posRates(placeCellAllGoodSegInd(i,j),:);
+        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAllGoodSegInd(i,j),:);
     end
 end
 
