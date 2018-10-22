@@ -26,12 +26,9 @@ meanRunVel = edges(meanRunVelInd)+round((edges(meanRunVelInd+1)-edges(meanRunVel
 runVelThresh = edges(runVelThreshInd);
 
 if toPlot
-    figure;
-    plot(edges(1:end-1), numVals);
-    hold on;
-    line([edges(runVelThreshInd) edges(runVelThreshInd)], [0 max(numVals)], 'Color', 'r');
-    line([edges(meanRunVelInd) edges(meanRunVelInd)], [0 max(numVals)], 'Color', 'g');
-    xlabel('velocity (mm/sec)');
-end
+figure;
+plot(numVals);
+hold on;
+line([runVelThresh runVelThresh], [
 
 %toc;

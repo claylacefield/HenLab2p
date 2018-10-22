@@ -13,7 +13,7 @@ numBins = 100;
 try
 load(findLatestFilename('treadBehStruc'));
 catch
-    [treadBehStruc] = procHen2pBehav();
+    [treadBehStruc] = procHen2pBehav('auto');
 end
 
 % if input is cell array of peaks, make matrix

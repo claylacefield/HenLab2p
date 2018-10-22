@@ -30,7 +30,7 @@ catch
     behCell = importdata(filename);
 end
 
-disp(['Processing treadmill behavior data from: ' filename]);
+disp(['Processing treadmill behavior data (cue shift task) from: ' filename]);
 
 treadBehStruc.tdmlName = filename;
 

@@ -1,4 +1,4 @@
-function [lickLap] = lickByLap(treadBehStruc);
+function [lickLap] = lickByLap(treadBehStruc, toPlot);
 
 %% USAGE: [lickLap] = lickByLap(treadBehStruc);
 
@@ -28,8 +28,10 @@ for i = 1:length(lapFrInds)-1
     %end
 end
 
+if toPlot
 figure; 
 imagesc(lickLap);
 title(treadBehStruc.tdmlName);
 ylabel('lap');
 xlabel('position');
+end
