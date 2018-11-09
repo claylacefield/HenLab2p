@@ -1,4 +1,4 @@
-function wrapCueTaskTuning(varargin)
+function wrapCueTaskTuning()
 
 
 %% USAGE: wrapCueTaskTuning();
@@ -6,17 +6,12 @@ function wrapCueTaskTuning(varargin)
 % For a given cue task folder, plot the place cell tuning for normal cue
 % and cue shift laps (but needs to have goodSeg already chosen)
 
-
+if nargin
 
 load(findLatestFilename('_goodSeg_'));
 
 [treadBehStruc] = procHen2pBehav('auto', 'cue');
 
-if nargin>0
-    unitTuningStruc = varargin{1};
-else
-    [unitTuningStruc] = wrapTuningNewClay(pksCell(goodSeg), 15, 1, 0);
-end
-
+[unitTuningStruc] = wrapTuningNewClay(pksCell(goodSeg), 15, 1, 0);
 
 plotLapTypeTuning(unitTuningStruc, treadBehStruc, goodSeg, 1, 3);
