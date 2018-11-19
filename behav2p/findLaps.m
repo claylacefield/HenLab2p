@@ -15,7 +15,7 @@ y = y/max(y);
 %dy = diff(y);
 
 % use matlab builtin findpeaks to see when mouse reaches end of belt
-[pks, lapFrInds] = findpeaks(y, 'MinPeakProminence', 0.8); % , 'MinPeakDistance', 100);
+[pks, lapFrInds] = findpeaks(y, 'MinPeakProminence', 0.8, 'MinPeakDistance', 100);
 
 lapEpochs = [1 lapFrInds(1)-1];
 for i = 2:length(lapFrInds)
