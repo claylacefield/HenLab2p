@@ -31,7 +31,7 @@ treadBehStruc.tdmlName = filename;
 % initialize variables
 time = [];
 y = [];
-yTimes = [];
+yTimes = []; yTimeNano = [];
 lickTime = [];
 lickPos = [];
 lapTime = [];
@@ -69,7 +69,9 @@ for i=1:length(behCell)
             currY = str2num(rowStr(yInd+5:timeInd-2));
             y = [y currY];
             yTimes = [yTimes currTime];
-            
+            millisInd = strfind(rowStr, '"millis"');
+            millis = str2num(rowStr(millisInd+9:yInd-3));
+            yTimeNano = [yTimeNano millis];
         end
         
         % lick time/pos
@@ -137,6 +139,7 @@ treadBehStruc.y = y;
 treadBehStruc.yTimes = yTimes;
 % treadBehStruc.resampY = resampY;
 % treadBehStruc.vel = vel;
+treadBehStruc.yTimeNano = yTimeNano;
 
 treadBehStruc.lickTime = lickTime;
 treadBehStruc.lickPos = lickPos;

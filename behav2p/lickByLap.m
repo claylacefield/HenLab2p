@@ -2,9 +2,9 @@ function [lickLap] = lickByLap(treadBehStruc, toPlot);
 
 %% USAGE: [lickLap] = lickByLap(treadBehStruc);
 
-y = treadBehStruc.resampY;
+y = treadBehStruc.resampY(1:2:end);
 [lapFrInds] = findLaps(y);
-frTimes = treadBehStruc.adjFrTimes;
+frTimes = treadBehStruc.adjFrTimes(1:2:end);
 
 lickTimes = treadBehStruc.lickTime;
 [lickInds] = findNearestFr(lickTimes, frTimes);

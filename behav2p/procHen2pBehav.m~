@@ -38,9 +38,9 @@ treadBehStruc.adjFrTimes = adjFrTimes;
 %% resample y position to frame times and calculate velocity over each frame (at 30hz)
 y = treadBehStruc.y;
 yTimes = treadBehStruc.yTimes;
-yTimeNano = treadBehStruc.yTimeNano; % in msec
+yTimeNano = treadBehStruc.yTimeNano;
 
-yTimes = (yTimeNano-yTimeNano(1))/1000+yTimes(1);
+yTimes = yTimesNano-yTimesNano(1)+
 
 % only take position data from same period as images (but times themselves
 % are unchanged)

@@ -80,8 +80,8 @@ for i=1:length(behCell)
             y = [y currY];
             yTimes = [yTimes currTime];
             millisInd = strfind(rowStr, '"millis"');
-            millis = str2num(rowStr(millisInd+9:yInd-3));
-            yTimeNano = [yTimeNano millis];
+            millis = str2num(rowStr(millisInd+2:yInd-3));
+            yTimeNano = [yTimeNano ];
         end
         
         % lick time/pos
@@ -168,7 +168,6 @@ treadBehStruc.y = y;
 treadBehStruc.yTimes = yTimes;
 % treadBehStruc.resampY = resampY;
 % treadBehStruc.vel = vel;
-treadBehStruc.yTimeNano = yTimeNano;
 
 treadBehStruc.lickTime = lickTime;
 treadBehStruc.lickPos = lickPos;
