@@ -37,10 +37,20 @@ treadBehStruc.adjFrTimes = adjFrTimes;
 
 %% resample y position to frame times and calculate velocity over each frame (at 30hz)
 y = treadBehStruc.y;
-yTimes = treadBehStruc.yTimes;
-yTimeNano = treadBehStruc.yTimeNano; % in msec
+% yTimes = treadBehStruc.yTimes;
+% yTimeNano = treadBehStruc.yTimeNano; % in msec
+% yTimes = (yTimeNano-yTimeNano(1))/1000+yTimes(1);
 
-yTimes = (yTimeNano-yTimeNano(1))/1000+yTimes(1);
+% as of 112418 using pos times adjusted based upon rotary encoder nano
+% millis(), because sometimes beMate position readings come in late (i.e.
+% serial is logged later than actually occurs due to processor/serial
+% loading). This is adjusted in readTDML scripts (but should probably be
+% here instead?)
+yTimes = treadBehStruc.yTimesAdj; 
+
+% and also, fix position (for discontinuities and other problems around lap
+% boundaries)
+y = fixPos(y);
 
 % only take position data from same period as images (but times themselves
 % are unchanged)

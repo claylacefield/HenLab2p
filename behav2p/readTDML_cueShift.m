@@ -168,7 +168,17 @@ treadBehStruc.y = y;
 treadBehStruc.yTimes = yTimes;
 % treadBehStruc.resampY = resampY;
 % treadBehStruc.vel = vel;
+
 treadBehStruc.yTimeNano = yTimeNano;
+
+% adjust nano time based upon start computer time
+% and adjust yTimes based upon diff between nano and beMate
+yTimeNano = (yTimeNano-yTimeNano(1))/1000+yTimes(1);
+dTimes = yTimes-yTimeNano;
+dTimes = dTimes-runmean(dTimes, 200); 
+yTimes2 = yTimes;
+yTimes2(dTimes>0.02) = yTimes(dTimes>0.02)-dTimes(dTimes>0.02);
+treadBehStruc.yTimesAdj = yTimes2;
 
 treadBehStruc.lickTime = lickTime;
 treadBehStruc.lickPos = lickPos;

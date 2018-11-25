@@ -12,6 +12,8 @@ function [pksCell1, posLap1, pksCell2, posLap2, lapFrInds] = sepCueShiftLapSpkTi
 
 
 pos = treadBehStruc.resampY(1:2:end);
+%pos2 = pos;
+%pos2(pos2>2000)=pos2(pos2>2000)-2000;
 [lapFrInds] = findLaps(pos);
 
 pksCellGood = pksCell(goodSeg);

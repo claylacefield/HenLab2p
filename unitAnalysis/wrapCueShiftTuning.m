@@ -1,4 +1,4 @@
-function wrapCueShiftTuning(pksCell, goodSeg, treadBehStruc)
+function wrapCueShiftTuning(); %pksCell, goodSeg, treadBehStruc)
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -15,6 +15,9 @@ function wrapCueShiftTuning(pksCell, goodSeg, treadBehStruc)
 % downSamp = round(length(resampY)/totalFrames);  % find downsample rate
 % treadPos = resampY(1:downSamp:end); % downsample position vector
 % treadPos = treadPos/max(treadPos);  % normalize position vector
+
+load(findLatestFilename('_goodSeg_')); 
+load(findLatestFilename('treadBehStruc')); 
 
 %% format other stuff
 T = treadBehStruc.adjFrTimes(1:2:end);
