@@ -12,16 +12,16 @@ function [lapFrInds, lapEpochs] = findLaps(y)
 
 y = y/max(y);
 
-%dy = diff(y);
+dy = [diff(y) 0];
 
 % use matlab builtin findpeaks to see when mouse reaches end of belt
-[pks, lapFrInds] = findpeaks(y, 'MinPeakProminence', 0.8, 'MinPeakDistance', 100);
+[pks, lapFrInds] = findpeaks(-dy, 'MinPeakHeight', 0.5, 'MinPeakDistance', 100);
 
-lapEpochs = [1 lapFrInds(1)-1];
+lapEpochs = [1 lapFrInds(1)];
 for i = 2:length(lapFrInds)
-lapEpochs(i,:) = [lapFrInds(i-1) lapFrInds(i)-1];
+lapEpochs(i,:) = [lapFrInds(i-1)+1 lapFrInds(i)];
 end
-lapEpochs(length(lapFrInds)+1,:) = [lapFrInds(end) length(y)];
+lapEpochs(length(lapFrInds)+1,:) = [lapFrInds(end)+1 length(y)];
 
 
 % plot to check

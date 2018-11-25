@@ -59,6 +59,11 @@ y2 = y(frEpochInds);
 yTimes2 = yTimes(frEpochInds);
 
 resampY = interp1(yTimes2, y2, adjFrTimes); % THIS IS REALLY THE POSITION OUTPUT YOU WANT
+
+% now fix resamples at lap boundaries
+resampY = fixResampY(resampY);
+
+% calc velocity
 vel = abs(diff(resampY)); % units are mm/frame
 vel = [vel vel(end)];  % just repeat last vel to make same length as fr
 
