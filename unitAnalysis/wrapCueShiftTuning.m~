@@ -19,14 +19,13 @@ function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 load(findLatestFilename('_goodSeg_')); 
 
 if nargin==1
-    if ischar(varargin{1})
-        load(findLatestFilename('treadBehStruc'));
+    if isstr(varargin{1})
+        
     else
-        treadBehStruc = varargin{1};
+        
     end
 else
-    treadName = uigetfile('*.mat', 'Select treadBehStruc');
-    load(treadName);
+load(findLatestFilename('treadBehStruc')); 
 end
 
 %% format other stuff
