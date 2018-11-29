@@ -1,4 +1,4 @@
-function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
+function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -16,7 +16,10 @@ function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 % treadPos = resampY(1:downSamp:end); % downsample position vector
 % treadPos = treadPos/max(treadPos);  % normalize position vector
 
-load(findLatestFilename('_goodSeg_')); 
+filename = findLatestFilename('_goodSeg_');
+load(filename); 
+
+disp(['Calculating cue shift tuning for ' filename]);
 
 if nargin==1
     if ischar(varargin{1})
@@ -54,6 +57,12 @@ disp('Calc lapType2 tuning'); tic;
 spikes = C2; treadPos = posLap2;
 PCLappedSess2 = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLap2)), shuffN);
 toc;
+
+cueShiftStruc.PCLappedSess1 = PCLappedSess1;
+cueShiftStruc.PCLappedSess2 = PCLappedSess2;
+
+cueShiftStruc.pksCell1=pksCell1; cueShiftStruc.posLap1=posLap1; 
+cueShiftStruc.pksCell2=pksCell2; cueShiftStruc.posLap2=posLap2; cueShiftStruc.lapFrInds=lapFrInds;
 
 pc = find(PCLappedSess1.Shuff.isPC==1);
 posRates1 = PCLappedSess1.posRates(pc,:);
