@@ -55,7 +55,7 @@ rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 
 tic;
 for i=1:length(behCell)
-    rowStr = behCell{i}; % load in the string for this event
+    rowStr = behCell{i}; % load in the string for this eventd
     
     
     % sync pin (2p trigger ON)

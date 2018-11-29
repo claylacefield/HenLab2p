@@ -11,65 +11,36 @@ placeCellNoneOrigInd = sameCellTuningStruc.placeCellInNoneOrigInd ;
 placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
 
 
-
+posRatesCellByLap = {};
 posRatesCellByLap = {};
 posRatesCell={};
-cellsInAllGoodSegInd = {};
+cellsinAllGoodSegInd = {};
 pfInAllPos = {};
 for i = 1:size(cellsInAll,1)
     for j = 1:length(multSessSegStruc)
-        cellsInAllGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == cellsInAll(i,j));
-        posRatesCellByLap{i,j} = multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(cellsInAllGoodSegInd{i,j},:, :);
-        posRatesCellByLap{i,j} = squeeze(posRatesCellByLap{i,j})';
-        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(cellsInAllGoodSegInd{i,j},:);
-        pfInAllPos{i,j} = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{cellsInAllGoodSegInd{i,j}};
+        cellsinAllGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == cellsInAll(i,j));
     end
 end
 
-% then collect items within cell arrays into double across rows and columns
-% and get out of field bins
-pfInAllPos2 = {};
-pfOutAllPos = {};
-for i = 1:size(pfInAllPos,1)
-    for j = 1:size(pfInAllPos, 2)
-        pfInAllPos2{i, j}=[];
-        for ii = 1:length(pfInAllPos{i, j})
-            pfInAllPos2{i,j}=[pfInAllPos2{i,j}, pfInAllPos{i, j}{ii}];
-            pfOutAllPos{i,j} = setdiff([1:1:100],pfInAllPos2{i,j});
-        end
-    end
-end
+
 
 %look at within and out of PC firing (mean vs max), for now PC in all can do for
 %placeCellOrigInd for a table of PC properties,
-MeanposRatebyLapinPF = {};
-MeanposRatebyLapoutPF = {};
-PCwidth = {};
-COMbin = {};
+
 InfoPerSpkZ = {};%observed spatial information normalized by transient shuffle
 InfoPerSpkP = {}; %p value relative to transient shuffle
-for i = 1:size (pfInAllPos2, 1)
-    for j = 1:size (pfInAllPos2, 2)
-        MeanposRatebyLapinPF {i, j} = mean(mean(posRatesCellByLap{i,j}(:, pfInAllPos2{i,j}),2),1);
-        MeanposRatebyLapoutPF {i, j} = mean(mean(posRatesCellByLap{i,j}(:, pfOutAllPos{i,j}),2),1);
-        PCwidth {i, j} = 2*(length(pfInAllPos2{i,j}));
-        COMbin {i, j} = pfInAllPos2{i,j}(:, round(length(pfInAllPos2{i,j})/2));
-    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(cellsInAllGoodSegInd{i,j});
-        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(cellsInAllGoodSegInd{i,j});
+for i = 1:size (cellsInAll, 1)
+    for j = 1:size (cellsInAll, 2)
+        	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(cellsinAllGoodSegInd{i,j});
+        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(cellsinAllGoodSegInd{i,j});
 
     end
 end
 
 %% plotting across all datasets
 %first collect all 
-MeanposRatebyLapinPFcum = [];
-MeanposRatebyLapoutPFcum = [];
-PCwidthcum = []; COMbincum =[];
-InfoPerSpkZcum = []; InfoPerSpkPcum = [];
-MeanposRatebyLapinPFcum = [MeanposRatebyLapinPFcum; MeanposRatebyLapinPF];
-MeanposRatebyLapoutPFcum = [MeanposRatebyLapoutPFcum; MeanposRatebyLapoutPF];
-PCwidthcum = [PCwidthcum; PCwidth]; COMbincum =[COMbin; COMbin];
-InfoPerSpkZcum = [InfoPerSpkZcum; InfoPerSpkZ]; InfoPerSpkPcum = [InfoPerSpkPcum; InfoPerSpkP];
+%DiInfoPerSpkZcum = []; DiInfoPerSpkPcum = [];
+DiInfoPerSpkZcum = [DiInfoPerSpkZcum; InfoPerSpkZ]; DiInfoPerSpkPcum = [DiInfoPerSpkPcum; InfoPerSpkP];
 
 %% variability of firing for a cell within session
 posRateLapDiff = {};

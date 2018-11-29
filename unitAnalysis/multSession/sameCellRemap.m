@@ -156,16 +156,16 @@ for i = 1:size(posRatesCellAnyPC,1)
     for j = 1:size(posRatesCellAnyPC,2)
         rates = [rates; posRatesCellAnyPC{i,j}];
     end
-    [remapStrucSubsets.pcInAnyCoef{i}, remapStrucSubsets.pcInAnyPval{i}] = corrcoef(rates');
+    [remapStruc.pcInAnyCoef{i}, remapStruc.pcInAnyPval{i}] = corrcoef(rates');
 end
 
 A1A2=[]; A1B=[]; A2B=[];
-for i = 1:length(remapStrucSubsets.pcInAnyCoef)
-    A1A2 = [A1A2; remapStrucSubsets.pcInAnyCoef{i}(2)];
-    A1B = [A1B; remapStrucSubsets.pcInAnyCoef{i}(3)];
-    A2B = [A2B; remapStrucSubsets.pcInAnyCoef{i}(6)];
+for i = 1:length(remapStruc.pcInAnyCoef)
+    A1A2 = [A1A2; remapStruc.pcInAnyCoef{i}(2)];
+    A1B = [A1B; remapStruc.pcInAnyCoef{i}(3)];
+    A2B = [A2B; remapStruc.pcInAnyCoef{i}(6)];
 end
-remapStrucSubsets.PCAnyCorrCoeff121323 = [A1A2, A1B, A2B];
+remapStruc.PCAnyCorrCoeff121323 = [A1A2, A1B, A2B];
 
 %plot tunig sorted by sess2
 PCMatchedAny = {};% make a cell array of all posRates together
@@ -175,7 +175,7 @@ for i = 1:size(posRatesCellAnyPC, 2)
         PCMatchedAny{i} = [PCMatchedAny{i}; posRatesCellAnyPC{ii, i}];
     end
 end
-remapStrucSubsets.PCMatchedAny = [PCMatchedAny];
+remapStruc.PCMatchedAny = [PCMatchedAny];
 
 %sort second column and match 1 and 3 accordingly: 
 [~, s1] = nanmax(PCMatchedAny{2}, [], 2);

@@ -1,4 +1,4 @@
-function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
+function[wrapCueShiftTuningStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -19,13 +19,14 @@ function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 load(findLatestFilename('_goodSeg_')); 
 
 if nargin==1
-    if isstr(varargin{1})
-        
+    if ischar(varargin{1})
+        load(findLatestFilename('treadBehStruc'));
     else
-        
+        treadBehStruc = varargin{1};
     end
 else
-load(findLatestFilename('treadBehStruc')); 
+    treadName = uigetfile('*.mat', 'Select treadBehStruc');
+    load(treadName);
 end
 
 %% format other stuff
@@ -60,9 +61,10 @@ posRates1 = PCLappedSess1.posRates(pc,:);
 [newInd, oldInd] = sort(maxInd);
 sortInd = oldInd;
 posRates1 = posRates1(sortInd,:);
-
+wrapCueShiftTuningStruc.posRates1 = posRates1;
 posRates2 = PCLappedSess2.posRates(pc,:);
 posRates2 = posRates2(sortInd,:);
+wrapCueShiftTuningStruc.posRates2 = posRates1;
 
 figure('Position', [0 0 800 800]);
 subplot(2,2,1);

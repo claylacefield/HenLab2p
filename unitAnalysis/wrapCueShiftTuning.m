@@ -1,4 +1,4 @@
-function wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
+function [wrapCueShiftTuningStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -55,15 +55,18 @@ spikes = C2; treadPos = posLap2;
 PCLappedSess2 = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLap2)), shuffN);
 toc;
 
+wrapCueShiftTuningStruc.PCLappedSess1 = PCLappedSess1;
+wrapCueShiftTuningStruc.PCLappedSess2 = PCLappedSess2;
+
 pc = find(PCLappedSess1.Shuff.isPC==1);
 posRates1 = PCLappedSess1.posRates(pc,:);
 [maxVal, maxInd] = max(posRates1');
 [newInd, oldInd] = sort(maxInd);
 sortInd = oldInd;
 posRates1 = posRates1(sortInd,:);
-
 posRates2 = PCLappedSess2.posRates(pc,:);
 posRates2 = posRates2(sortInd,:);
+
 
 figure('Position', [0 0 800 800]);
 subplot(2,2,1);

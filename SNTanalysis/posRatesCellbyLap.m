@@ -14,15 +14,15 @@ placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
 posRatesCellByLap = {};
 posRatesCellByLap = {};
 posRatesCell={};
-placeCellAllGoodSegInd = {};
-pfInAllPos = {};
-for i = 1:size(placeCellAllOrigInd,1)
+placeCellAnyGoodSegInd = {};
+pfInAnyPos = {};
+for i = 1:size(placeCellAnyOrigInd,1)
     for j = 1:length(multSessSegStruc)
-        placeCellAllGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == placeCellAllOrigInd(i,j));
-        posRatesCellByLap{i,j} = multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(placeCellAllGoodSegInd{i,j},:, :);
+        placeCellAnyGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == placeCellAnyOrigInd(i,j));
+        posRatesCellByLap{i,j} = multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(placeCellAnyGoodSegInd{i,j},:, :);
         posRatesCellByLap{i,j} = squeeze(posRatesCellByLap{i,j})';
-        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAllGoodSegInd{i,j},:);
-        pfInAllPos{i,j} = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{placeCellAllGoodSegInd{i,j}};
+        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAnyGoodSegInd{i,j},:);
+        pfInAnyPos{i,j} = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{placeCellAnyGoodSegInd{i,j}};
     end
 end
 
@@ -30,12 +30,12 @@ end
 % and get out of field bins
 pfInAllPos2 = {};
 pfOutAllPos = {};
-for i = 1:size(pfInAllPos,1)
-    for j = 1:size(pfInAllPos, 2)
+for i = 1:size(pfInAnyPos,1)
+    for j = 1:size(pfInAnyPos, 2)
         pfInAllPos2{i, j}=[];
-        for ii = 1:length(pfInAllPos{i, j})
-            pfInAllPos2{i,j}=[pfInAllPos2{i,j}, pfInAllPos{i, j}{ii}];
-            pfOutAllPos{i,j} = setdiff([1:1:100],pfInAllPos2{i,j});
+        for ii = 1:length(pfInAnyPos{i, j})
+            pfInAllPos2{i,j}=[pfInAllPos2{i,j}, pfInAnyPos{i, j}{ii}];
+            pfOutAllPos{i,j} = setdiff([1:100],pfInAllPos2{i,j});
         end
     end
 end
@@ -47,15 +47,19 @@ MeanposRatebyLapoutPF = {};
 PCwidth = {};
 COMbin = {};
 InfoPerSpkZ = {};%observed spatial information normalized by transient shuffle
-InfoPerSpkP = {}; %p value relative to transient shuffle
+InfoPerSpkP = {}; %p value relative to transient shuffle;egs
+circbin = 1:100;
+circbin = ((circbin - 1)/99)*2*pi() - pi(); 
 for i = 1:size (pfInAllPos2, 1)
     for j = 1:size (pfInAllPos2, 2)
-        MeanposRatebyLapinPF {i, j} = mean(mean(posRatesCellByLap{i,j}(:, pfInAllPos2{i,j}),2),1);
-        MeanposRatebyLapoutPF {i, j} = mean(mean(posRatesCellByLap{i,j}(:, pfOutAllPos{i,j}),2),1);
+        MeanposRatebyLapinPF {i, j} = mean(nanmean(posRatesCellByLap{i,j}(:, pfInAllPos2{i,j}),2),1);
+        MeanposRatebyLapoutPF {i, j} = mean(nanmean(posRatesCellByLap{i,j}(:, pfOutAllPos{i,j}),2),1);
         PCwidth {i, j} = 2*(length(pfInAllPos2{i,j}));
-        COMbin {i, j} = pfInAllPos2{i,j}(:, round(length(pfInAllPos2{i,j})/2));
-    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(placeCellAllGoodSegInd{i,j});
-        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(placeCellAllGoodSegInd{i,j});
+        posRatesIn = posRatesCell{i,j};
+        c = circ_mean(circbin, posRatesIn, 2);
+        COMbin {i, j} = round(((c + pi())/(2*pi()))*99 + 1);
+    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(placeCellAnyGoodSegInd{i,j});
+        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(placeCellAnyGoodSegInd{i,j});
 
     end
 end
@@ -66,10 +70,53 @@ MeanposRatebyLapinPFcum = [];
 MeanposRatebyLapoutPFcum = [];
 PCwidthcum = []; COMbincum =[];
 InfoPerSpkZcum = []; InfoPerSpkPcum = [];
+
 MeanposRatebyLapinPFcum = [MeanposRatebyLapinPFcum; MeanposRatebyLapinPF];
 MeanposRatebyLapoutPFcum = [MeanposRatebyLapoutPFcum; MeanposRatebyLapoutPF];
-PCwidthcum = [PCwidthcum; PCwidth]; COMbincum =[COMbin; COMbin];
+PCwidthcum = [PCwidthcum; PCwidth]; COMbincum =[COMbincum; COMbin];
 InfoPerSpkZcum = [InfoPerSpkZcum; InfoPerSpkZ]; InfoPerSpkPcum = [InfoPerSpkPcum; InfoPerSpkP];
+
+
+%% for all the PCsin three sessions
+multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
+placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
+cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
+placeCellAllOrigInd = sameCellTuningStruc.placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
+placeCellNoneOrigInd = sameCellTuningStruc.placeCellInNoneOrigInd ;
+placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
+
+pfInAllPos = {}; pcGoodSegInd = {}; pfOutAllPos = {}; MeanposRatebyLapinPF = {};
+MeanposRatebyLapoutPF = {}; PCwidth = {}; InfoPerSpkZ = {}; InfoPerSpkP = {};
+posRateCOMs = {};
+for j = 1:3
+    isPC = find(multSessSegStruc(j).PCLapSess.Shuff.isPC);
+    pcGoodSegInd{j} = isPC;
+    pfInAllPos{j} = {};
+    posRateCOMs{j} = [];
+    circbin = 1:100;
+    circbin = ((circbin - 1)/99)*2*pi() - pi();
+    for i = 1:length(isPC)
+        inPF = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{isPC(i)};
+        
+        posRatesIn = multSessSegStruc(j).PCLapSess.posRates(isPC(i), :);
+        c = circ_mean(circbin, posRatesIn, 2);
+        posRateCOMs{j}(i) = round(((c + pi())/(2*pi()))*99 + 1);
+        
+        pfInAllPos{j}{i} = [];
+        for ii = 1:length(inPF)
+            pfInAllPos{j}{i} = [pfInAllPos{j}{i}, inPF{ii}];
+            pfOutAllPos{j}{i} = setdiff([1:100],pfInAllPos{j}{i});
+            MeanposRatebyLapinPF{j}{i} = nanmean(multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(pcGoodSegInd{j}(i), pfInAllPos{j}{i}, :), 2);
+            MeanposRatebyLapinPF{j}{i} = mean(squeeze (MeanposRatebyLapinPF{j}{i}),1);
+            MeanposRatebyLapoutPF{j}{i} = nanmean(multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(pcGoodSegInd{j}(i), pfOutAllPos{j}{i}, :), 2);
+            MeanposRatebyLapoutPF{j}{i} = mean(squeeze (MeanposRatebyLapoutPF{j}{i}),1);
+            PCwidth {j}{i} = 2*(length(pfInAllPos{j}{i}));
+            InfoPerSpkZ{j}{i} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(pcGoodSegInd{j}(i));
+            InfoPerSpkP {j}{i} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(pcGoodSegInd{j}(i));
+        end
+    end
+end
+
 
 %% variability of firing for a cell within session
 posRateLapDiff = {};
