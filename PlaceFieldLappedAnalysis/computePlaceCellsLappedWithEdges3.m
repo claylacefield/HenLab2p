@@ -1,4 +1,4 @@
-csfunction PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, shuffN)
+function PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, shuffN)
 %function [PCLappedSess, PCSimple] = computePlaceCellsLappedWithEdges2(spikes, treadPos, T, shuffN);
 %written by Andres Grosmark, towards the end of 2017, and also the
 %beginning of 2018.

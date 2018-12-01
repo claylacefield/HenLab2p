@@ -1,4 +1,4 @@
-dlstfunction [unitTuningStruc] = wrapTuningNewClay(C, fps, toPlot, calcPvals);
+function [unitTuningStruc] = wrapTuningNewClay(C, fps, toPlot, calcPvals);
 
 %% USAGE: [unitTuningStruc] = wrapTuningNewClay(C, fps, toPlot, calcPvals);
 % calculate tuning pvalues based upon circular and non-circular methods
