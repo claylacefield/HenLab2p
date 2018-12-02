@@ -157,19 +157,8 @@ yMin = min([size(im1b,1) size(im2b,1)]);
 im1b = im1b(1:yMin, 1:xMin);
 im2b = im2b(1:yMin, 1:xMin);
 
-imagesc(handles.axes3, abs(im2b-im1b)); % plot diff image
+imagesc(handles.axes3, abs(im2b-im1b));
 
-% save output structure
-tifPath1 = handles.tifPath1;
-%cd(handles.tifPath1); cd ..; cd ..;
-slashInds = strfind(tifPath1, '/');
-mousePath = tifPath1(1:slashInds(end-2));
-cd(mousePath);
-mouseName = tifPath1(slashInds(end-3)+1:slashInds(end-2)-1);
-
-manAlignStruc.mouseName = mouseName;
-manAlignStruc.tifPath1 = handles.tifPath1;
-manAlignStruc.tifPath2 = handles.tifPath2;
 manAlignStruc.tifName1=handles.tifName1;
 manAlignStruc.tifName2=handles.tifName2;
 manAlignStruc.im1 = im1b;
@@ -181,7 +170,9 @@ manAlignStruc.y1range = y1range;
 manAlignStruc.x2range = x2range;
 manAlignStruc.y2range = y2range;
 
-% save structure to mouse folder
-save([mouseName '_manAlignStruc_' date], 'manAlignStruc');
+cd(handles.tifPath1); cd ..; cd ..;
+slashInds = strfind(handles.tifPath1, '
+
+save(['manAlignStruc_' date], 'manAlignStruc');
 
 guidata(hObject, handles);
