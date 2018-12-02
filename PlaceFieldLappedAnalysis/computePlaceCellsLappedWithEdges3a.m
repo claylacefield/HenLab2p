@@ -11,11 +11,11 @@ end
 %minimum percentage of laps in which cell must fire above its mean rate, also
 %minumum number of laps that a bin must be occupied in order to be included
 %in the analyisis
-lapPerc = 20; 
+lapPerc = 10; 
 lapPerc = lapPerc/100;
 
 %absolute minimum number of laps (for sessions with few laps)
-lapMin = 3;
+lapMin = 2;
 
 %calculate which lap is which:
 [lapVec, ~] = calcLaps1(treadPos, T);

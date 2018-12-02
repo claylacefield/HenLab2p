@@ -56,11 +56,12 @@ cumDiInfoPerSpkP2 = [cumDiInfoPerSpkP2; InfoPerSpkP2 ];
 cumDiInfoPerSpkP3 = [cumDiInfoPerSpkP3; InfoPerSpkP3 ]; 
 
 %% to get animal by animal number of PCs with COM within the cue vs reward zones
+
 posRateCOMs1 =  posRateCOMs{1,1}';
 posRateCOMs2 =  posRateCOMs{1,2}';
 posRateCOMs3 =  posRateCOMs{1,3}';
 
-bin = 0:1:99;
+bin = 0:99;
 NumCOM1 = histc(posRateCOMs1,bin);
 NumCOM2 = histc(posRateCOMs2,bin);
 NumCOM3 = histc(posRateCOMs3,bin);

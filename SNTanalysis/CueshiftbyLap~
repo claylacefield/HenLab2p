@@ -1,0 +1,13 @@
+posRatesCellByLap = {};
+pfInAnyPos = {};
+
+PCLappedSess1 = cueShiftStruc.PCLappedSess1;
+PCLappedSess2 = cueShiftStruc.PCLappedSess2;
+pc = find(PCLappedSess1.Shuff.isPC==1);
+posRates1 = PCLappedSess1.posRates(pc,:);
+posRates2 = PCLappedSess2.posRates(pc,:);
+
+pfInAnyPos1 = PCLappedSess1.Shuff.PFInAllPos};
+
+posRatesCellByLap1 = PCLappedSess1.ByLap.posRateByLap(pc,:,:);
+posRatesCellByLap1 = squeeze(posRatesCellByLap1)';

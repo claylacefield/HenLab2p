@@ -130,7 +130,6 @@ for i = 1:size (pfInAllPos2, 1)
 end
 % collect all the sess1 2, 3 cells within 3 seperate arrays
 %and then plot the ;abhl-[
-
 % P1 = []; P2=[]; P3=[]; V1 = []; V2=[]; V3=[];
 for i = 1:size(pfInAllPos2, 1)
     p1= reshape(posRateLapZinPF{i,1}, [], 1);

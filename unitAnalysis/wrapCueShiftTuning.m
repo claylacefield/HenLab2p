@@ -55,7 +55,7 @@ toc;
 
 disp('Calc lapType2 tuning'); tic;
 spikes = C2; treadPos = posLap2;
-PCLappedSess2 = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLap2)), shuffN);
+PCLappedSess2 = computePlaceCellsLappedWithEdges3a(spikes, treadPos, T(1:length(posLap2)), shuffN);
 toc;
 
 cueShiftStruc.PCLappedSess1 = PCLappedSess1;

@@ -133,7 +133,7 @@ for i = 1:length(placeCellsInAll)
     for j = 1:size(placeCellAllOrigInd,2)
         origInd = placeCellAllOrigInd(i,j); % orig C/A index of this cell
         goodSegInd = find(multSessSegStruc(j).goodSeg == origInd);
-        posPks = multSessSegStruc(j).outPC.posRates(goodSegInd,:);
+        posPks = multSessSegStruc(j).PCLapSess.posRates(goodSegInd,:);
         samePlacePosPks(i,j,:) = posPks;
         plot(posPks, color{j});
     end

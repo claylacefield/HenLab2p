@@ -1,0 +1,44 @@
+posRatesCellByLap = {};
+
+PCLappedSess1 = cueShiftStruc.PCLappedSess1;
+PCLappedSess2 = cueShiftStruc.PCLappedSess2;
+pc = find(PCLappedSess1.Shuff.isPC==1);
+posRates1 = PCLappedSess1.posRates(pc,:);
+posRates2 = PCLappedSess2.posRates(pc,:);
+
+posRatesCellByLap1 = PCLappedSess1.ByLap.posRateByLap(pc,:,:);
+posRatesCellByLap1 = squeeze(posRatesCellByLap1)';
+
+pfInAnyPos1 = PCLappedSess1.Shuff.PFInAllPos(pc);
+pfInAllPos2 = {};
+pfOutAllPos = {};
+for i = 1:size(pfInAnyPos1,1)
+    for j = 1:size(pfInAnyPos1, 2)
+        pfInAllPos2{i, j}=[];
+        for ii = 1:length(pfInAnyPos1{i, j})
+            pfInAllPos2{i,j}=[pfInAllPos2{i,j}, pfInAnyPos1{i, j}{ii}];
+            pfOutAllPos{i,j} = setdiff([1:100],pfInAllPos2{i,j});
+        end
+    end
+end
+MeanposRatebyLapinPF = {};
+MeanposRatebyLapoutPF = {};
+PCwidth = {};
+COMbin = {};
+InfoPerSpkZ = {};%observed spatial information normalized by transient shuffle
+InfoPerSpkP = {}; %p value relative to transient shuffle;egs
+circbin = 1:100;
+circbin = ((circbin - 1)/99)*2*pi() - pi(); 
+for i = 1:size (pfInAllPos2, 1)
+    for j = 1:size (pfInAllPos2, 2)
+        MeanposRatebyLapinPF {i, j} = mean(nanmean(posRatesCellByLap{i,j}(:, pfInAllPos2{i,j}),2),1);
+        MeanposRatebyLapoutPF {i, j} = mean(nanmean(posRatesCellByLap{i,j}(:, pfOutAllPos{i,j}),2),1);
+        PCwidth {i, j} = 2*(length(pfInAllPos2{i,j}));
+        posRatesIn = posRatesCell{i,j};
+        c = circ_mean(circbin, posRatesIn, 2);
+        COMbin {i, j} = round(((c + pi())/(2*pi()))*99 + 1);
+    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(placeCellAnyGoodSegInd{i,j});
+        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(placeCellAnyGoodSegInd{i,j});
+
+    end
+end
