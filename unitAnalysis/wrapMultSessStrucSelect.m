@@ -37,7 +37,8 @@ while stillAdding
             %segName = findLatestFilename('segDict');
             load(goodSegName);
             
-            [treadBehStruc] = procHen2pBehav('auto');
+            %[treadBehStruc] = procHen2pBehav('auto');
+            load(findLatestFilename('treadBehStruc'));
             
 %             numBins = 100 ; rayThresh = 0.05;
 %             [goodSegPosPkStruc, circStatStruc] = wrapUnitTuning(C, treadBehStruc, numBins, rayThresh);

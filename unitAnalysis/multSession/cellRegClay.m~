@@ -9,7 +9,7 @@ function [cell_registered_struct] = cellRegClay(multSessSegStruc, varargin);
 % Outputs are saved in the output directory (the current directory), as
 % "cellRegistered_..._.m", and also output as cell_registered_struct
 
-if nargin == 2
+if nargin == 1
     toAlign = 1;
     manAlignStruc = varargin{1};
     x1range = manAlignStruc.x1range;
@@ -37,7 +37,7 @@ if nargin == 2
     multSessSegStruc(1).A = reshape(A1,size(A1,1)*size(A1,2),size(A1,3));
     multSessSegStruc(1).d1 = size(A1,1); multSessSegStruc(1).d2 = size(A1,2);
     multSessSegStruc(2).A = reshape(A2,size(A2,1)*size(A2,2),size(A2,3));
-    multSessSegStruc(2).d1 = size(A2,1); multSessSegStruc(2).d2 = size(A2,2);
+    multSessSegStruc(2).d1 = size(A1,1); multSessSegStruc(1).d2 = size(A1,2);
 end
 
 %% Method overview:
