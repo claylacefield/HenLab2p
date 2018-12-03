@@ -32,7 +32,7 @@ treadBehStruc.tdmlName = filename;
 time = [];
 y = [];
 yTimes = []; yTimeNano = [];
-lickTime = []; lickPos = []; lickLap = [];
+lickTime = []; lickPos = [];
 lapTime = [];
 rewTime = []; rewPos = []; rewLap = [];
 rewZoneStartTime = [];
@@ -75,18 +75,11 @@ for i=1:length(behCell)
             yTimeNano = [yTimeNano millis];
         end
         
-        % lap time
-        if ~isempty(strfind(rowStr, '"lap"'))
-            lapTime = [lapTime currTime];
-            lap = lap+1;
-        end
-        
         % lick time/pos
         try
             if ~isempty(strfind(rowStr, '"lick"')) && ~isempty(strfind(rowStr, '"start"'))
                 lickTime = [lickTime currTime];
                 lickPos = [lickPos currY];
-                lickLap = [lickLap lap];
             end
         catch
             disp('Dropping this lick because its before first pos reading');
@@ -103,7 +96,11 @@ for i=1:length(behCell)
             end
         end
         
-        
+        % lap time
+        if ~isempty(strfind(rowStr, '"lap"'))
+            lapTime = [lapTime currTime];
+            lap = lap+1;
+        end
         
         % rew time/pos
         if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 5'))
@@ -125,7 +122,7 @@ for i=1:length(behCell)
             rfidTime = [rfidTime currTime];
             rfidPos = [rfidPos currY];
             rfidLap = [rfidLap lap];
-            rfidName = [rfidName {rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)}];
+            rfidName = {rfidName rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)};
         end
         
         % other events: debug timeout,
@@ -163,9 +160,11 @@ yTimes2 = yTimes;
 yTimes2(dTimes>0.02) = yTimes(dTimes>0.02)-dTimes(dTimes>0.02);
 treadBehStruc.yTimesAdj = yTimes2;
 
+treadBehStruc.lickTime = lickTime;
+treadBehStruc.lickPos = lickPos;
 treadBehStruc.lapTime = lapTime;
-treadBehStruc.lickTime = lickTime; treadBehStruc.lickPos = lickPos; treadBehStruc.lickLap = lickLap;
-treadBehStruc.rewTime = rewTime; treadBehStruc.rewPos = rewPos; treadBehStruc.rewLap = rewLap;
+treadBehStruc.rewTime = rewTime;
+treadBehStruc.rewPos = rewPos;
 treadBehStruc.rewZoneStartTime = rewZoneStartTime;
 treadBehStruc.rewZoneStartPos = rewZoneStartPos;
 treadBehStruc.rewZoneStopTime = rewZoneStopTime;

@@ -149,7 +149,7 @@ for i=1:length(behCell)
             rfidTime = [rfidTime currTime];
             rfidPos = [rfidPos currY];
             rfidLap = [rfidLap lap];
-            rfidName = [rfidName {rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)}];
+            rfidName = {rfidName rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)};
         end
         
         % other events: debug timeout,
@@ -182,8 +182,8 @@ yTimes2 = yTimes;
 yTimes2(dTimes>0.02) = yTimes(dTimes>0.02)-dTimes(dTimes>0.02);
 treadBehStruc.yTimesAdj = yTimes2;
 
-treadBehStruc.lapTime = lapTime;
 treadBehStruc.lickTime = lickTime; treadBehStruc.lickPos = lickPos; treadBehStruc.lickLap = lickLap;
+treadBehStruc.lapTime = lapTime;
 treadBehStruc.rewTime = rewTime; treadBehStruc.rewPos = rewPos;treadBehStruc.rewLap = rewLap;
 treadBehStruc.rewZoneStartTime = rewZoneStartTime;
 treadBehStruc.rewZoneStartPos = rewZoneStartPos;
