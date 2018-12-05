@@ -101,6 +101,19 @@ for i = 1:length(multSessSegStruc)
     end
 end
 
+for i=1:size(multSessSegStruc,2)
+    n=[];
+   for j=1:size(spatial_footprints{i},1)
+      a = squeeze(spatial_footprints{i}(j,:,:));
+      if sum(a(:))~=0
+         n = [n j]; 
+      end
+      
+   end
+   spatial_footprints{i} = spatial_footprints{i}(n,:,:);
+   okGoodSegs{i}=n;
+end
+
 [footprints_projections]=compute_footprints_projections(spatial_footprints);
 plot_all_sessions_projections(footprints_projections,figures_directory,figures_visibility)
 disp('Done')
