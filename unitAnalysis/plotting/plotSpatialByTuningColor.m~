@@ -17,15 +17,15 @@ end
 origCAinds = goodSeg(goodSegSubset);
 
 % Sort cells based upon tuning position
-posRates = posRates(goodSegSubset,:); % posRates for goodSeg subset (not sorted)
-[maxRates, maxRatePos] = max(posRates,[],2); % rate peak and position (inds)
-[sortedPFpeakPos, sortInds] = sort(maxRatePos); % indices of goodSegSubset, sorted by tuning
+posRates = posRates(goodSegSubset,:);
+[maxRates, inds] = max(posRates,[],2); % rate peak and position (inds)
+[sortedPFpeak, inds2] = sort(inds); % indices of goodSegSubset, sorted by tuning
 
-origCAindsSort = origCAinds(sortInds); % and keep track of their original indices
+origCAindsSort = origCAinds(inds2); % and keep track of their original indices
 
 %% Now find spatial and temporal profiles of these cells (sorted by tuning pos)
 
-gsA = A(:,origCAindsSort); % goodSeg subset spatial/A (sorted)
+gsA = A(:,origCAindsSort); % goodSeg subset spatial/A
 gsC = C(origCAindsSort, :); gsC = gsC/max(gsC(:)); % temporal
 numCells = length(origCAindsSort); % numCells
 
@@ -34,11 +34,11 @@ gsA2 = reshape(full(gsA),d1,d2,numCells); % reshaped spatial for all cells
 %% Plot color rgb components based upon tuning pos
 
 %color = jet(numCells);
-color = autumn(size(posRates,2));
+color = jet(size(posRates,2));
 rgb = zeros(d1,d2,3); % initialize final color matrix (mxnx3)
 
 for i = 1:numCells
-    segSpat = gsA2(:,:,i); % single seg spatial (sorted)
+    segSpat = gsA2(:,:,i); % single seg spatial
     segSpat = segSpat/max(segSpat(:)); % normalize
     ga3(:,:,i) = segSpat; % not used?
     
@@ -59,4 +59,4 @@ subplot(1,2,1);
 image(rgb);
 
 subplot(1,2,2);
-imagesc(posRates(sortInds,:));
+imagesc(posRates(inds2,:));

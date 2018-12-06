@@ -151,7 +151,7 @@ title('Place cells in all sessions');
 
 %%
 %save spatial profiles of cells from all sessions, aligned with ziv
-for i = 1:length(unitSpatCell)
+for i = 1:length(unitSpatCell)d
     allCell = mean(unitSpatCell{i},1);
     rgb(:,:,i) = allCell/max(allCell(:));
 end
