@@ -24,8 +24,9 @@ for i = 1:size(mapInd,2)
     
     % find index of cellReg cells with respect to original C/A
     goodSeg = multSessSegStruc(i).goodSeg;
-    cellRegArr = mapInd(:,i);
+    cellRegArr = mapInd(:,i); % mapInd/cellRegArr are in terms of goodSeg indices
     
+    % find orig CA index of registered cells 
     for j = 1:length(cellRegArr) % for all cells in cellReg array from this session (0's for cells not in session)
         if cellRegArr(j)~=0  % if this cell is present in this session
             mapInd2(j,i) = goodSeg(cellRegArr(j));
@@ -60,7 +61,7 @@ end
 disp('Finding cells (and their tuning) in diff sessions'); tic;
 
 % find ziv array cells present in all sessions
-cellRegIndInAll = find(min(mapInd2, [], 2)); % [1,1,1,...] in all col
+cellRegIndInAll = find(min(mapInd2, [], 2)); % [1,1,1,...] in all col (i.e. none have zeros)
 cellsInAll = mapInd2(cellRegIndInAll,:); % orig C/A index of all ziv registered cells present in all sessions
 
 %%
@@ -79,7 +80,7 @@ end
 % cellRegInd(cellsInAll) for cells present in all sessions, that are place cells in all
 placeCellsInAll = find(min(sameCellPlaceBool, [], 2)); % index in array of only place cells present in all sessions
 placeCellsInNone = find(~max(sameCellPlaceBool, [], 2)); % or cells present in all sessions that are place cells in none
-placeCellsInAny = find (max(sameCellPlaceBool,[],2));% or cells present in all sessions that are place cells in at least one
+placeCellsInAny = find(max(sameCellPlaceBool,[],2));% or cells present in all sessions that are place cells in at least one
 %%
 % tuning in placeCellsInAll
 placeCellAllOrigInd = cellsInAll(placeCellsInAll,:);
@@ -115,6 +116,7 @@ toc;
 sameCellTuningStruc.multSessSegStruc = multSessSegStruc; % just save orig struc (not too huge)
 sameCellTuningStruc.unitSpatCell = unitSpatCell;  % cell array of spatial profiles of ziv cells
 sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
+sameCellTuningStruc.
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
 sameCellTuningStruc.rewCellOrigInd = rewCellOrigInd;
 sameCellTuningStruc.cellsInAll = cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
@@ -151,7 +153,7 @@ title('Place cells in all sessions');
 
 %%
 %save spatial profiles of cells from all sessions, aligned with ziv
-for i = 1:length(unitSpatCell)d
+for i = 1:length(unitSpatCell)
     allCell = mean(unitSpatCell{i},1);
     rgb(:,:,i) = allCell/max(allCell(:));
 end

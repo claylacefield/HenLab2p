@@ -24,8 +24,9 @@ for i = 1:size(mapInd,2)
     
     % find index of cellReg cells with respect to original C/A
     goodSeg = multSessSegStruc(i).goodSeg;
-    cellRegArr = mapInd(:,i);
+    cellRegArr = mapInd(:,i); % mapInd/cellRegArr are in terms of goodSeg indices
     
+    % find orig CA index of registered cells 
     for j = 1:length(cellRegArr) % for all cells in cellReg array from this session (0's for cells not in session)
         if cellRegArr(j)~=0  % if this cell is present in this session
             mapInd2(j,i) = goodSeg(cellRegArr(j));
@@ -60,14 +61,15 @@ end
 disp('Finding cells (and their tuning) in diff sessions'); tic;
 
 % find ziv array cells present in all sessions
-cellRegIndInAll = find(min(mapInd2, [], 2)); % [1,1,1,...] in all col
-cellsInAll = mapInd2(cellRegIndInAll,:); % orig C/A index of all ziv registered cells present in all sessions
+cellRegIndInAll = find(min(mapInd2, [], 2)); % [1,1,1,...] in all col (i.e. none have zeros)
+cellsInAllOrig = mapInd2(cellRegIndInAll,:); % orig C/A index of all ziv registered cells present in all sessions
+cellsInAll = mapInd(cellRegIndInAll,:);
 
 %%
 % see if cells present in all sessions are place cells in all
-for i = 1:size(cellsInAll,1) % for all cells 
-    for j = 1:size(cellsInAll,2)    % for each session from that cell
-        if find(placeCellOrigInd{j}== cellsInAll(i,j)) % see if it's a place cell
+for i = 1:size(cellsInAllOrig,1) % for all cells 
+    for j = 1:size(cellsInAllOrig,2)    % for each session from that cell
+        if find(placeCellOrigInd{j}== cellsInAllOrig(i,j)) % see if it's a place cell
             sameCellPlaceBool(i,j) = 1;
         else
             sameCellPlaceBool(i,j) = 0;
@@ -79,20 +81,21 @@ end
 % cellRegInd(cellsInAll) for cells present in all sessions, that are place cells in all
 placeCellsInAll = find(min(sameCellPlaceBool, [], 2)); % index in array of only place cells present in all sessions
 placeCellsInNone = find(~max(sameCellPlaceBool, [], 2)); % or cells present in all sessions that are place cells in none
-placeCellsInAny = find (max(sameCellPlaceBool,[],2));% or cells present in all sessions that are place cells in at least one
+placeCellsInAny = find(max(sameCellPlaceBool,[],2));% or cells present in all sessions that are place cells in at least one
 %%
 % tuning in placeCellsInAll
-placeCellAllOrigInd = cellsInAll(placeCellsInAll,:);
-placeCellInNoneOrigInd = cellsInAll(placeCellsInNone,:);
-placeCellInAnyOrigInd = cellsInAll(placeCellsInAny,:);
+placeCellAllGoodSegInd = cellsInAll(placeCellsInAll,:);
+placeCellAllOrigInd = cellsInAllOrig(placeCellsInAll,:);
+placeCellInNoneOrigInd = cellsInAllOrig(placeCellsInNone,:);
+placeCellInAnyOrigInd = cellsInAllOrig(placeCellsInAny,:);
 %= cellRegIndInAll(placeCellsInAll,:);
 
 %% 
 %now do this for cells active during reward periods
 % see if cells present in all sessions are rewrad active cells in all
-for i = 1:size(cellsInAll,1) % for all cells 
-    for j = 1:size(cellsInAll,2)    % for each session from that cell
-        if find(rewCellOrigInd{j}== cellsInAll(i,j)) % see if it's a rew cell
+for i = 1:size(cellsInAllOrig,1) % for all cells 
+    for j = 1:size(cellsInAllOrig,2)    % for each session from that cell
+        if find(rewCellOrigInd{j}== cellsInAllOrig(i,j)) % see if it's a rew cell
             sameCellRewBool(i,j) = 1;
         else
             sameCellRewBool(i,j) = 0;
@@ -104,9 +107,9 @@ rewCellsInAll = find(min(sameCellRewBool, [], 2)); % index in array of only rew 
 rewCellsInNone = find(~max(sameCellRewBool, [], 2)); % or cells present in all sessions that are rew cells in none
 rewCellsInAny = find (max(sameCellRewBool,[],2));% or cells present in all sessions that are rew cells in at least one
 % tuning in rewCellsInAll
-rewCellAllOrigInd = cellsInAll(rewCellsInAll,:);
-rewCellInNoneOrigInd = cellsInAll(rewCellsInNone,:);
-rewCellInAnyOrigInd = cellsInAll(rewCellsInAny,:);
+rewCellAllOrigInd = cellsInAllOrig(rewCellsInAll,:);
+rewCellInNoneOrigInd = cellsInAllOrig(rewCellsInNone,:);
+rewCellInAnyOrigInd = cellsInAllOrig(rewCellsInAny,:);
 
 toc;
 
@@ -117,7 +120,9 @@ sameCellTuningStruc.unitSpatCell = unitSpatCell;  % cell array of spatial profil
 sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
 sameCellTuningStruc.rewCellOrigInd = rewCellOrigInd;
-sameCellTuningStruc.cellsInAll = cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
+sameCellTuningStruc.cellsInAll = cellsInAll;
+sameCellTuningStruc.cellsInAllOrig = cellsInAllOrig; % orig C/A index of all ziv registered cells present in all sessions
+sameCellTuningStruc.placeCellAllGoodSegInd = placeCellAllGoodSegInd;
 sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
 sameCellTuningStruc.placeCellInNoneOrigInd = placeCellInNoneOrigInd; % orig C/A index of all cells that are not place cells in all sessions
 sameCellTuningStruc.placeCellInAnyOrigInd = placeCellInAnyOrigInd; % orig C/A index of all cells that are place cells in at least one session
