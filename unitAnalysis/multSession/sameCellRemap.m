@@ -1,4 +1,4 @@
-function [remapStruc] = sameCellRemap(sameCellTuningStruc);
+adfirtfunction [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
