@@ -1,4 +1,4 @@
-function [cell_registered_struct] = cellRegClay(multSessSegStruc, varargin);
+function [cell_registered_struct] = cellRegClay_tiffAlign(multSessSegStruc, varargin);
 
 %% USAGE: [cell_registered_struct] = cellRegClay(multSessTuningStruc);
 %% Clay 2017
@@ -94,32 +94,35 @@ disp('Stage 1 - Loading sessions')
 % get spatial footprints of all NMF segmented neurons
 % nUnits x d1 x d2
 for i = 1:length(multSessSegStruc)
-    A = permute(reshape(full(multSessSegStruc(i).A), multSessSegStruc(i).d1,multSessSegStruc(i).d2, size(multSessSegStruc(i).A,2)), [3 1 2]);
-    try
-    spatial_footprints{i} = A(multSessSegStruc(i).goodSeg,:,:);
-    catch
-        spatial_footprints{i} = A;
-    end
+    
+    footprints_projections{i} = multSessSegStruc(i).avgTiff; % now using avgTiff for alignment (clay)
+    
+%     A = permute(reshape(full(multSessSegStruc(i).A), multSessSegStruc(i).d1,multSessSegStruc(i).d2, size(multSessSegStruc(i).A,2)), [3 1 2]);
+%     try
+%     spatial_footprints{i} = A(multSessSegStruc(i).goodSeg,:,:);
+%     catch
+%         spatial_footprints{i} = A;
+%     end
 end
 
 % (clay) this is a fix to remove spatial footprints for cells with null/NaN
 % values (e.g. if part of frame has been trimmed after manual alignment to
 % help with CellReg automated alignment)
-for i=1:size(multSessSegStruc,2)
-    n=[];
-   for j=1:size(spatial_footprints{i},1)
-      a = squeeze(spatial_footprints{i}(j,:,:));
-      if sum(a(:))~=0
-         n = [n j]; 
-      end
-      
-   end
-   spatial_footprints{i} = spatial_footprints{i}(n,:,:);
-   okGoodSegs{i}=n;
-end
+% for i=1:size(multSessSegStruc,2)
+%     n=[];
+%    for j=1:size(spatial_footprints{i},1)
+%       a = squeeze(spatial_footprints{i}(j,:,:));
+%       if sum(a(:))~=0
+%          n = [n j]; 
+%       end
+%       
+%    end
+%    spatial_footprints{i} = spatial_footprints{i}(n,:,:);
+%    okGoodSegs{i}=n;
+% end
 
 % this just computes projections from all neurons for each session (for alignment)
-[footprints_projections]=compute_footprints_projections(spatial_footprints);
+%[footprints_projections]=compute_footprints_projections(spatial_footprints);
 plot_all_sessions_projections(footprints_projections,figures_directory,figures_visibility)
 disp('Done')
 
@@ -131,10 +134,17 @@ disp('Done')
 % 3. Evaluating how suitable the data is for longitudinal analysis
 
 % Defining the parameters for image alignment:
-alignment_type='Translations and Rotations'; % either 'Translations' or 'Translations and Rotations'
+alignment_type='Translations'; %'Translations and Rotations'; % either 'Translations' or 'Translations and Rotations'
 use_parallel_processing=true; % either true or false
 maximal_rotation=30; % in degrees - only relevant if 'Translations and Rotations' is used
 reference_session_index=1; 
+
+% Clay 122318
+% For DG (at least XIR_1118_02 121118 sessions) built-in alignment doesn't 
+% work, so going to just normxcorr2 on tiffs from each session
+% But I still have to figure out how to apply all shifts to data and still
+% have all of the registration stages work.
+
 
 % Preparing the data for alignment:
 disp('Stage 2 - Aligning sessions')
