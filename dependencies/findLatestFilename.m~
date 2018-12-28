@@ -17,10 +17,9 @@ dirFilenames = {currDir.name};
 
 fileTypeInd = find(cellfun(@length, strfind(dirFilenames, fileTag)));
 
-% now eliminate files with notInclude string
 if ~isempty(notInclude)
     fileNotTypeInd = find(cellfun(@length, strfind(dirFilenames(fileTypeInd), notInclude)));
-    fileTypeInd(fileNotTypeInd) = [];
+    
 end
 
 
