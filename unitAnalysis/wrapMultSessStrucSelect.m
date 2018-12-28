@@ -59,7 +59,7 @@ while stillAdding
             multSessSegStruc(numSess).d1 = d1;
             multSessSegStruc(numSess).d2 = d2;
             multSessSegStruc(numSess).treadBehStruc = treadBehStruc;
-            
+            multSessSegStruc(numSess).avgTiff = imread(findLatestFilename('_avCaChDs'));
             
             multSessSegStruc(numSess).goodSeg = goodSeg; % includes greatSeg but not in's and ok's
             multSessSegStruc(numSess).greatSeg = greatSeg;
