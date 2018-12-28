@@ -109,7 +109,7 @@ if exist('posRatesCell')
   
     % shuffle cell identities
      rng('shuffle')
-   pcRShuff1=[]; pcRShuff2 = [];
+   pcRShuff12=[]; pcRShuff13 = []; pcRShuff23 = [];
    for sh = 1:200
        posRatesCellRand = posRatesCell;
        posRatesCellRand(:, 1) = posRatesCell(randperm(size(posRatesCell, 1)), 1);
@@ -122,13 +122,16 @@ if exist('posRatesCell')
                rates = [rates; posRatesCellRand{i,j}];
            end
            [r, p] = corrcoef(rates');
-           pcRShuff1(sh, i) = r(2, 1);
-           pcRShuff2(sh, i) = r(2, 3);
+           pcRShuff12(sh, i) = r(2, 1);
+           pcRShuff23(sh, i) = r(2, 3);
+           pcRShuff13(sh, i) = r(1, 3);
+
        end
    end
-   isSigAAPCAll = A1A2' > prctile(pcRShuff1, 97.5);
-   isSigABPCAll = A2B' > prctile(pcRShuff2, 97.5);
-   remapStruc.ShuffSig1223 = [(mean(pcRShuff1))', (mean(pcRShuff2))', isSigAAPCAll' , isSigABPCAll'];
+   isSigA1A2PCAll = A1A2' > prctile(pcRShuff12, 97.5);
+   isSigA2BPCAll = A2B' > prctile(pcRShuff23, 97.5);
+   isSigA1BPCAll = A1B' > prctile(pcRShuff13, 97.5);
+   remapStruc.ShuffSig121323 = [(mean(pcRShuff12))', (mean(pcRShuff13))',(mean(pcRShuff23))', isSigA1A2PCAll' , isSigA1BPCAll',isSigA2BPCAll'];
    
     %plot tunig sorted by sess2
     PCMatchedAll = {};% make a cell array of all posRates together
@@ -195,7 +198,7 @@ for i = 1:length(remapStruc.pcInAnyCoef)
 end
 remapStruc.PCAnyCorrCoeff121323 = [A1A2, A1B, A2B];
 %suffle cell identities
-   pcRShuff1=[]; pcRShuff2 = [];
+   pcRShuff12=[]; pcRShuff13 = []; pcRShuff23 = [];
    for sh = 1:200
        posRatesCellRand = posRatesCellAnyPC;
        posRatesCellRand(:, 1) = posRatesCellAnyPC(randperm(size(posRatesCellAnyPC, 1)), 1);
@@ -208,13 +211,16 @@ remapStruc.PCAnyCorrCoeff121323 = [A1A2, A1B, A2B];
                rates = [rates; posRatesCellRand{i,j}];
            end
            [r, p] = corrcoef(rates');
-           pcRShuff1(sh, i) = r(2, 1);
-           pcRShuff2(sh, i) = r(2, 3);
+           pcRShuff12(sh, i) = r(2, 1);
+           pcRShuff23(sh, i) = r(2, 3);
+           pcRShuff12(sh, i) = r(1, 3);
+
        end
    end
-   isSigAAPCAny = A1A2' > prctile(pcRShuff1, 97.5);
-   isSigABPCAny = A2B' > prctile(pcRShuff2, 97.5);
-   remapStruc.PCAnyShuffSig1223 = [(mean(pcRShuff1))', (mean(pcRShuff2))', isSigAAPCAny' , isSigABPCAny'];
+   isSigA1A2PCAny = A1A2' > prctile(pcRShuff12, 97.5);
+   isSigA2BPCAny = A2B' > prctile(pcRShuff23, 97.5);
+   isSigA1BPCAny = A1B' > prctile(pcRShuff13, 97.5);
+   remapStruc.PCAnyShuffSig121323 = [(mean(pcRShuff12))',(mean(pcRShuff13))', (mean(pcRShuff23))', isSigA1A2PCAny', isSigA1BPCAny',isSigA2BPCAny'];
  
 %plot tunig sorted by sess2
 PCMatchedAny = {};% make a cell array of all posRates together
