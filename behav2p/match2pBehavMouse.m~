@@ -28,7 +28,7 @@ for i = 3:length(mouseDir)
                sessName = dayDir(j).name;
                sessPath = [dayPath '/' sessName];
                cd(sessPath);
-               hyphenInds = strfind(sessName, '-');
+               p
                mouseName = sessName(hyphenInds(2)+1:hyphenInds(3)-1);
                %xmlName = findLatestFilename('.xml');
                sessDir = dir;

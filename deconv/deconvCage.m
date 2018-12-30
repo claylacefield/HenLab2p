@@ -25,7 +25,7 @@ for k = 3:length(cageDir)
                         if strfind(dayDir(i).name, '18') % 'TSeries')
                             cd([dayPath '/' dayDir(i).name]);
                             %sessDir = dir;
-                            if ~isempty(findLatestFilename('_deconvC_'))
+                            if isempty(findLatestFilename('_deconvC_'))
 
                                 segDictFilename = findLatestFilename('_segDict_', 'goodSeg');
                                 disp(['Cant find previous deconv so deconvolving ' segDictFilename]); % findLatestFilename('Cycle')]);
