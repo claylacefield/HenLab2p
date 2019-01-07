@@ -119,8 +119,8 @@ Rew5002 = sum(NumCOM2(20:30))/sum(NumCOM2);
 Rew5003 = sum(NumCOM3(20:30))/sum(NumCOM3);
 Rew500 = [Rew5001 Rew5002 Rew5003];
 
-FracCOM=[];
-FracCOM = [FracCOM [MidCue; EdgeCue; Rew1500; Rew500]];
+%IRFracCOM=[];
+IRFracCOM = [IRFracCOM [MidCue; EdgeCue; Rew1500; Rew500]];
 
 %%
 %remap struc by animals

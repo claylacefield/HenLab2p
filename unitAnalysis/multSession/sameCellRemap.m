@@ -1,4 +1,4 @@
-adfirtfunction [remapStruc] = sameCellRemap(sameCellTuningStruc);
+function [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
@@ -213,7 +213,7 @@ remapStruc.PCAnyCorrCoeff121323 = [A1A2, A1B, A2B];
            [r, p] = corrcoef(rates');
            pcRShuff12(sh, i) = r(2, 1);
            pcRShuff23(sh, i) = r(2, 3);
-           pcRShuff12(sh, i) = r(1, 3);
+           pcRShuff13(sh, i) = r(1, 3);
 
        end
    end
@@ -244,21 +244,23 @@ for i = 1:3
     imagesc(PCMatchedAny{i});
 end
 suptitle('nonNormRates');
-%normalize each by max firing rate
-for i = 1:length(PCMatchedAny)
-    for ii = 1:size(PCMatchedAny{i}, 1)
-        PCMatchedAny{i}(ii, :) = PCMatchedAny{i}(ii, :)/nanmax(PCMatchedAny{i}(ii, :));
-    end
-    PCMatchedAny{i}(isnan(PCMatchedAny{i})) = 0;
-end
 
-figure;
-for i = 1:3
-    subplot(1, 3, i);
-    imagesc(PCMatchedAny{i});
-end
-suptitle('NormRates');
-colormap jet;
+% %normalize each by max firing rate
+% for i = 1:length(PCMatchedAny)
+%     for ii = 1:size(PCMatchedAny{i}, 1)
+%         PCMatchedAny{i}(ii, :) = PCMatchedAny{i}(ii, :)/nanmax(PCMatchedAny{i}(ii, :));
+%     end
+%     PCMatchedAny{i}(isnan(PCMatchedAny{i})) = 0;
+% end
+% 
+% figure;
+% for i = 1:3
+%     subplot(1, 3, i);
+%     imagesc(PCMatchedAny{i});
+% end
+% suptitle('NormRates');
+% colormap jet;
+
 % %% now for all cells present in all sessions
 % for i = 1:size(cellsInAll,1)
 %     for j = 1:length(multSessSegStruc)

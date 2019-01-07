@@ -1,7 +1,6 @@
 
 
 
-%% to get the bins within a cell's place field 
 %unpack some variables
 multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
 placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
@@ -10,6 +9,7 @@ placeCellAllOrigInd = sameCellTuningStruc.placeCellAllOrigInd; % orig C/A index 
 placeCellNoneOrigInd = sameCellTuningStruc.placeCellInNoneOrigInd ;
 placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
 
+%% to get the bins within a cell's place field 
 
 posRatesCellByLap = {};
 posRatesCell={};
@@ -86,7 +86,7 @@ placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
 
 pfInAllPos = {}; pcGoodSegInd = {}; pfOutAllPos = {}; MeanposRatebyLapinPF = {};
 MeanposRatebyLapoutPF = {}; PCwidth = {}; InfoPerSpkZ = {}; InfoPerSpkP = {};
-posRateCOMs = {};
+posRateCOMs = {}; posRatesAll = {};
 for j = 1:3
     isPC = find(multSessSegStruc(j).PCLapSess.Shuff.isPC);
     pcGoodSegInd{j} = isPC;
@@ -98,6 +98,8 @@ for j = 1:3
         inPF = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{isPC(i)};
         
         posRatesIn = multSessSegStruc(j).PCLapSess.posRates(isPC(i), :);
+        posRatesAll{j}{i} = posRatesIn;
+        
         c = circ_mean(circbin, posRatesIn, 2);
         posRateCOMs{j}(i) = round(((c + pi())/(2*pi()))*99 + 1);
         

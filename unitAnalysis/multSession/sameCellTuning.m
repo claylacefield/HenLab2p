@@ -47,13 +47,13 @@ for i = 1:size(mapInd,2)
     multSessSegStruc(i).PCLapSess = PCLappedSess;
     toc;
     
-    disp('And non-movement epochs (and rewCells)'); tic;
-    [outNon, PCLappedSess] = wrapAndresPlaceFieldsClay(multSessSegStruc(i).pksCell(multSessSegStruc(i).goodSeg), 0, multSessSegStruc(i).treadBehStruc, -3);
-    multSessSegStruc(i).outNonPC = outNon;
-    RewLoc =[(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStartPos)/20)):1:(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStopPos)/20))))];
-    multSessSegStruc(i).RewLoc = RewLoc;
-    rewCellOrigInd{i} = goodSeg(find(nanmean(outNon.posRates(:,RewLoc),2)>0));
-    toc;
+%     disp('And non-movement epochs (and rewCells)'); tic;
+%     [outNon, PCLappedSess] = wrapAndresPlaceFieldsClay(multSessSegStruc(i).pksCell(multSessSegStruc(i).goodSeg), 0, multSessSegStruc(i).treadBehStruc, -3);
+%     multSessSegStruc(i).outNonPC = outNon;
+%     RewLoc =[(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStartPos)/20)):1:(round(mean((multSessSegStruc(i).treadBehStruc.rewZoneStopPos)/20))))];
+%     multSessSegStruc(i).RewLoc = RewLoc;
+%     rewCellOrigInd{i} = goodSeg(find(nanmean(outNon.posRates(:,RewLoc),2)>0));
+%     toc;
 end
 
 %%
@@ -90,28 +90,6 @@ placeCellInNoneOrigInd = cellsInAllOrig(placeCellsInNone,:);
 placeCellInAnyOrigInd = cellsInAllOrig(placeCellsInAny,:);
 %= cellRegIndInAll(placeCellsInAll,:);
 
-%% 
-%now do this for cells active during reward periods
-% see if cells present in all sessions are rewrad active cells in all
-for i = 1:size(cellsInAllOrig,1) % for all cells 
-    for j = 1:size(cellsInAllOrig,2)    % for each session from that cell
-        if find(rewCellOrigInd{j}== cellsInAllOrig(i,j)) % see if it's a rew cell
-            sameCellRewBool(i,j) = 1;
-        else
-            sameCellRewBool(i,j) = 0;
-        end
-    end
-end
-% cellRegInd(cellsInAll) for cells present in all sessions, that are rew cells in all
-rewCellsInAll = find(min(sameCellRewBool, [], 2)); % index in array of only rew cells present in all sessions
-rewCellsInNone = find(~max(sameCellRewBool, [], 2)); % or cells present in all sessions that are rew cells in none
-rewCellsInAny = find (max(sameCellRewBool,[],2));% or cells present in all sessions that are rew cells in at least one
-% tuning in rewCellsInAll
-rewCellAllOrigInd = cellsInAllOrig(rewCellsInAll,:);
-rewCellInNoneOrigInd = cellsInAllOrig(rewCellsInNone,:);
-rewCellInAnyOrigInd = cellsInAllOrig(rewCellsInAny,:);
-
-toc;
 
 %% Save useful vars to output struc
 
@@ -119,16 +97,12 @@ sameCellTuningStruc.multSessSegStruc = multSessSegStruc; % just save orig struc 
 sameCellTuningStruc.unitSpatCell = unitSpatCell;  % cell array of spatial profiles of ziv cells
 sameCellTuningStruc.zivCentroids = zivCentroids;    % centroids of these cells
 sameCellTuningStruc.placeCellOrigInd = placeCellOrigInd;  % ind of place cells (goodRay) w. re. to orig C/A
-sameCellTuningStruc.rewCellOrigInd = rewCellOrigInd;
 sameCellTuningStruc.cellsInAll = cellsInAll;
 sameCellTuningStruc.cellsInAllOrig = cellsInAllOrig; % orig C/A index of all ziv registered cells present in all sessions
 sameCellTuningStruc.placeCellAllGoodSegInd = placeCellAllGoodSegInd;
 sameCellTuningStruc.placeCellAllOrigInd = placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
 sameCellTuningStruc.placeCellInNoneOrigInd = placeCellInNoneOrigInd; % orig C/A index of all cells that are not place cells in all sessions
 sameCellTuningStruc.placeCellInAnyOrigInd = placeCellInAnyOrigInd; % orig C/A index of all cells that are place cells in at least one session
-sameCellTuningStruc.rewCellAllOrigInd = rewCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
-sameCellTuningStruc.rewCellInNoneOrigInd = rewCellInNoneOrigInd; % orig C/A index of all cells that are not place cells in all sessions
-sameCellTuningStruc.rewCellInAnyOrigInd = rewCellInAnyOrigInd; % orig C/A index of all cells that are place cells in at least one session
 sameCellTuningStruc.regMapOrigInd = mapInd2; % orig C/A ind for all cells in ziv mat
 sameCellTuningStruc.regMapGoodSegInd = mapInd;
 sameCellTuningStruc.sameCellPlaceBool = sameCellPlaceBool;  % boolean for this mat
