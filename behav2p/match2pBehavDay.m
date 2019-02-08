@@ -6,7 +6,7 @@ function match2pBehavDay()
 % different with other file naming conventions, etc.
 
 
-behavDataFolder = '/data/sebnem/behaviorData/XIR_1218';
+behavDataFolder = uigetdir('/data/sebnem/behaviorData', 'Select behavior folder of animals'); %'/data/sebnem/behaviorData/WT';
 
 % mouseFolder = uigetdir();
 % folder = '/data/sebnem/DG_data/121718';
@@ -22,13 +22,13 @@ behavDataFolder = '/data/sebnem/behaviorData/XIR_1218';
 %        dayName = mouseDir(i).name;
 %        dayPath = [mouseFolder '/' dayName];
 
-dayPath = uigetdir();
+dayPath = uigetdir('/data/sebnem/DG_data/', 'Select day folder of sessions to match');
 
 cd(dayPath);
 dayDir = dir;
 
 for j = 3:length(dayDir)
-    if dayDir(j).isdir == 1 && ~isempty(strfind(dayDir(j).name, '18'))
+    if dayDir(j).isdir == 1 && (~isempty(strfind(dayDir(j).name, '18')) || ~isempty(strfind(dayDir(j).name, '19')))
         try
             sessName = dayDir(j).name;
             sessPath = [dayPath '/' sessName];

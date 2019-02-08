@@ -34,7 +34,7 @@ for k = 3:length(cageDir)
                                 [deconvC, recon] = deconvAllC(C);  % deconvolution
                                 
                                 outFilename = [segDictFilename(1:strfind(segDictFilename, '_eMC')) 'segDict' segDictFilename(strfind(segDictFilename, '.mat')-6:strfind(segDictFilename, '.mat')-1) '_deconvC_' date '.mat'];
-                                save(outFilename, 'deconvC');
+                                save(outFilename, 'deconvC', 'recon');
                                 
                             end
                         end
