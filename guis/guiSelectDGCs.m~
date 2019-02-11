@@ -184,16 +184,16 @@ A = handles.A; C = handles.C;
 aSeg = reshape(full(A(:,segNum)),handles.d1,handles.d2);
 imagesc(handles.spatialAxes, aSeg);
 
-tiff = handles.tiff;
-
-for i = 1:3
-rgb(:,:,i) = tiff;
-a2(:,:,i) = zeros(handles.d1,handles.d2);
-end
-a2(:,:,2) = aSeg;
-a3 = uint8(a2/max(a2(:))*255);
-rgb2 = rgb + a3;
-imshow(rgb2, 'Parent', handles.spatialAxes);
+% tiff = handles.tiff;
+% 
+% for i = 1:3
+% rgb(:,:,i) = tiff;
+% a2(:,:,i) = zeros(handles.d1,handles.d2);
+% end
+% a2(:,:,2) = aSeg;
+% a3 = uint8(a2/max(a2(:))*255);
+% rgb2 = rgb + a3;
+% imshow(handles.spatialAxes, rgb2);
 
 
 plotTemp(hObject, handles);

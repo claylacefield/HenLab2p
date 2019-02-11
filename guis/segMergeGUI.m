@@ -90,8 +90,13 @@ set(handles.segDictTxt, 'String', file1);
 disp(['Loading ' file1]);
 
 [file, path] = uigetfile('*.mat', 'Select corresponding goodSeg file to process');
+if file~=0
 cd(path);
 load([path file]); % load goodSeg file
+else
+    file = file1;
+    goodSeg = 1:size(C,1);
+end
 basename = file(1:strfind(file,'.mat')-1);
 set(handles.editBasename, 'String', basename);
 handles.basename = basename;
@@ -111,12 +116,15 @@ handles.goodSegOrig = goodSeg;
 handles.greatSeg = greatSeg;
 set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
 
+try
 handles.pksCell = pksCell;
 handles.segSdThresh = segSdThresh;
 handles.segPkMethod = segPkMethod;
 handles.posRates = posRates;
 handles.deconvC = deconvC;
 handles.posDeconv = posDeconv;
+catch
+end
 
 try
 handles.okSeg = okSeg;
@@ -219,8 +227,12 @@ origDiscSegNum = handles.goodSegOrig(discardSegNum);
 
 handles.dupSegGroup{pairRow} = dupSegList(dupSegList ~= discardSegNum);
 handles.goodSeg = handles.goodSeg(handles.goodSeg ~= origDiscSegNum);
-handles.greatSeg = handles.greatSeg(handles.greatSeg ~= origDiscSegNum);
 set(handles.goodSegTxt, 'String', num2str(handles.goodSeg));
+
+try
+handles.greatSeg = handles.greatSeg(handles.greatSeg ~= origDiscSegNum);
+catch
+end
 
 set(handles.dispSegSlider, 'Value', 1);
 handles.dispSeg=1;
@@ -295,30 +307,46 @@ function saveButton_Callback(hObject, eventdata, handles)
 segDictFile = handles.segDictFile;
 path = handles.path;
 goodSeg = handles.goodSeg;
-greatSeg = handles.greatSeg;
-pksCell = handles.pksCell;
-segSdThresh = handles.segSdThresh;
-segPkMethod = handles.segPkMethod;
-posRates = handles.posRates;
-
-% try
-okSeg = handles.okSeg;
-inSeg = handles.inSeg;
-% catch
-% end
-
-deconvC = handles.deconvC;
-posDeconv = handles.posDeconv;
 
 mergA = handles.mergA;
 mergC = handles.mergC;
 
 try
-save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
+    greatSeg = handles.greatSeg;
+    pksCell = handles.pksCell;
+    segSdThresh = handles.segSdThresh;
+    segPkMethod = handles.segPkMethod;
+    posRates = handles.posRates;
+    % try
+    okSeg = handles.okSeg;
+    inSeg = handles.inSeg;
+    % catch
+    % end
+    
+    deconvC = handles.deconvC;
+    posDeconv = handles.posDeconv;
+    
+    try
+        save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
+    catch
+        [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
+        save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
+    end
+    
 catch
-    [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
-    save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
+    
+    try
+        save([handles.editBasename '_goodSeg_' date '.mat'], 'segDictFile', 'goodSeg', 'mergA', 'mergC');
+    catch
+        [savFile, savPath] = uiputfile('*.mat', 'Save goodSegs to file location', [handles.fileBasename '_goodSeg_' date '.mat']);
+        save([savPath savFile '_goodSeg_' date '.mat'], 'segDictFile', 'path', 'okSeg', 'goodSeg', 'greatSeg', 'inSeg', 'pksCell', 'segSdThresh', 'segPkMethod', 'posRates', 'deconvC', 'posDeconv', 'mergA', 'mergC');
+    end
+    
 end
+
+
+
+
 
 guidata(hObject, handles);
 

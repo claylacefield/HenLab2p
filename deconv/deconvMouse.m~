@@ -7,7 +7,7 @@ mousePath = uigetdir();
 cd(mousePath);
 mouseDir = dir;
 
-% parpool(6);
+parpool(6);
 
 for j=3:length(mouseDir)
     dayName = mouseDir(j).name;
@@ -44,6 +44,3 @@ for j=3:length(mouseDir)
     cd(mousePath);
     
 end
-
-% poolobj=gcp('nocreate');
-% delete(poolobj);

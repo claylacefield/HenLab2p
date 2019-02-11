@@ -23,7 +23,7 @@ for i = 3:length(mouseDir)
        dayDir = dir;
        
        for j = 3:length(dayDir)
-           if dayDir(j).isdir == 1 && ~isempty(strfind(dayDir(j).name, 'TSeries'))
+           if dayDir(j).isdir == 1 && ~isempty(strfind(dayDir(j).name, '18'))
                try
                sessName = dayDir(j).name;
                sessPath = [dayPath '/' sessName];
