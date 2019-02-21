@@ -35,7 +35,7 @@ for n = 1:length(lapFrInds) %+1)
     
     for m = 1:length(lapTypeInfo)-1
         if lapSeqN == lapTypeInfo(m);
-            lapTypeArr(n) = m+1; % find(lapTypeInfo(1:end-1),m)
+            lapTypeArr(n) = find(lapTypeInfo(1:end-1),lapTypeInfo(m))+1;
         else
             lapTypeArr(n) = 1;
         end

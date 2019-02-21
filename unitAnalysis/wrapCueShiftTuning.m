@@ -1,4 +1,4 @@
-function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc)
+function [cueShiftStruc] = wrapCueShiftTuning(lapTypeInfo, varargin); %pksCell, goodSeg, treadBehStruc)
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -15,16 +15,23 @@ function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, trea
 % downSamp = round(length(resampY)/totalFrames);  % find downsample rate
 % treadPos = resampY(1:downSamp:end); % downsample position vector
 % treadPos = treadPos/max(treadPos);  % normalize position vector
-
+try
 filename = findLatestFilename('_goodSeg_');
 load(filename); 
+catch
+    disp('Cant find goodSeg');
+end
 
 disp(['Calculating cue shift tuning for ' filename]);
 
-if nargin==1
-    if ischar(varargin{1})
+if nargin==2
+    if ischar(varargin{1}) % if arg is char (any letter key), then load latest treadBehStruc
         load(findLatestFilename('treadBehStruc'));
-    else
+    elseif iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
+        pksCell = varargin{1};
+        [treadBehStruc] = procHen2pBehav('auto', 'cue');
+        goodSeg = 1:length(pksCell);
+    else  % or if it's a struc it's treadBehStruc
         treadBehStruc = varargin{1};
     end
 else
@@ -35,7 +42,10 @@ end
 %% format other stuff
 T = treadBehStruc.adjFrTimes(1:2:end);
 
-[pksCell1, posLap1, pksCell2, posLap2, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc);
+[pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo);
+
+posLap1 = posLapCell{1}; posLap2 = posLapCell{2};
+pksCell1 = pksCellCell{1}; pksCell2 = pksCellCell{2};
 
 posLap1 = posLap1/max(posLap1); posLap2 = posLap2/max(posLap2);
 
