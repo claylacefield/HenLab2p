@@ -1,4 +1,4 @@
-function [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo)
+function [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc) %, lapTypeInfo)
 
 %% USAGE: [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo);
 % Strips out and concatenates unit events/pks and position of different lap types
@@ -19,6 +19,8 @@ function [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, 
 
 %[caLapBin] = wrapLapTuning(C,treadBehStruc);
 
+lapTypeArr = findCueLapTypes();
+
 % extract position and find lap boundaries (lapFrInds = ends of laps)
 pos = treadBehStruc.resampY(1:2:end);
 %pos2 = pos;
@@ -29,28 +31,36 @@ lapFrInds = [lapFrInds length(pos)]; % just for last lap (partial lap)
 pksCellGood = pksCell(goodSeg);
 
 % assign lap types for all laps based upon lapTypeInfo
-lapSeqN = 0;
-for n = 1:length(lapFrInds) %+1)
-    lapSeqN = lapSeqN + 1;
-    
-    for m = 1:length(lapTypeInfo)-1
-        if lapSeqN == lapTypeInfo(m);
-            lapTypeArr(n) = m+1; % find(lapTypeInfo(1:end-1),m)
-        else
-            lapTypeArr(n) = 1;
-        end
-    end
-    
-    % reset lap cycle counter if necessary
-    if lapSeqN == lapTypeInfo(end)
-       lapSeqN = 0; 
-    end
+% lapSeqN = 0;
+% for n = 1:length(lapFrInds) %+1)
+%     lapSeqN = lapSeqN + 1;
+%     
+%     for m = 1:length(lapTypeInfo)-1
+%         if lapSeqN == lapTypeInfo(m);
+%             lapTypeArr(n) = m+1; % find(lapTypeInfo(1:end-1),m)
+%         else
+%             lapTypeArr(n) = 1;
+%         end
+%     end
+%     
+%     % reset lap cycle counter if necessary
+%     if lapSeqN == lapTypeInfo(end)
+%        lapSeqN = 0; 
+%     end
+% end
+
+
+numLapTypes = max(lapTypeArr);
+numOmit = length(find(lapTypeArr==0));
+if numOmit>2
+    numLapTypes = numLapTypes+1;
+    lapTypeArr(lapTypeArr==0) = numLapTypes;
 end
 
 disp('Separating spikes and pos by lap type');
 
 % initialize output arrays
-for k=1:length(lapTypeInfo)
+for k=1:numLapTypes
     posLapCell{k} = [];
     pksCellCell{k} = cell(1,length(pksCellGood));
     if k==1
@@ -69,7 +79,7 @@ end
 % now find spikes for each lap, for each cell, based upon lapType
 for i=1:length(lapFrInds)-1
     lapType = lapTypeArr(i+1);
-    
+    if lapType ~= 0
     for j=1:length(pksCellGood)  % for each cell
         unitPks = unique(pksCellGood{j}); % get all pks for that cell (sometimes repeats, so get unique)
         lapPks = unitPks(find(unitPks>=lapFrInds(i) & unitPks<=lapFrInds(i+1))); % see which are in this lap
@@ -81,7 +91,7 @@ for i=1:length(lapFrInds)-1
     
     % and concatenate pos for this lap based upon this lapType
     posLapCell{lapType} = [posLapCell{lapType} pos(lapFrInds(i):lapFrInds(i+1))];
-    
+    end
 end
 
 % and now fill in the last lap

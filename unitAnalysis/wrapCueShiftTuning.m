@@ -1,4 +1,4 @@
-function [cueShiftStruc] = wrapCueShiftTuning(lapTypeInfo, varargin); %pksCell, goodSeg, treadBehStruc)
+function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc,lapTypeInfo, )
 
 % % if input is cell array of peaks
 % if iscell(C)
@@ -24,7 +24,7 @@ end
 
 disp(['Calculating cue shift tuning for ' filename]);
 
-if nargin==2
+if nargin==1
     if ischar(varargin{1}) % if arg is char (any letter key), then load latest treadBehStruc
         load(findLatestFilename('treadBehStruc'));
     elseif iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
@@ -42,67 +42,79 @@ end
 %% format other stuff
 T = treadBehStruc.adjFrTimes(1:2:end);
 
-[pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo);
+[pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc); %, lapTypeInfo);
 
 posLap1 = posLapCell{1}; posLap2 = posLapCell{2};
 pksCell1 = pksCellCell{1}; pksCell2 = pksCellCell{2};
 
 posLap1 = posLap1/max(posLap1); posLap2 = posLap2/max(posLap2);
 
-%cCell = C;
-C1 = zeros(length(pksCell1),length(posLap1));
-C2 = zeros(length(pksCell2),length(posLap2));
-for i = 1:length(pksCell1)
-    C1(i,pksCell1{i})=1;
-    C2(i,pksCell2{i})=1;
+% build spike arrays from spk times
+for typeNum = 1:length(pksCellCell)
+spikeCell{typeNum} = zeros(length(pksCellCell{typeNum}),length(posLapCell{typeNum}));
+for i = 1:length(pksCellCell{typeNum})
+    spikeCell{typeNum}(i,pksCellCell{typeNum}{i})=1;
+end
 end
 
-disp('Calc lapType1 tuning'); tic;
+% Calculate tuning for each lap type (and concat struc in cell array)
 shuffN = 1000;
-spikes = C1; treadPos = posLap1;
-PCLappedSess1 = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLap1)), shuffN);
-toc;
+for typeNum = 1:length(pksCellCell)
+    spikes = spikeCell{typeNum};
+    treadPos = posLapCell{typeNum}; treadPos = treadPos/max(treadPos);
+    disp(['Calculating tuning for lapType ' num2str(typeNum)]); tic;
+    PCLappedSessCell{typeNum} = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLapCell{typeNum})), shuffN);
+    toc;
+end
 
-disp('Calc lapType2 tuning'); tic;
-spikes = C2; treadPos = posLap2;
-PCLappedSess2 = computePlaceCellsLappedWithEdges3a(spikes, treadPos, T(1:length(posLap2)), shuffN);
-toc;
+% disp('Calc lapType2 tuning'); tic;
+% spikes = C2; treadPos = posLap2;
+% PCLappedSess2 = computePlaceCellsLappedWithEdges3a(spikes, treadPos, T(1:length(posLap2)), shuffN);
+% toc;
+% 
+% cueShiftStruc.PCLappedSess1 = PCLappedSess1;
+% cueShiftStruc.PCLappedSess2 = PCLappedSess2;
+% cueShiftStruc.pksCell1=pksCell1; cueShiftStruc.posLap1=posLap1; 
+% cueShiftStruc.pksCell2=pksCell2; cueShiftStruc.posLap2=posLap2; cueShiftStruc.lapFrInds=lapFrInds;
 
-cueShiftStruc.PCLappedSess1 = PCLappedSess1;
-cueShiftStruc.PCLappedSess2 = PCLappedSess2;
+cueShiftStruc.pksCellCell = pksCellCell;
+cueShiftStruc.posLapCell = posLapCell;
+cueShiftStruc.lapFrInds = lapFrInds;
+cueShiftStruc.PCLappedSessCell = PCLappedSessCell;
 
-cueShiftStruc.pksCell1=pksCell1; cueShiftStruc.posLap1=posLap1; 
-cueShiftStruc.pksCell2=pksCell2; cueShiftStruc.posLap2=posLap2; cueShiftStruc.lapFrInds=lapFrInds;
+% refLapType = 2;
+% plotCueShiftStruc(cueShiftStruc, refLapType);
 
-pc = find(PCLappedSess1.Shuff.isPC==1);
-posRates1 = PCLappedSess1.posRates(pc,:);
-[maxVal, maxInd] = max(posRates1');
-[newInd, oldInd] = sort(maxInd);
-sortInd = oldInd;
-posRates1 = posRates1(sortInd,:);
-
-posRates2 = PCLappedSess2.posRates(pc,:);
-posRates2 = posRates2(sortInd,:);
-
-figure('Position', [0 0 800 800]);
-subplot(2,2,1);
-colormap(jet);
-imagesc(posRates1);
-xlabel('position');
-title('LapType1');
-
-% tuning of lapType2 PCs
-subplot(2,2,2);
-colormap(jet);
-imagesc(posRates2);
-xlabel('position');
-title('LapType2');
-
-% and mean of each
-subplot(2,2,3);
-plot(mean(posRates1,1));
-hold on;
-plot(mean(posRates2,1),'g');
-title('posRates1=b, posRates2=g');
-
-
+% 
+% pc = find(PCLappedSess1.Shuff.isPC==1);
+% posRates1 = PCLappedSess1.posRates(pc,:);
+% [maxVal, maxInd] = max(posRates1');
+% [newInd, oldInd] = sort(maxInd);
+% sortInd = oldInd;
+% posRates1 = posRates1(sortInd,:);
+% 
+% posRates2 = PCLappedSess2.posRates(pc,:);
+% posRates2 = posRates2(sortInd,:);
+% 
+% figure('Position', [0 0 800 800]);
+% subplot(2,2,1);
+% colormap(jet);
+% imagesc(posRates1);
+% xlabel('position');
+% title('LapType1');
+% 
+% % tuning of lapType2 PCs
+% subplot(2,2,2);
+% colormap(jet);
+% imagesc(posRates2);
+% xlabel('position');
+% title('LapType2');
+% 
+% % and mean of each
+% subplot(2,2,3);
+% plot(mean(posRates1,1));
+% hold on;
+% plot(mean(posRates2,1),'g');
+% title('posRates1=b, posRates2=g');
+% 
+% 

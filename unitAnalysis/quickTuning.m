@@ -1,4 +1,4 @@
-function [cueShiftStruc, pksCell] = quickTuning(lapTypeInfo)
+function [cueShiftStruc, pksCell] = quickTuning() % lapTypeInfo)
 
 % Quickly performs rough peak detection post-Caiman and looks at tuning
 
@@ -24,4 +24,4 @@ toc;
 % [unitTuningStruc] = wrapTuningNewClay(pksCell, fps, toPlot, calcPvals);
 
 
-[cueShiftStruc] = wrapCueShiftTuning(lapTypeInfo, pksCell);
+[cueShiftStruc] = wrapCueShiftTuning(pksCell); % (lapTypeInfo, 
