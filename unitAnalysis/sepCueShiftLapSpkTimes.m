@@ -1,4 +1,4 @@
-function [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc) %, lapTypeInfo)
+function [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, varargin) %, lapTypeInfo)
 
 %% USAGE: [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo);
 % Strips out and concatenates unit events/pks and position of different lap types
@@ -19,14 +19,47 @@ function [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, 
 
 %[caLapBin] = wrapLapTuning(C,treadBehStruc);
 
-lapTypeArr = findCueLapTypes();
-
 % extract position and find lap boundaries (lapFrInds = ends of laps)
 pos = treadBehStruc.resampY(1:2:end);
 %pos2 = pos;
 %pos2(pos2>2000)=pos2(pos2>2000)-2000;
-[lapFrInds] = findLaps(pos);
+[lapFrInds, lapEpochs] = findLaps(pos);
 lapFrInds = [lapFrInds length(pos)]; % just for last lap (partial lap)
+lapCueStruc.lapFrInds = lapFrInds;
+
+
+if length(varargin)==1
+    if length(varargin{1})==1
+        rewOmit = varargin{1};
+        autoLapType = 1;
+    else
+        rewOmit = 0;
+        lapTypeInfo = varargin{1};
+        autoLapType = 0;
+    end
+elseif length(varargin)==2
+        rewOmit = varargin{1};
+        lapTypeInfo = varargin{2};
+        autoLapType = 0;
+else
+    rewOmit = 0;
+    autoLapType = 1;
+end
+
+% build lapTypeArr
+if autoLapType==1
+    [lapCueStruc] = findCueLapTypes(rewOmit);
+    lapTypeArr = lapCueStruc.lapTypeArr;
+else
+    lapTypeArr = ones(size(lapEpochs,1),1)';
+    numLapTypes = length(lapTypeInfo)-1;
+    for i=1:numLapTypes
+        lapTypeLaps = lapTypeInfo(i):lapTypeInfo(end):length(lapTypeArr);
+        lapTypeArr(lapTypeLaps)=i+1;
+    end
+    lapCueStruc.lapTypeArr = lapTypeArr;
+end
+
 
 pksCellGood = pksCell(goodSeg);
 

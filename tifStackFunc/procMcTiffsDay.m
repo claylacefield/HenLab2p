@@ -1,5 +1,8 @@
 function procMcTiffsDay()
 
+% This function performs procMcH5forCaiman directly from folder of TIFFs
+% (before H5 conversion, e.g. when conversion fails)
+
 dayPath = uigetdir();
 cd(dayPath);
 dayDir = dir;

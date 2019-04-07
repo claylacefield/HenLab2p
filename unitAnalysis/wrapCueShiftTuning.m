@@ -24,30 +24,69 @@ end
 
 disp(['Calculating cue shift tuning for ' filename]);
 
-if nargin==1
-    if ischar(varargin{1}) % if arg is char (any letter key), then load latest treadBehStruc
-        load(findLatestFilename('treadBehStruc'));
-    elseif iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
-        pksCell = varargin{1};
-        [treadBehStruc] = procHen2pBehav('auto', 'cue');
-        goodSeg = 1:length(pksCell);
-    else  % or if it's a struc it's treadBehStruc
-        treadBehStruc = varargin{1};
-    end
-else
-    treadName = uigetfile('*.mat', 'Select treadBehStruc');
-    load(treadName);
+try
+    load(findLatestFilename('treadBehStruc'));
+catch
+    disp('Couldnt find previous treadBehStruc so processing');
+    [treadBehStruc] = procHen2pBehav('auto', 'cue');
 end
+
+%numArgs = length(varargin);
+if nargin==1
+    if iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
+        pksCell = varargin{1};
+        goodSeg = 1:length(pksCell);
+        rewOmit = 0;
+    elseif length(varargin{1})==1
+        rewOmit = varargin{1};
+    else
+        lapTypeInfo = varargin{1};
+        rewOmit = 0;
+    end
+elseif length(varargin)==2
+    if iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
+        pksCell = varargin{1};
+        goodSeg = 1:length(pksCell);
+        if length(varargin{2})==1
+            rewOmit = varargin{2};
+        else
+            lapTypeInfo = varargin{2};
+            rewOmit = 0;
+        end
+    else
+        if length(varargin{1})==1
+            rewOmit = varargin{1};
+            lapTypeInfo = varargin{2};
+        else
+            lapTypeInfo = varargin{1};
+            rewOmit = varargin{2};
+        end
+    end
+elseif length(varargin)==3
+    pksCell = varargin{1};
+    goodSeg = 1:length(pksCell);
+    if length(varargin{2})==1
+        rewOmit = varargin{2};
+        lapTypeInfo = varargin{3};
+    else
+        lapTypeInfo = varargin{2};
+        rewOmit = varargin{3};
+    end
+end
+
 
 %% format other stuff
 T = treadBehStruc.adjFrTimes(1:2:end);
 
-[pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc); %, lapTypeInfo);
+if exist('lapTypeInfo')==0
+[pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, rewOmit); %, lapTypeInfo);
+else
+    [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, rewOmit, lapTypeInfo);
+end
 
-posLap1 = posLapCell{1}; posLap2 = posLapCell{2};
-pksCell1 = pksCellCell{1}; pksCell2 = pksCellCell{2};
-
-posLap1 = posLap1/max(posLap1); posLap2 = posLap2/max(posLap2);
+% posLap1 = posLapCell{1}; posLap2 = posLapCell{2};
+% pksCell1 = pksCellCell{1}; pksCell2 = pksCellCell{2};
+% posLap1 = posLap1/max(posLap1); posLap2 = posLap2/max(posLap2);
 
 % build spike arrays from spk times
 for typeNum = 1:length(pksCellCell)
@@ -77,9 +116,10 @@ end
 % cueShiftStruc.pksCell1=pksCell1; cueShiftStruc.posLap1=posLap1; 
 % cueShiftStruc.pksCell2=pksCell2; cueShiftStruc.posLap2=posLap2; cueShiftStruc.lapFrInds=lapFrInds;
 
+cueShiftStruc.filename = findLatestFilename('.h5');
 cueShiftStruc.pksCellCell = pksCellCell;
 cueShiftStruc.posLapCell = posLapCell;
-cueShiftStruc.lapFrInds = lapFrInds;
+cueShiftStruc.lapCueStruc = lapCueStruc;
 cueShiftStruc.PCLappedSessCell = PCLappedSessCell;
 
 % refLapType = 2;

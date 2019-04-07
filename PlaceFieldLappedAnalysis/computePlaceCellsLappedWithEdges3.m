@@ -4,9 +4,9 @@ function PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, s
 %beginning of 2018.
 %spikes = rows are samples, and columns are neurons
 
-if size(spikes,2)>size(spikes,1)
+%if size(spikes,2)>size(spikes,1)
     spikes = spikes';
-end
+%end
 
 %minimum percentage of laps in which cell must fire above its mean rate, also
 %minumum number of laps that a bin must be occupied in order to be included
@@ -73,7 +73,7 @@ occu = nansum(PCSimple.Occupancy);
 
 %%%%Info (bits/spike and bits/second) calcuations:
 nCells = size(PCSimple.posRates, 1);
-PCSimple.InfoPerSpk = NaN(nCells, 1);
+PCSimple.InfoPerSpk = NaN(nCells, 1);  % start out with NaNs
 PCSimple.InfoPerSec = NaN(nCells, 1);
 PCSimple.Shuff.InfoPerSpk = NaN(nCells, size(ratesAllShuff, 3));
 PCSimple.Shuff.InfoPerSec = NaN(nCells, size(ratesAllShuff, 3));
@@ -85,7 +85,7 @@ for i = 1:nCells
     [infoSp, infoSec] = makeInfoPerSpikeAndSec(PCSimple.posRates(i, goodBins), PCSimple.Occupancy(goodBins));
     PCSimple.InfoPerSpk(i) =  infoSp;
     PCSimple.InfoPerSec(i) = infoSec;
-    for sh = 1:size(ratesAllShuff, 3)
+    for sh = 1:size(ratesAllShuff, 3)  % shuffle
         [infoSp, infoSec] = makeInfoPerSpikeAndSec(ratesAllShuff(i, goodBins, sh), PCSimple.Occupancy(goodBins));
         PCSimple.Shuff.InfoPerSpk(i, sh) =  infoSp;
         PCSimple.Shuff.InfoPerSec(i, sh) = infoSec;
