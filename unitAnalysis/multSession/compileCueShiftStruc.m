@@ -1,4 +1,4 @@
-function [groupCueStruc] = compileCueShiftStruc(groupCueStruc, cueShiftStruc, lapTypes)
+function [groupCueStruc] = compileCueShiftStruc(groupCueStruc, cueShiftStruc, sessType)
 
 
 % run out of current cueShiftStruc folder
@@ -8,17 +8,6 @@ function [groupCueStruc] = compileCueShiftStruc(groupCueStruc, cueShiftStruc, la
 % - put in what percent omit/shift (e.g. length 1/2+3)
 % - think about integrating measures from sebnem posRatesCellbyLap.m
 
-%lapTypes = {'normCue' 'omitRew' 'omitCue'}; 'shiftCue' 
-
-n = length(groupCueStruc);
-try groupCueStruc(1).filename
-    n = n+1;
-catch
-end
-
-
-groupCueStruc(n).filename = findLatestFilename('cueShiftStruc');
-groupCueStruc(n).path = pwd;
 
 
 % select reference lap type for place cell determination (one with most
@@ -30,13 +19,8 @@ for i=1:length(cueShiftStruc.pksCellCell)
 end
 [val, refLapType] = max(numLapType);
 
-groupCueStruc(n).lapTypeArr = lapTypeArr;
-
-groupCueStruc(n).percNormCue = length(find(lapTypeArr==refLapType))/length(lapTypeArr);
-
 % select place cells
 pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
-groupCueStruc(n).pc = pc;
 % % Now compile PCs from all types
 % pc=[];
 % for i=1:numLapTypes
@@ -46,19 +30,33 @@ groupCueStruc(n).pc = pc;
 % end
 % pc = sort(unique(pc));
 
-groupCueStruc(n).infoPerSpkZ = cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.InfoPerSpkZ(pc);
-groupCueStruc(n).infoPerSpkP = cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.InfoPerSpkP(pc);
 
 
 % lapType specific variables
-for i = 1:length(numLapType)
-    lapTypeString = lapTypes{i};
+for i = 1:numLapTypes
+    posRates = cueShiftStruc.PCLappedSessCell{i}.posRates(pc,:);
+    posRateByLap = cueShiftStruc.PCLappedSessCell{i}.ByLap.posRateByLap(pc,:,:);
+    pkPos = cueShiftStruc.PCLappedSessCell{i}.Shuff.PFPeakPos(pc);
     
-    groupCueStruc(n).(lapTypeString).posRates = cueShiftStruc.PCLappedSessCell{i}.posRates(pc,:);
-    groupCueStruc(n).(lapTypeString).posRateByLap = cueShiftStruc.PCLappedSessCell{i}.ByLap.posRateByLap(pc,:,:);
-    groupCueStruc(n).(lapTypeString).pkPos = cueShiftStruc.PCLappedSessCell{i}.Shuff.PFPeakPos(pc);
 end
 
+tempStruc.normCue.posRates = posRates;
+tempStruc.posRateByLap = posRateByLap;
+tempStruc.pkPos = pkPos;
 
+% session-specific variables
+filename = findLatestFilename('cueShiftStruc');
+percNormCue = length(find(lapTypeArr==refLapType))/length(lapTypeArr);
+%pc = pc; and lapTypeArr, path
+infoPerSpkZ = cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.InfoPerSpkZ(pc);
+infoPerSpkP = cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.InfoPerSpkP(pc);
+
+% now put into correct session and lapType part of struc90acflrts
+sessTypeString = 'cueOmitSess';
+lapTypeString = 'normCueLaps';
+
+% groupCueStruc.cueOmitSess(n).
+    
+    
 
     
