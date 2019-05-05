@@ -6,12 +6,10 @@ function match2pBehavMouse()
 % different with other file naming conventions, etc.
 
 mouseFolder = uigetdir('/data/sebnem/DG_data', 'Select mouse folder of 2p data');
-disp(['Moving behavior for ' mouseFolder]);
 
 behavDataFolder = uigetdir('/data/sebnem/behaviorData', 'Select behavior folder for this animal');
-disp(['Behavior data folder for this mouse ' behavDataFolder]);
 
-%mouseName = mouseFolder(strfind(mouseFolder, 'DG_data/')+8:end);
+mouseName = mouseFolder(strfind(mouseFolder, 'DG_data/')+8:end);
 
 cd(mouseFolder);
 
@@ -42,7 +40,7 @@ for i = 3:length(mouseDir)
                     if isempty(findLatestFilename('.tdml'))
                         for k = 3:length(sessDir)
                             if ~isempty(strfind(sessDir(k).name, '.xml'))
-                                sessDatenum = sessDir(k).datenum; % this is XML datenum, which is at start of 2p acqu.
+                                sessDatenum = sessDir(k).datenum;
                                 cd(behavDataFolder);
                                 filename = findNearestDatenum(sessDatenum);
                                 source = [behavDataFolder '/' filename];
@@ -53,11 +51,10 @@ for i = 3:length(mouseDir)
                         end
                     end
                 catch
-                end % end TRY/CATCH for session
-            end % end IF isdir and 2018 or 2019
+                end
+            end
         end % end FOR loop for sessions in day
         
         cd(dayPath);
     end
-    cd(mouseFolder);
 end
