@@ -12,7 +12,7 @@ for j=3:length(mouseDir)
     
     for i = 3:length(dayDir)
         try
-            if strfind(dayDir(i).name, '18') % 'TSeries')
+            if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) % 'TSeries')
                 cd([mousePath '/' dayName '/' dayDir(i).name]);
                 %sessDir = dir;
                 if isempty(findLatestFilename('eMC'))

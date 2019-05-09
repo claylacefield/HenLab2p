@@ -26,8 +26,8 @@ switch nargin
         [relFrTimes, absFrTimes, frInds] = get2pFrTimes();
 end
 
-treadBehStruc.relFrTimes = relFrTimes;
-treadBehStruc.absFrTimes = absFrTimes;
+treadBehStruc.relFrTimes = relFrTimes; % times relative to start of frame grab (trig by beMate)
+treadBehStruc.absFrTimes = absFrTimes;  % absolute time from start of acq (before trig)
 treadBehStruc.frInds = frInds; % just indices of each from from Bruker XML
 
 %% calculate frame times adjusted to behav TDML times

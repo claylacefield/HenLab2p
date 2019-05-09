@@ -22,8 +22,8 @@ for i=1:length(xmCell)
     rowStr = xmCell{i};
     
     if ~isempty(strfind(rowStr, 'relativeTime'))
-        relTimeInd = strfind(rowStr, 'relativeTime');
-        absTimeInd = strfind(rowStr, 'absoluteTime');
+        relTimeInd = strfind(rowStr, 'relativeTime');  % relative to first frame
+        absTimeInd = strfind(rowStr, 'absoluteTime');   % absolute from start stack (before frame grab triggered)
         indexInd = strfind(rowStr, 'index');
         parInd = strfind(rowStr, 'parameterSet');
         

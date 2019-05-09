@@ -194,3 +194,4 @@ treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.ol
 treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 
+% NOTE: these times (e.g. rewTime) will be in register with adjFrTimes
