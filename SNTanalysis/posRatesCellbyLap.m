@@ -87,7 +87,7 @@ placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
 pfInAllPos = {}; pcGoodSegInd = {}; pfOutAllPos = {}; MeanposRatebyLapinPF = {};
 MeanposRatebyLapoutPF = {}; PCwidth = {}; InfoPerSpkZ = {}; InfoPerSpkP = {};
 posRateCOMs = {}; posRatesAll = {};
-for j = 1:3
+for j = 1:2
     isPC = find(multSessSegStruc(j).PCLapSess.Shuff.isPC);
     pcGoodSegInd{j} = isPC;
     pfInAllPos{j} = {};

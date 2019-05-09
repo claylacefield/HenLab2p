@@ -1,7 +1,7 @@
-transMat = zeros(size(posAndSpkStruct.C'));
+transMat = zeros(size(Cds'));
 
-for i = 1:length(posAndSpkStruct.pksAll)
-    pks = posAndSpkStruct.pksAll{i};
+for i = 1:length(pksCell)
+    pks = pksCell{i};
     if ~isempty(pks)
         transMat(pks, i) = 1;
     end
@@ -9,11 +9,11 @@ end
 
 numTransients = sum(transMat);
 
-T = posAndSpkStruct.treadBehStruct.adjFrTimes(1:2:end);
-treadPos = posAndSpkStruct.treadBehStruct.resampY(1:2:end);
+T = treadBehStruc.adjFrTimes(1:2:end);
+treadPos = treadBehStruc.resampY(1:2:end);
 treadPos = treadPos/max(treadPos);
 
-placeAnalysis = computePlaceCellsLappedWithEdges2(transMat, treadPos, T, 200);
+placeAnalysis = computePlaceCellsLappedWithEdges2(transMat, treadPos, T, 1000);
 
 [~, m1] = max(placeAnalysis.posRates(placeAnalysis.Shuff.isPC > 0, :)');
 [~, m2] = sort(m1);

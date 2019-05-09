@@ -239,11 +239,17 @@ for i = 1:length(PCMatchedAny)
     PCMatchedAny{i} = PCMatchedAny{i}(s2, :);
 end
 figure;
+maxRate = Inf;
+CLims = [0, 0.5];
 for i = 1:3
     subplot(1, 3, i);
-    imagesc(PCMatchedAny{i});
+    c = PCMatchedAny{i};
+    c(c> maxRate) = maxRate;
+    imagesc(c);
+    set (gca, 'CLim', CLims)
 end
 suptitle('nonNormRates');
+colormap hot;
 
 % %normalize each by max firing rate
 % for i = 1:length(PCMatchedAny)

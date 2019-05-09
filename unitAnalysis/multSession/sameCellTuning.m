@@ -129,26 +129,26 @@ end
 title('Place cells in all sessions');
 
 %%
-%save spatial profiles of cells from all sessions, aligned with ziv
-for i = 1:length(unitSpatCell)
-    allCell = mean(unitSpatCell{i},1);
-    rgb(:,:,i) = allCell/max(allCell(:));
-end
-
-%imwrite(rgb, 'cellRegRGB.tif');
-
-%cellRegIndInAll
-
-% mark centroids of place cells in all
-try
-rgb2 = insertMarker(10*rgb, zivCentroids(cellRegIndInAll(placeCellsInAll),:));
-%rgb2 = insertMarker(10*rgb, zivCentroids);
-catch
-    rgb2=rgb;
-end
-
-figure;
-imshow(rgb2);
+% %save spatial profiles of cells from all sessions, aligned with ziv
+% for i = 1:length(unitSpatCell)
+%     allCell = mean(unitSpatCell{i},1);
+%     rgb(:,:,i) = allCell/max(allCell(:));
+% end
+% 
+% %imwrite(rgb, 'cellRegRGB.tif');
+% 
+% %cellRegIndInAll
+% 
+% % mark centroids of place cells in all
+% try
+% rgb2 = insertMarker(10*rgb, zivCentroids(cellRegIndInAll(placeCellsInAll),:));
+% %rgb2 = insertMarker(10*rgb, zivCentroids);
+% catch
+%     rgb2=rgb;
+% end
+% 
+% figure;
+% imshow(rgb2);
 
 % also, want to look at whether there are clusters or domains of tuning
 % similarity

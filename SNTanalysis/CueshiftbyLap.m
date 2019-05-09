@@ -6,6 +6,46 @@ pc = find(PCLappedSess1.Shuff.isPC==1);
 posRates1 = PCLappedSess1.posRates(pc,:);
 posRates2 = PCLappedSess2.posRates(pc,:);
 
+COMbin1 = [];
+COMbin2 = [];
+
+circbin = 1:100;
+circbin = ((circbin - 1)/99)*2*pi() - pi();
+for i = 1:size (pc, 1)
+    posRatesIn1 = posRates1(i,:);
+    posRatesIn2 = posRates2(i,:);
+    c1 = circ_mean(circbin, posRatesIn1, 2);
+    c2 = circ_mean(circbin, posRatesIn2, 2);
+    COMbin1(i) = round(((c1 + pi())/(2*pi()))*99 + 1);
+    COMbin2(i) = round(((c2 + pi())/(2*pi()))*99 + 1);
+end
+
+COMbin1 = (COMbin1)';
+COMbin2 = (COMbin2)';
+
+Z1= PCLappedSess1.Shuff.InfoPerSpkZ(pc);
+P1= PCLappedSess1.Shuff.InfoPerSpkP(pc);
+Z2= PCLappedSess2.Shuff.InfoPerSpkZ(pc);
+P2= PCLappedSess2.Shuff.InfoPerSpkP(pc);
+
+%% cumulatives
+% cumIRCOMbin1 = []; cumIRCOMbin2 = []; cumIRZ1 =[]; cumIRZ2 =[]; cumIRP1 =[]; cumIRP2 =[];
+% cumIRPosRate1 =[];cumIRPosRate2 =[]; 
+cumIRCOMbin1 = [cumIRCOMbin1; COMbin1];
+cumIRCOMbin2 = [cumIRCOMbin2; COMbin2];
+cumIRZ1 =[cumIRZ1; Z1]; cumIRZ2 =[cumIRZ2; Z2]; 
+cumIRP1 =[cumIRP1;P1]; cumIRP2 =[cumIRP2;P2]; 
+cumIRPosRate1 =[cumIRPosRate1; posRates1];
+cumIRPosRate2 =[cumIRPosRate2; posRates2]; 
+
+
+%% to plot shifted for Di15
+PCLappedSess1 = cueShiftStruc.PCLappedSess1;
+PCLappedSess2 = cueShiftStruc.PCLappedSess2;
+pc = find(PCLappedSess1.Shuff.isPC==1);
+posRates1 = PCLappedSess1.posRates(pc,:);
+posRates2 = PCLappedSess2.posRates(pc,:);
+
 ShiftedposRates1 = [];
 ShiftedposRates2 = [];
 for i = 1: size (posRates1,1);
@@ -15,7 +55,7 @@ ShiftedposRates1=[ShiftedposRates1; newposRate1];
 ShiftedposRates2=[ShiftedposRates2; newposRate2];
 end
 
-%% to plot shifted
+
 
 [maxVal, maxInd] = max(ShiftedposRates1');
 [newInd, oldInd] = sort(maxInd);
@@ -67,9 +107,9 @@ end
 COMbin1 = (COMbin1)';
 COMbin2 = (COMbin2)';
 
-%cumCOMbin1 = []; cumCOMbin2 = [];
-cumCOMbin1 = [cumCOMbin1; COMbin1];
-cumCOMbin2 = [cumCOMbin2; COMbin2];
+% %cumCOMbin1 = []; cumCOMbin2 = [];
+% cumCOMbin1 = [cumCOMbin1; COMbin1];
+% cumCOMbin2 = [cumCOMbin2; COMbin2];
 
 
 %% remapping between Lap type1 vs type2
@@ -84,7 +124,7 @@ rAll = [rAll; r(1, 2)];
 pAll = [pAll; p(1, 2)];
 end
 
-%cumrAll =[]; cumpAll =[];
+cumrAll =[]; cumpAll =[];
 cumrAll =[cumrAll; rAll]; cumpAll = [cumpAll; pAll];
 
 %% ongoing
@@ -103,10 +143,10 @@ for i = 1:size(pfInAnyPos1,1)
 end
 
 
-InfoPerSpkZ1= PCLappedSess1.Shuff.InfoPerSpkZ(pc);
-InfoPerSpkP1= PCLappedSess1.Shuff.InfoPerSpkP(pc);
-InfoPerSpkZ2= PCLappedSess2.Shuff.InfoPerSpkZ(pc);
-InfoPerSpkP2= PCLappedSess2.Shuff.InfoPerSpkP(pc);
+Z1= PCLappedSess1.Shuff.InfoPerSpkZ(pc);
+P1= PCLappedSess1.Shuff.InfoPerSpkP(pc);
+Z2= PCLappedSess2.Shuff.InfoPerSpkZ(pc);
+P2= PCLappedSess2.Shuff.InfoPerSpkP(pc);
 
 placeCellInd = {};
 posRatesCellByLap = {};
