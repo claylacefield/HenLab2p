@@ -5,7 +5,7 @@ cd(dayPath);
 dayDir = dir;
 
 for i = 3:length(dayDir)
-    if strfind(dayDir(i).name, '18') %'TSeries')
+    if ~isempty(strfind(dayDir(i).name, '18')) ||  ~isempty(strfind(dayDir(i).name, '19'))%'TSeries')
         cd(dayDir(i).name);
         sessDir = dir;
         %try

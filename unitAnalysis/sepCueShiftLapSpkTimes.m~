@@ -104,11 +104,12 @@ end
 % first, just fill in first lap (for each cell, find spikes in first lap)
 lapType = lapTypeArr(1);
 if lapType~=0
-    for p = 1:length(pksCellGood)
+for p = 1:length(pksCellGood)
+        
         unitPks = unique(pksCellGood{p}); % get all pks for that cell
         lapPks = unitPks(find(unitPks>=1 & unitPks<=lapFrInds(1))); % see which are in this lap
         pksCellCell{lapType}{p} = lapPks;
-    end
+end
 end
 
 % now find spikes for each lap, for each cell, based upon lapType
