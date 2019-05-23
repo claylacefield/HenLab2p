@@ -49,6 +49,7 @@ rewZoneStopTime = [];
 rewZoneStopPos = [];
 
 olfTime = []; olfPos = []; olfLap = [];
+ledTime = []; ledPos = []; ledLap = [];
 toneTime = []; tonePos = []; toneLap = [];
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 
@@ -131,10 +132,17 @@ for i=1:length(behCell)
         end
         
         % olfactory stim time/pos
-        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 3'))
+        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 3,'))
             olfTime = [olfTime currTime];
             olfPos = [olfPos currY];
             olfLap = [olfLap lap];
+        end
+        
+        % olfactory stim time/pos
+        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
+            ledTime = [ledTime currTime];
+            ledPos = [ledPos currY];
+            ledLap = [ledLap lap];
         end
         
         % tone stim time/pos
@@ -191,6 +199,7 @@ treadBehStruc.rewZoneStopTime = rewZoneStopTime;
 treadBehStruc.rewZoneStopPos = rewZoneStopPos;
 
 treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.olfLap = olfLap;
+treadBehStruc.ledTime = ledTime; treadBehStruc.ledPos = ledPos; treadBehStruc.ledLap = ledLap;
 treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 
