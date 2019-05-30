@@ -1,4 +1,4 @@
-function [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
+function [multSessSegStruc] = wrapMultSessStrucSelect2P(varargin);
 
 %% USAGE: [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
 % Start with multSessTuninStruc or create new, selecting folders to
@@ -24,18 +24,18 @@ end
 stillAdding = 1;
 while stillAdding
     try
-        [segDictName, path] = uigetfile('*.mat', 'Select session segDict file to add to multSessTuningStruc');
+        [segDictName, path] = uigetfile('*.mat', 'Select session seg2P file to add to multSessTuningStruc');
         cd(path);
         
         try
-            goodSegName = uigetfile('*.mat', 'Select goodSeg file for this segDict');
+%             goodSegName = uigetfile('*.mat', 'Select goodSeg file for this segDict');
             
             disp(['Adding ' segDictName ' to multSessTuningStruc']);
         
             load(segDictName);
             
             %segName = findLatestFilename('segDict');
-            load(goodSegName);
+            %load(goodSegName);
             
             %[treadBehStruc] = procHen2pBehav('auto');
             load(findLatestFilename('treadBehStruc'));
@@ -52,17 +52,17 @@ while stillAdding
             multSessSegStruc(numSess).dayName = path(slashInds(end-2)+1:slashInds(end-1)-1);
             multSessSegStruc(numSess).sessName = path(slashInds(end-1)+1:end-1);
             multSessSegStruc(numSess).segDictName = segDictName;
-            multSessSegStruc(numSess).goodSegName = goodSegName;
+            %multSessSegStruc(numSess).goodSegName = goodSegName;
             %multSessTuningStruc(numSess).sessPath = foldername;
-            multSessSegStruc(numSess).C = C;
-            multSessSegStruc(numSess).A = A;
-            multSessSegStruc(numSess).d1 = d1;
-            multSessSegStruc(numSess).d2 = d2;
+            multSessSegStruc(numSess).C = seg2P.C2p;
+            multSessSegStruc(numSess).A = seg2P.A2p;
+            multSessSegStruc(numSess).d1 = seg2P.d12p;
+            multSessSegStruc(numSess).d2 = seg2P.d22p;
             multSessSegStruc(numSess).treadBehStruc = treadBehStruc;
             %multSessSegStruc(numSess).avgTiff = imread(findLatestFilename('_avCaChDs'));
             
-            multSessSegStruc(numSess).goodSeg = goodSeg; % includes greatSeg but not in's and ok's
-            multSessSegStruc(numSess).greatSeg = greatSeg;
+            %multSessSegStruc(numSess).goodSeg = goodSeg; % includes greatSeg but not in's and ok's
+            %multSessSegStruc(numSess).greatSeg = greatSeg;
             
 %             try
 %             multSessSegStruc(numSess).okSeg = okSeg;
@@ -70,11 +70,11 @@ while stillAdding
 %             catch
 %                 disp('No okSegs or INs');
 %             end
-%             
-            multSessSegStruc(numSess).pksCell = pksCell;
-            multSessSegStruc(numSess).deconvC = deconvC;
-            multSessSegStruc(numSess).posRates = posRates;
-            multSessSegStruc(numSess).posDeconv = posDeconv;
+            
+            multSessSegStruc(numSess).pksCell = seg2P.pksCell;
+%             multSessSegStruc(numSess).deconvC = deconvC;
+%             multSessSegStruc(numSess).posRates = posRates;
+%             multSessSegStruc(numSess).posDeconv = posDeconv;
 
 %             multSessTuningStruc(numSess).goodSegPosPkStruc = goodSegPosPkStruc;
 %             wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
@@ -91,7 +91,7 @@ while stillAdding
         saveFilename = ['/data/sebnem/DG_data/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
         save(saveFilename, 'multSessSegStruc');
     end
-     cd ..;
+    cd ..;
 end
 
 

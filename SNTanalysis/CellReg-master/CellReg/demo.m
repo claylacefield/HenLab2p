@@ -1,14 +1,3 @@
-function [cell_registered_struct] = cellRegClay_allSeg(multSessSegStruc);
-
-%% USAGE: [cell_registered_struct] = cellRegClay(multSessTuningStruc);
-%% Clay 2017
-% This is a wrapper script for the Ziv CellReg alignment procedure, based
-% upon demo.m from CellReg folder.
-% Inputs are from multSessTuningStruc, which contains
-% C/A/treadBehStruc/etc. 
-% Outputs are saved in the output directory (the current directory), as
-% "cellRegistered_..._.m", and also output as cell_registered_struct
-
 %% Method overview:
 
 % This is an implementation of a probabilistic approach for the
@@ -41,31 +30,31 @@ function [cell_registered_struct] = cellRegClay_allSeg(multSessSegStruc);
 %% Setting paths for the cell registration procedure:
 
 % Defining the results_directory and creating the figures_directory:
-results_directory= pwd; % '/home/clay/Documents/analysis';
+results_directory= 'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13';
 figures_directory=fullfile(results_directory,'Figures');
 if exist(figures_directory,'dir')~=7
     mkdir(figures_directory);
 end
 figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
 
-        
+% Defining the paths for the data:
+file_names={'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13\Footprints\spatial_footprints1.mat',...
+            'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13\Footprints\spatial_footprints2.mat',...
+            'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13\Footprints\spatial_footprints3.mat',...
+            'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13\Footprints\spatial_footprints4.mat',...
+            'D:\Analysis\Dorsal Raphe Nucleus\By Animal\DRN113\Cell Registration-2018-06-13\Footprints\spatial_footprints5.mat'};
+
 %% Stage 1 - Loading the spatial footprints of cellular activity:
 % This stage loads a new data set which includes several sessions with the
 % identified spatial footprints.
 
 % Defining the parameters:
-imaging_technique='two_photon'; % either 'one_photon' or 'two_photon'
-microns_per_pixel=1.3;
+imaging_technique='one_photon'; % either 'one_photon' or 'two_photon'
+microns_per_pixel=2.45;
 
-% Loading the data: (compile spatial_footprints from multSdessTuningStruc)
+% Loading the data:
 disp('Stage 1 - Loading sessions')
-
-% nUnits x d1 x d2
-for i = 1:length(multSessSegStruc)
-    A = permute(reshape(full(multSessSegStruc(i).A), multSessSegStruc(i).d1,multSessSegStruc(i).d2, size(multSessSegStruc(i).A,2)), [3 1 2]);
-    spatial_footprints{i} = A;
-end
-
+[spatial_footprints,number_of_sessions]=load_multiple_sessions(file_names);
 [footprints_projections]=compute_footprints_projections(spatial_footprints);
 plot_all_sessions_projections(footprints_projections,figures_directory,figures_visibility)
 disp('Done')
@@ -79,8 +68,8 @@ disp('Done')
 
 % Defining the parameters for image alignment:
 alignment_type='Translations and Rotations'; % either 'Translations' or 'Translations and Rotations'
-use_parallel_processing=true; % either true or false
-maximal_rotation=30; % in degrees - only relevant if 'Translations and Rotations' is used
+use_parallel_processing=false; % either true or false
+maximal_rotation=10; % in degrees - only relevant if 'Translations and Rotations' is used
 reference_session_index=1; 
 
 % Preparing the data for alignment:
@@ -92,10 +81,26 @@ disp('Stage 2 - Aligning sessions')
 [centroid_locations]=compute_centroid_locations(adjusted_spatial_footprints,microns_per_pixel); 
 [centroid_projections]=compute_centroids_projections(centroid_locations,adjusted_spatial_footprints);
 
+%Added by Grace to allow for the use of a different image set for
+%cross-correlations; here, prep image set for alignment
+if exist('im','var')
+    temp = cell(size(im));
+    for i = 1:size(im,2)
+        temp{1,i} = zeros(1,size(im{1,i},1),size(im{1,i},2));
+        temp{1,i}(1,:,:) = im{1,i};
+    end
+    im = temp;
+    im = adjust_FOV_size(im);
+    for i = 1:size(im,2)
+        im{1,i} = squeeze(im{1,i}(1,:,:));
+        im{1,i} = im{1,i}/max(im{1,i}(:));
+    end
+end
+
 % Aligning the cells according to the tranlations/rotations that maximize their similarity:
 if strcmp(alignment_type,'Translations and Rotations')
     [spatial_footprints_corrected,centroid_locations_corrected,footprints_projections_corrected,centroid_projections_corrected,maximal_cross_correlation,alignment_translations,overlapping_FOV]=...
-        align_images(adjusted_spatial_footprints,centroid_locations,adjusted_footprints_projections,centroid_projections,adjusted_FOV,microns_per_pixel,reference_session_index,alignment_type,use_parallel_processing,maximal_rotation);
+        align_images(adjusted_spatial_footprints,centroid_locations,adjusted_footprints_projections,centroid_projections,adjusted_FOV,microns_per_pixel,reference_session_index,alignment_type,use_parallel_processing,maximal_rotation,im);
 elseif strcmp(alignment_type,'Translations')
     [spatial_footprints_corrected,centroid_locations_corrected,footprints_projections_corrected,centroid_projections_corrected,maximal_cross_correlation,alignment_translations,overlapping_FOV]=...
         align_images(adjusted_spatial_footprints,centroid_locations,adjusted_footprints_projections,centroid_projections,adjusted_FOV,microns_per_pixel,reference_session_index,alignment_type,use_parallel_processing);
@@ -103,7 +108,7 @@ end
 
 % Evaluating data quality:
 [all_centroid_projections_correlations,number_of_cells_per_session]=...
-    evaluate_data_quality(spatial_footprints_corrected,centroid_projections_corrected,maximal_cross_correlation,alignment_translations,reference_session_index,alignment_type);
+    evaluate_data_quality(spatial_footprints_corrected,footprints_projections_corrected,maximal_cross_correlation,alignment_translations,reference_session_index,alignment_type);
 plot_alignment_results(adjusted_spatial_footprints,centroid_locations,spatial_footprints_corrected,centroid_locations_corrected,adjusted_footprints_projections,footprints_projections_corrected,reference_session_index,all_centroid_projections_correlations,maximal_cross_correlation,alignment_translations,overlapping_FOV,alignment_type,number_of_cells_per_session,figures_directory,figures_visibility)
 
 if use_parallel_processing
@@ -119,7 +124,7 @@ disp('Done')
 % correlations from the data.
 
 % Defining the parameters for the probabilstic modeling:
-maximal_distance=12; % cell-pairs that are more than 12 micrometers apart are assumed to be different cells
+maximal_distance=20; % cell-pairs that are more than 12 micrometers apart are assumed to be different cells
 normalized_maximal_distance=maximal_distance/microns_per_pixel;
 p_same_certainty_threshold=0.95; % certain cells are those with p_same>threshld or <1-threshold
 
@@ -226,7 +231,7 @@ disp('Done')
 % correlations.
 
 % Defining the parameters for final registration:
-registration_approach='Probabilistic'; % either 'Probabilistic' or 'Simple threshold'
+registration_approach='Simple threshold'; % either 'Probabilistic' or 'Simple threshold'
 model_type=best_model_string; % either 'Spatial correlation' or 'Centroid distance'
 p_same_threshold=0.5; % only relevant if probabilistic approach is used
 
@@ -266,10 +271,10 @@ if strcmp(registration_approach,'Probabilistic')
 elseif strcmp(registration_approach,'Simple threshold')
     if strcmp(model_type,'Spatial correlation')
         [optimal_cell_to_index_map,registered_cells_centroids]=...
-            cluster_cells(cell_to_index_map,all_to_all_spatial_correlations,all_to_all_indexes,normalized_maximal_distance,final_threshold,centroid_locations_corrected,registration_approach,transform_data);
+            cluster_cells(cell_to_index_map,all_to_all_correlation_multi,all_to_all_matrix_multi,normalized_maximal_distance,final_threshold,centroid_locations_corrected,registration_approach,transform_data);
     elseif strcmp(model_type,'Centroid distance')
         [optimal_cell_to_index_map,registered_cells_centroids]=...
-            cluster_cells(cell_to_index_map,all_to_all_centroid_distances,all_to_all_indexes,normalized_maximal_distance,normalized_distance_threshold,centroid_locations_corrected,registration_approach,transform_data);
+            cluster_cells(cell_to_index_map,all_to_all_distance_multi,all_to_all_matrix_multi,normalized_maximal_distance,normalized_distance_threshold,centroid_locations_corrected,registration_approach,transform_data);
     end
 end
 [is_in_overlapping_FOV]=check_if_in_overlapping_FOV(registered_cells_centroids,overlapping_FOV);

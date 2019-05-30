@@ -101,7 +101,7 @@ end
 
 %basename = filename(1:strfind(filename, '.h5')-1);
 basename = filename(1:strfind(filename, '_Cycle')-1);
-basename = [basename '_eMC'];
+basename = [basename '_nMC'];
 
 %saveRed = 1;
 %%

@@ -1,6 +1,6 @@
-function [seg2p] = postProcSuite2p()
+function [seg2P] = postProcSuite2p()
 
-%%load temporal factor
+%%load? temporal factor
 F = readNPY('F.npy');
 isCell = readNPY('iscell.npy');
 C = [];
@@ -31,14 +31,16 @@ end
 
 
 %% get transients
-% pksCell={};
-% for seg = 1:size(Cds,1)
-% pksCell{seg} = clayCaTransients(Cds(seg,:), 15);
-% end
+pksCell={};
+for seg = 1:size(Cds,1)
+pksCell{seg} = clayCaTransients(Cds(seg,:), 15);
+end
 
 %% make seg2P
 seg2P = [];
 seg2P.C2p = Cds;
+seg2P.pksCell = pksCell;
+load('s2pSpatialMasks.mat');
 seg2P.A2p = A;
 seg2P.d12p = d1;
 seg2P.d22p = d2;

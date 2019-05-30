@@ -1,4 +1,4 @@
-function procMcH5mouseSuite2p()
+function postProcS2Pmouse()
 
 mousePath = uigetdir();
 cd(mousePath);
@@ -12,12 +12,15 @@ for j=3:length(mouseDir)
     
     for i = 3:length(dayDir)
         try
-            if strfind(dayDir(i).name, '18') % 'TSeries')
+            if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '17')) % 'TSeries')
                 cd([mousePath '/' dayName '/' dayDir(i).name]);
                 %sessDir = dir;
-                if isempty(findLatestFilename('eMC'))
-                    disp('Cant find previous eMC.h5 so processing raw .h5'); % findLatestFilename('Cycle')]);
-                    procMcH5forSuite2p('auto');
+                if isempty(findLatestFilename('_seg2P_'))
+                    cd('suite2p/plane0');
+                    [seg2P]= postProcSuite2p();
+                    basename = dayDir(i).name;
+                    cd([mousePath '/' dayName '/' dayDir(i).name]);
+                    save ([basename '_seg2P_' date '.mat'], 'seg2P');
                 end
             end
         catch
