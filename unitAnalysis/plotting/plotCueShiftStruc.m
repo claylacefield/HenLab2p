@@ -31,8 +31,10 @@ end
 
 figure('Position', [0 0 1000 800]);
 
+numCols = ceil((numLapTypes+1)/2);
+
 for i = 1:numLapTypes
-subplot(2,2,i);
+subplot(2,numCols,i);
 colormap(jet);
 imagesc(posRatesCell{i});
 %colorbar;
@@ -45,7 +47,7 @@ end
 end
 
 % and mean of each
-subplot(2,2,4); hold on;
+subplot(2,numCols,numLapTypes+1); hold on;
 for i = 1:numLapTypes
 plot(mean(posRatesCell{i},1));
 end

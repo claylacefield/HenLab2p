@@ -30,7 +30,7 @@ if length(varargin)>0
             if length(varargin{1})==1
                 segCh = varargin{1}; % if varargin{1} is numeric, it's segCh
                 filename = 0;
-                [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
+                [Y, Ysiz, filename, info] = h5readClay(segCh, endFr, filename);
                 Y = squeeze(Y);
                 Y = permute(Y, [2 1 3]);
             else
@@ -47,7 +47,7 @@ if length(varargin)>0
                 else
                     filename = flag;
                 end
-                [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
+                [Y, Ysiz, filename, info] = h5readClay(segCh, endFr, filename);
                 Y = squeeze(Y);
                 Y = permute(Y, [2 1 3]);
             else
@@ -165,7 +165,7 @@ imwrite(double(avCh2ds/max(avCh2ds(:))), [basename '_avCaChDs.tif']); % save tif
 outfile = [basename '_caChExpDs.h5'];
 disp(['Saving filtered, downsampled calcium channel as H5 (tzyxc order):' outfile]);
 tic;
-saveH5(Y, outfile);
+saveH5(Y, outfile, info);
 toc;
 
 if saveRed

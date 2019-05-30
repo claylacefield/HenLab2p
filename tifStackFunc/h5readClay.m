@@ -1,4 +1,4 @@
-function [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename)
+function [Y, Ysiz, filename, info] = h5readClay(segCh, endFr, filename)
 
 
 %% USAGE: [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);

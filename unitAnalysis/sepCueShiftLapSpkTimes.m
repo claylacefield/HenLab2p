@@ -51,11 +51,15 @@ if autoLapType==1
     [lapCueStruc] = findCueLapTypes(rewOmit);
     lapTypeArr = lapCueStruc.lapTypeArr;
 else
-    lapTypeArr = ones(size(lapEpochs,1),1)';
-    numLapTypes = length(lapTypeInfo)-1;
-    for i=1:numLapTypes
-        lapTypeLaps = lapTypeInfo(i):lapTypeInfo(end):length(lapTypeArr);
-        lapTypeArr(lapTypeLaps)=i+1;
+    if length(lapTypeInfo)<10 % if length of lapTypeInfo is <10 then it's prob lap sequence
+        lapTypeArr = ones(size(lapEpochs,1),1)';
+        numLapTypes = length(lapTypeInfo)-1;
+        for i=1:numLapTypes
+            lapTypeLaps = lapTypeInfo(i):lapTypeInfo(end):length(lapTypeArr);
+            lapTypeArr(lapTypeLaps)=i+1;
+        end
+    else
+        lapTypeArr = lapTypeInfo; % else it's a full lapTypeArr
     end
     lapCueStruc.lapTypeArr = lapTypeArr;
 end
