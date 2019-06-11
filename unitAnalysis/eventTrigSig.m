@@ -28,9 +28,13 @@ end
 
 % 
 for i = 1:length(evTimes)
+    try
     [val, nrstInd] = min(abs(sigTimes-evTimes(i)));
     zeroFr(i) = nrstInd(1);
     evTrigSig(:,i) = sig(nrstInd+interval(1):nrstInd+interval(2));
+    catch
+        disp(['Prob with event #' num2str(i)]);
+    end
 end
 
 if toPlot

@@ -42,17 +42,17 @@ ledLap = treadBehStruc.ledLap+1;
 %[sortVals,order] = sort([length(ledPos), length(olfPos), length(tonePos)]);
 
 % sometimes one cue is missing so take the one with most
-if length(tonePos) >= length(olfPos) && length(tonePos) >= length(ledPos)
+if length(tonePos) > length(olfPos) && length(tonePos) > length(ledPos)
     cuePos = tonePos;
     cueLap = toneLap;
     cueTime = toneTime;
     cueType = 'tone';
-elseif length(olfPos) >= length(tonePos) && length(olfPos) >= length(ledPos)
+elseif length(olfPos) > length(tonePos) && length(olfPos) > length(ledPos)
     cuePos = olfPos;
     cueLap = olfLap;
     cueTime = olfTime;
     cueType = 'olf';
-elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos)
+elseif length(ledvPos) > length(olfPos) && length(ledPos) > length(tonePos)
     cuePos = ledPos;
     cueLap = ledLap;
     cueTime = ledTime;

@@ -60,6 +60,7 @@ else
         end
     else
         lapTypeArr = lapTypeInfo; % else it's a full lapTypeArr
+        lapTypeArr = lapTypeArr(1:size(lapEpochs,1));  % just trim if necessary
     end
     lapCueStruc.lapTypeArr = lapTypeArr;
 end

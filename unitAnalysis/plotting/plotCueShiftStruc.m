@@ -25,8 +25,11 @@ posRatesCell{refLapType} = posRates;
 
 % now for all lap types with PCs and sorted based upon reference type 
 for i = 1:numLapTypes
+    try
 posRates = cueShiftStruc.PCLappedSessCell{i}.posRates(pc,:);
 posRatesCell{i} = posRates(sortInd,:);
+    catch
+    end
 end
 
 figure('Position', [0 0 1000 800]);
@@ -34,23 +37,31 @@ figure('Position', [0 0 1000 800]);
 numCols = ceil((numLapTypes+1)/2);
 
 for i = 1:numLapTypes
-subplot(2,numCols,i);
-colormap(jet);
-imagesc(posRatesCell{i});
-%colorbar;
-xlabel('position');
-if i==1
-    title(cueShiftStruc.filename(1:strfind(cueShiftStruc.filename,'cueShift')-2));
-else
-title(['LapType '  num2str(i)]);
-end
+    try
+        subplot(2,numCols,i);
+        colormap(jet);
+        imagesc(posRatesCell{i});
+        %colorbar;
+        xlabel('position');
+        if i==1
+            title(cueShiftStruc.filename(1:strfind(cueShiftStruc.filename,'cueShift')-2));
+        else
+            title(['LapType '  num2str(i)]);
+        end
+    catch
+    end
 end
 
 % and mean of each
 subplot(2,numCols,numLapTypes+1); hold on;
 for i = 1:numLapTypes
-plot(mean(posRatesCell{i},1));
+    try
+        plot(mean(posRatesCell{i},1));
+    catch
+    end
+    numCell{i}=num2str(i);
 end
-title('posRates1=b, posRates2=g');
+%title('posRates1=b, posRates2=g');
+legend(numCell);
 
 

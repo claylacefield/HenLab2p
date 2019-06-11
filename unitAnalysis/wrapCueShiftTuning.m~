@@ -103,16 +103,16 @@ end
 % Calculate tuning for each lap type (and concat struc in cell array)
 shuffN = 1000;
 for typeNum = 1:length(pksCellCell)
-    try
+    %try
     spikes = spikeCell{typeNum};
     treadPos = posLapCell{typeNum}; treadPos = treadPos/max(treadPos);
     disp(['Calculating tuning for lapType ' num2str(typeNum)]); tic;
     PCLappedSessCell{typeNum} = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLapCell{typeNum})), shuffN);
     toc;
-    catch
-        PCLappedSessCell{typeNum} = [];
-        disp(['Prob with lapType ' num2str(typeNum)]);
-    end
+%     catch
+%         PCLappedSessCell{typeNum} = [];
+%         disp(['Prob with lapType ' num2str(typeNum)]);
+%     end
 end
 
 % disp('Calc lapType2 tuning'); tic;

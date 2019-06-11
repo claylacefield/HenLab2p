@@ -51,6 +51,7 @@ rewZoneStopPos = [];
 olfTime = []; olfPos = []; olfLap = [];
 ledTime = []; ledPos = []; ledLap = [];
 toneTime = []; tonePos = []; toneLap = [];
+tactTime = []; tactPos = []; tactLap = [];
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 
 tic;
@@ -152,6 +153,13 @@ for i=1:length(behCell)
             toneLap = [toneLap lap];
         end
         
+        % tone stim time/pos
+        if ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'start')) %&& ~isempty(strfind(rowStr, '"pin":3'))
+            tactTime = [tactTime currTime];
+            tactPos = [tactPos currY];
+            tactLap = [tactLap lap];
+        end
+        
         % RFID time/pos
         if ~isempty(strfind(rowStr, '"tag_reader"')) %&& ~isempty(strfind(rowStr, '"open"')) %&& ~isempty(strfind(rowStr, '"pin":3'))
             rfidTime = [rfidTime currTime];
@@ -201,6 +209,7 @@ treadBehStruc.rewZoneStopPos = rewZoneStopPos;
 treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.olfLap = olfLap;
 treadBehStruc.ledTime = ledTime; treadBehStruc.ledPos = ledPos; treadBehStruc.ledLap = ledLap;
 treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
+treadBehStruc.tactTime = tactTime; treadBehStruc.tactPos = tactPos; treadBehStruc.tactLap = tactLap;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 
 % NOTE: these times (e.g. rewTime) will be in register with adjFrTimes
