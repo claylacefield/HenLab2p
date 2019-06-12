@@ -1,3 +1,5 @@
+function gatherSuite2PFolders()
+
 baseFolder = uigetdir();
 statFiles1 = rdir([baseFolder, '/**/stat.npy']);
 

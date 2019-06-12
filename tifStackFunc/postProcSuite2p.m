@@ -1,6 +1,6 @@
 function [seg2P] = postProcSuite2p()
 
-%%load? temporal factor
+%%load temporal factor
 F = readNPY('F.npy');
 isCell = readNPY('iscell.npy');
 C = [];
