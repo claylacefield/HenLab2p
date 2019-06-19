@@ -26,13 +26,16 @@ end
 
 % load in goodSeg if present?
 try 
-    load(findLatestFilename('_segDict_goodSeg')); %, 'goodSeg'));
+    load(findLatestFilename('_segDict_', 'goodSeg'));
     disp('Loading latest segDict');
-    pksCell = pksCell(goodSeg);
 catch
 [segDictName, path] = uigetfile('*.mat', 'Choose segDict to perform quick tuning (curr for cue task)');
 cd(path);
 load([path '/' segDictName]);
+
+
+
+end
 
 fps = 15;
 
@@ -45,10 +48,6 @@ for seg = 1:size(C,1)
 pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
 end
 toc;
-
-end
-
-
 
 
 % toPlot = 2; % to plot only PCs

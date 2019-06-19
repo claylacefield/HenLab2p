@@ -1,4 +1,4 @@
-function avgCueTrigSig(segNum, eventName)
+function avgCueTrigSigRew(segNum, eventName)
 
 
 % eventName = 'led' to make 'ledTime', etc.
@@ -36,17 +36,23 @@ end
 % times for all cues
 evTimes = treadBehStruc.([eventName 'Time']);
 
+% rew times each lap
+rew = treadBehStruc.rewZoneStartPos;
+[counts, edges, rewPosBin] = histcounts(rew,10);
+midRewInds = find(rewPosBin>=5 & rewPosBin<=7)+;
+notMidRewInds = find(rewPosBin>7 | rewPosBin<5);
+lapTypeArr(midRewInds) = 1;
+lapTypeArr(notMidRewInds) = 2;
+lapTypeArr(omitLaps) = 0;
+
 % find times of cues at different locations
-if length(cuePos)>1
+
 cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
-pos1evInd = find(cueLapArr==3);
+pos1evInd = find(cueLapArr==1);
 pos2evInd = find(cueLapArr==2);
 [evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos1evInd), 0, [-30 120], frTimes(1:2:end));
 [evTrigSig2, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos2evInd), 0, [-30 120], frTimes(1:2:end));
-else
 
-[evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes, 0, [-30 120], frTimes(1:2:end));
-end
 
 try
 [evTrigSig0, zeroFr] = eventTrigSig(C(segNum,:), omitCueTimes, 0, [-30 120], frTimes(1:2:end));

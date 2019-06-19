@@ -62,7 +62,7 @@ handles.greatSeg = [];
 handles.plotPos = 0;
 handles.plotVel = 0;
 handles.plotDff = 0;
-handles.sdThresh = 4;
+handles.sdThresh = 3;
 handles.plotPks = 0;
 handles.pksCell = {};
 handles.plotTuning = 0;
@@ -109,12 +109,12 @@ set(handles.editBasename, 'String', basename);
 handles.basename = basename;
 handles.fileBasename = basename;
 
-% try
-% load(findLatestFilename('treadBehStruc'));
-% catch
-%     disp('Cant find treadBehStruc file so calculating');
+try
+load(findLatestFilename('treadBehStruc'));
+catch
+    disp('Cant find treadBehStruc file so calculating');
     [treadBehStruc] = procHen2pBehav('auto');
-% end
+end
 treadPos = treadBehStruc.resampY(1:2:end);
 
 C = C/max(C(:));

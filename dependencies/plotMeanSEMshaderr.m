@@ -15,7 +15,7 @@ avCa = nanmean(ca,2);
 
 if size(varargin)==1
     baselineFr = varargin{1};
-avCa = avCa - avCa(baselineFr);
+avCa = avCa - mean(avCa(baselineFr));
 end
 
 %errorbar(xAx, nanmean(ca, 2),sem, 'Color', color); xlim([xAx(1) xAx(end)]);
