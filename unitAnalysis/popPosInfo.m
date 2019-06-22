@@ -1,6 +1,12 @@
+function popPosInfo(cueShiftStruc, goodSeg)
+
 
 posRates = cueShiftStruc.PCLappedSessCell{1}.posRates;
+if goodSeg==0
 pc = find(cueShiftStruc.PCLappedSessCell{1}.Shuff.isPC==1);
+else
+    pc = goodSeg;
+end
 pcRates = posRates(pc,:);
 
 [maxs, inds] = max(pcRates'); % find bin of peak firing rate for PCs
