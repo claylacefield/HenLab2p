@@ -26,7 +26,8 @@ end
 
 % load in goodSeg if present?
 try 
-    load(findLatestFilename('_segDict_goodSeg')); %, 'goodSeg'));
+    segDictName = findLatestFilename('_segDict_goodSeg');
+    load(segDictName); %, 'goodSeg'));
     disp('Loading latest segDict');
     pksCell = pksCell(goodSeg);
 catch
@@ -48,7 +49,7 @@ toc;
 
 end
 
-
+cueShiftStruc.segDictName = segDictName;
 
 
 % toPlot = 2; % to plot only PCs

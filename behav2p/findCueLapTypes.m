@@ -35,9 +35,15 @@ tonePos = treadBehStruc.tonePos;
 toneLap = treadBehStruc.toneLap+1;
 
 % and for led
+try
 ledTime = treadBehStruc.ledTime;
 ledPos = treadBehStruc.ledPos;
 ledLap = treadBehStruc.ledLap+1;
+catch
+    ledTime = [];
+ledPos = [];
+ledLap = [];
+end
 
 %[sortVals,order] = sort([length(ledPos), length(olfPos), length(tonePos)]);
 
