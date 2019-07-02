@@ -4,6 +4,15 @@ function plotCueShiftStruc(cueShiftStruc, refLapType)
 
 numLapTypes = length(cueShiftStruc.pksCellCell);
 
+if refLapType==0
+    lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
+    lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
+    for i=1:length(cueShiftStruc.pksCellCell)
+        numLapType(i) = length(find(lapTypeArr==i));
+    end
+    [val, refLapType] = max(numLapType); % use ref lap from one with most laps
+end
+
 % select place cells
 pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
 % Now compile PCs from all types
