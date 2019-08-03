@@ -38,9 +38,10 @@ treadBehStruc.tdmlName = filename;
 time = [];
 y = [];
 currY = NaN;
+lap = 0;
 yTimes = []; yTimeNano = [];
 lickTime = []; lickPos = []; lickLap = [];
-lapTime = []; lapNum = []; lap = 0; 
+lapTime = [];
 rewTime = []; rewPos = []; rewLap = [];
 rewZoneStartTime = [];
 rewZoneStartPos = [];
@@ -53,7 +54,6 @@ toneTime = []; tonePos = []; toneLap = [];
 tactTime = []; tactPos = []; tactLap = [];
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 ctxtTime = []; ctxtPos = []; ctxtLap = []; ctxtName = {};
-frCountTime = []; frCountPos = []; frCount = [];
 
 tic;
 for i=1:length(behCell)
@@ -89,8 +89,7 @@ for i=1:length(behCell)
         % lap time
         if ~isempty(strfind(rowStr, '"lap"'))
             lapTime = [lapTime currTime];
-            lap = str2num(rowStr(strfind(rowStr, '"lap"')+7:strfind(rowStr, '"time"')-2)); % lap+1;
-            lapNum = [lapNum lap];
+            lap = lap+1;
         end
         
         % lick time/pos
@@ -217,7 +216,7 @@ yTimes2 = yTimes;
 yTimes2(dTimes>0.02) = yTimes(dTimes>0.02)-dTimes(dTimes>0.02);
 treadBehStruc.yTimesAdj = yTimes2;
 
-treadBehStruc.lapTime = lapTime; treadBehStruc.lapNum = lapNum;
+treadBehStruc.lapTime = lapTime;
 treadBehStruc.lickTime = lickTime; treadBehStruc.lickPos = lickPos; treadBehStruc.lickLap = lickLap;
 treadBehStruc.rewTime = rewTime; treadBehStruc.rewPos = rewPos;treadBehStruc.rewLap = rewLap;
 treadBehStruc.rewZoneStartTime = rewZoneStartTime;
@@ -231,7 +230,5 @@ treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStru
 treadBehStruc.tactTime = tactTime; treadBehStruc.tactPos = tactPos; treadBehStruc.tactLap = tactLap;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 treadBehStruc.ctxtTime = ctxtTime; treadBehStruc.ctxtPos = ctxtPos; treadBehStruc.ctxtLap = ctxtLap; treadBehStruc.ctxtName = ctxtName;
-treadBehStruc.frCountTime = frCountTime; treadBehStruc.frCountPos = frCountPos; treadBehStruc.frCount = frCount;
-
 
 % NOTE: these times (e.g. rewTime) will be in register with adjFrTimes

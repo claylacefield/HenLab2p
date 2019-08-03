@@ -1,4 +1,4 @@
-function [startCueCellInd, midCueCellInd3] = findCueCells(cueShiftStruc, eventName)
+function [startCueCellInd, midCueCellInd2] = findCueCells(cueShiftStruc, eventName)
 
 %% USAGE: findCueCells(cueShiftStruc);
 % This function finds the identity of putative start and middle/variable
@@ -187,19 +187,10 @@ for i = 1:length(midCellInd)
     numGreater = length(find(resampMeanDiff>=midCellRateDiff(i)));
     
     if numGreater<=5
-        midCueCellInd3 = [midCueCellInd3 midCellInd(i)];
+        midCueCellInd3 = [midCueCellInd3 m];
     end
     
 end
-
-figure('Position', [200,50,400,1200]);
-subplot(2,1,1); 
-[sortInd] = plotUnitsByTuning(posRatesRef(midCueCellInd3,:), 0, 1);
-cl = caxis;
-title('midCueCell (shuff) cueLaps');
-subplot(2,1,2); 
-colormap(jet); imagesc(posRatesOmit(midCueCellInd3(sortInd),:)); caxis(cl);
-title('midCueCell omitLaps');
 
 %% old stuff with COM, xcorr
 

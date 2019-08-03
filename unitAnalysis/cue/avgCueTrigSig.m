@@ -1,4 +1,4 @@
-function avgCueTrigSig(segNum, eventName)
+function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot)
 
 
 % eventName = 'led' to make 'ledTime', etc.
@@ -15,7 +15,8 @@ lapTypeArr = lapCueStruc.lapTypeArr;
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
 frTimes = treadBehStruc.adjFrTimes; %(1:2:end);
 
-% if there are omitCue laps, estimate a time for typical cue position
+% if there are omitCue laps, estimate a time for typical cue position each
+% lap
 cuePos = lapCueStruc.lapTypeCuePos;
 lapEpochs = lapCueStruc.lapEpochs;
 if min(lapTypeArr)==0
@@ -38,28 +39,37 @@ end
 % times for all cues
 evTimes = treadBehStruc.([eventName 'Time']);
 
-% find times of cues at different locations
+%% find times of cues at different locations
 if length(cuePos)>1
-cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
-pos1evInd = find(cueLapArr==1);
-pos2evInd = find(cueLapArr==2);
-[evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos1evInd), 0, [-30 120], frTimes(1:2:end));
-[evTrigSig2, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos2evInd), 0, [-30 120], frTimes(1:2:end));
-if length(cuePos)>2
-    pos3evInd = find(cueLapArr==3);
-[evTrigSig3, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos3evInd), 0, [-30 120], frTimes(1:2:end));
-    
-end
+    cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
+    pos1evInd = find(cueLapArr==1);
+    pos2evInd = find(cueLapArr==2);
+    [evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos1evInd), 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig2, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos2evInd), 0, [-30 120], frTimes(1:2:end));
+    if length(cuePos)>2
+        pos3evInd = find(cueLapArr==3);
+        [evTrigSig3, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos3evInd), 0, [-30 120], frTimes(1:2:end));
+        
+    end
 else
-
-[evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes, 0, [-30 120], frTimes(1:2:end));
+    
+    [evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes, 0, [-30 120], frTimes(1:2:end));
 end
 
 try
-[evTrigSig0, zeroFr] = eventTrigSig(C(segNum,:), omitCueTimes, 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig0, zeroFr] = eventTrigSig(C(segNum,:), omitCueTimes, 0, [-30 120], frTimes(1:2:end));
 catch
 end
 
+
+%% save vars to output struc
+
+cueTrigSigStruc.omitCueSig = evTrigSig0;
+cueTrigSigStruc.midCueSig = evTrigSig2;
+
+
+%% Plotting
+if toPlot
 figure;
 subplot(2,1,1);
 try
@@ -100,3 +110,4 @@ end
 % hold on;
 % plot(evTrigSig0, 'r');
 
+end

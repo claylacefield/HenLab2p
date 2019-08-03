@@ -78,4 +78,5 @@ load(findLatestFilename('segDict', 'goodSeg'),'C');
 cpc = C(pc,:);
 for i=1:length(pc); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
 imagesc(cpc2(sortInd,:));
+title('C for all PCs');
 
