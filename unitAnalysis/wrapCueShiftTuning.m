@@ -1,4 +1,4 @@
-function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc,lapTypeInfo, )
+function [cueShiftStruc] = wrapCueShiftTuning(varargin) %pksCell, goodSeg, treadBehStruc,lapTypeInfo, )
 
 % Examples
 % [cueShiftStruc] = wrapCueShiftTuning(); % processes current folder, all
@@ -22,14 +22,14 @@ end
 disp(['Calculating cue shift tuning for ' filename]);
 
 % load treadBehStruc or create if necessary (but watch out if you have run
-% guiSelectDGCs because it might create non-cue treadBehSTruc, which will
+% guiSelectDGCs because it might create non-cue treadBehStruc, which will
 % be used automatically I think
-try
-    load(findLatestFilename('treadBehStruc'));
-catch
+% try
+%     load(findLatestFilename('treadBehStruc'));
+% catch
     disp('Couldnt find previous treadBehStruc so processing');
     [treadBehStruc] = procHen2pBehav('auto', 'cue');
-end
+
 
 % parse arguments (and fill in rest with defaults)
 if nargin==1

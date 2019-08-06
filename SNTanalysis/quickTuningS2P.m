@@ -1,4 +1,4 @@
-function [cueShiftStruc, pksCell] = quickTuningS2P(varargin) % lapTypeInfo)
+function [cueShiftStruc] = quickTuningS2P(varargin) % lapTypeInfo)
 
 % Quickly performs rough peak detection post-Caiman and looks at tuning
 
@@ -26,8 +26,8 @@ end
 
 % load in goodSeg if present?
 try 
-    load(findLatestFilename('seg2P', 'goodSeg'));
-    disp('Loading latest segDict');
+    load(findLatestFilename('seg2P'));
+    disp('Loading latest seg2P');
 catch
 [seg2PName, path] = uigetfile('*.mat', 'Choose seg2P to perform quick tuning (curr for cue task)');
 cd(path);
@@ -38,25 +38,16 @@ C = seg2P.C2p;
 A = seg2P.A2p;
 d1 = seg2P.d12p;
 d2 = seg2P.d22p;
-
+pksCell = seg2P.pksCell;
 fps = 15;
 
-disp('Calculating transients');
-sdThresh = 3;
-timeout = 3;
-toPlot = 0;
-tic;
-for seg = 1:size(C,1)
-pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
-end
-toc;
 
 
 % toPlot = 2; % to plot only PCs
 % calcPvals = 0;
 % [unitTuningStruc] = wrapTuningNewClay(pksCell, fps, toPlot, calcPvals);
 
-disp('Running wrapCueShiftTuning based upon quick pksCell');
+disp('Running wrapCueShiftTuning based upon pksCell');
 if exist('lapTypeInfo')==0
 [cueShiftStruc] = wrapCueShiftTuning(pksCell, rewOmit); % (lapTypeInfo, 
 else
@@ -66,11 +57,9 @@ end
 % make filename and save to output struc
 basename = findLatestFilename('.xml');
 basename = basename(1:strfind(basename, '.xml')-1);
-filename = [basename '_cueShiftStrucQuickTuning_' date '.mat'];
+filename = [basename '_2PcueShiftStruc_' date '.mat'];
 cueShiftStruc.filename = filename;
 cueShiftStruc.path = pwd;
-
-cueShiftStruc.pksCell = pksCell;
 
 % save output struc to current folder
 save(filename, 'cueShiftStruc');

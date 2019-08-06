@@ -1,4 +1,4 @@
-function [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, varargin);
+function [PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, varargin);
 
 %% USAGE: [out, PCLappedSess] = wrapAndresPlaceFieldsClay(C, toPlot, treadBehStruc, minVel, );
 %% variables
@@ -50,18 +50,19 @@ T = treadBehStruc.adjFrTimes(1:downSamp:end);
 [lapVec, lapInts] = calcLaps1(treadPos, T);
 
 %% Run place field analysis
-out = computePlaceTransVectorLapCircShuffWithEdges4(C, treadPos, T, lapVec, shuffN, [], minVel); %, varargin);
 
 
+PCLappedSess = computePlaceCellsLappedWithEdges3(C, treadPos, T, shuffN);
+ 
 
 %% plotting
 if toPlot == 1 || toPlot == 2
     
     if toPlot == 2 % to only plot place cells
-        pcInd = find(out.Shuff.isPC);
-        posRates = out.posRates(pcInd,:);
+        pcInd = find(PCLappedSess.Shuff.isPC);
+        posRates = PCLappedSess.posRates(pcInd,:);
     else
-        posRates = out.posRates;%(pcInd,:);
+        posRates = PCLappedSess.posRates;%(pcInd,:);
     end
     
     [maxVal, maxInd] = max(posRates');
@@ -91,7 +92,5 @@ if toPlot == 1 || toPlot == 2
 end
 
 
-%% But I think this might be another wrapper script
-spikes = C;
-PCLappedSess = computePlaceCellsLappedWithEdges3(spikes, treadPos, T, shuffN);
- 
+
+

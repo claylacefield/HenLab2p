@@ -49,9 +49,9 @@ rewZoneStopTime = [];
 rewZoneStopPos = [];
 
 olfTime = []; olfPos = []; olfLap = []; olfTimeEnd = []; olfPosEnd = [];
-ledTime = []; ledPos = []; ledLap = []; ledTimeEnd = []; ledPosEnd = []; 
+ledTime = []; ledPos = []; ledLap = [];
 toneTime = []; tonePos = []; toneLap = [];toneTimeEnd = []; tonePosEnd = [];
-tactTime = []; tactPos = []; tactLap = []; tactTimeEnd = []; tactPosEnd = []; 
+tactTime = []; tactPos = []; tactLap = [];
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 
 tic;
@@ -165,13 +165,13 @@ for i=1:length(behCell)
         end
         
         % Tactile stim time/pos
-        if ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'start')) 
+        if ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'start')) %&& ~isempty(strfind(rowStr, '"pin":3'))
             tactTime = [tactTime currTime];
             tactPos = [tactPos currY];
             tactLap = [tactLap lap];
-        elseif ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'stop')) 
-            tactTimeEnd = [tactTimeEnd currTime];
-            tactPosEnd = [tactPosEnd currY];
+        elseif ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"close"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
+            ledTimeEnd = [ledTimeEnd currTime];
+            ledPosEnd = [ledPosEnd currY];
         end
         
         % RFID time/pos
@@ -223,11 +223,10 @@ treadBehStruc.rewZoneStopPos = rewZoneStopPos;
 treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.olfLap = olfLap;
 treadBehStruc.olfTimeEnd = olfTimeEnd; treadBehStruc.olfPosEnd = olfPosEnd; 
 treadBehStruc.ledTime = ledTime; treadBehStruc.ledPos = ledPos; treadBehStruc.ledLap = ledLap;
-treadBehStruc.ledTimeEnd = ledTimeEnd; treadBehStruc.ledPosEnd = ledPosEnd;
 treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
 treadBehStruc.toneTimeEnd = toneTimeEnd; treadBehStruc.tonePosEnd = tonePosEnd; 
+
 treadBehStruc.tactTime = tactTime; treadBehStruc.tactPos = tactPos; treadBehStruc.tactLap = tactLap;
-treadBehStruc.tactTimeEnd = tactTimeEnd; treadBehStruc.tactPosEnd = tactPosEnd;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 
 % NOTE: these times (e.g. rewTime) will be in register with adjFrTimes

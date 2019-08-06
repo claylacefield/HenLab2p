@@ -50,7 +50,7 @@ yTimes = treadBehStruc.yTimesAdj;
 
 % and also, fix position (for discontinuities and other problems around lap
 % boundaries)
-y = fixPos(y);
+%y = fixPos(y);
 
 % only take position data from same period as images (but times themselves
 % are unchanged)

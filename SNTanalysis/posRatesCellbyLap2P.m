@@ -1,27 +1,27 @@
-
+function [posRatesStruc] = posRatesbyLap2P(sameCellTuningStruc);
 
 
 %unpack some variables
 multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
-placeCellInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
+placeCellInd = sameCellTuningStruc.placeCellInd;  % ind of place cells (Andres) w. re. to orig C/A
 cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
-placeCellAllGoodSegInd = sameCellTuningStruc.placeCellAllGoodSegInd; % orig C/A index of all cells that are place cells in all sessions
-placeCellNoneInd = sameCellTuningStruc.placeCellInNoneOrigInd ;
-placeCellAnyInd = sameCellTuningStruc.placeCellInAnyOrigInd;
+placeCellAllInd = sameCellTuningStruc.placeCellAllInd; % orig C/A index of all cells that are place cells in all sessions
+placeCellNoneInd = sameCellTuningStruc.placeCellInNoneInd ;
+placeCellAnyInd = sameCellTuningStruc.placeCellInAnyInd;
 
-% to get the bins within a cell's place field 
+%and to get the bins within a cell's place field for placeCellAnyInd
 
 posRatesCellByLap = {};
 posRatesCell={};
-placeCellAnyGoodSegInd = {};
+%placeCellAnyGoodSegInd = {};
 pfInAnyPos = {};
 for i = 1:size(placeCellAnyInd,1)
     for j = 1:length(multSessSegStruc)
-        placeCellAnyGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == placeCellAnyInd(i,j));
-        posRatesCellByLap{i,j} = multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(placeCellAnyGoodSegInd{i,j},:, :);
+        %placeCellAnyGoodSegInd{i,j} = find(multSessSegStruc(j).goodSeg == placeCellAnyInd(i,j));
+        posRatesCellByLap{i,j} = multSessSegStruc(j).PCLapSess.ByLap.posRateByLap(placeCellAnyInd(i,j),:, :);
         posRatesCellByLap{i,j} = squeeze(posRatesCellByLap{i,j})';
-        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAnyGoodSegInd{i,j},:);
-        pfInAnyPos{i,j} = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{placeCellAnyGoodSegInd{i,j}};
+        posRatesCell{i,j} = multSessSegStruc(j).PCLapSess.posRates(placeCellAnyInd(i,j),:);
+        pfInAnyPos{i,j} = multSessSegStruc(j).PCLapSess.Shuff.PFInAllPos{placeCellAnyInd(i,j)};
     end
 end
 
@@ -57,8 +57,8 @@ for i = 1:size (pfInAllPos2, 1)
         posRatesIn = posRatesCell{i,j};
         c = circ_mean(circbin, posRatesIn, 2);
         COMbin {i, j} = round(((c + pi())/(2*pi()))*99 + 1);
-    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(placeCellAnyGoodSegInd{i,j});
-        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(placeCellAnyGoodSegInd{i,j});
+    	InfoPerSpkZ {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkZ(placeCellAnyInd(i,j));
+        InfoPerSpkP {i, j} = multSessSegStruc(j).PCLapSess.Shuff.InfoPerSpkP(placeCellAnyInd(i,j));
 
     end
 end
@@ -76,13 +76,13 @@ IRPCwidthcum = [IRPCwidthcum; PCwidth]; IRCOMbincum =[IRCOMbincum; COMbin];
 IRInfoPerSpkZcum = [IRInfoPerSpkZcum; InfoPerSpkZ]; IRInfoPerSpkPcum = [IRInfoPerSpkPcum; InfoPerSpkP];
 
 
-%% for all the PCsin three sessions
+%% for all the PCsin three sessions regardless of registration
 multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
-placeCellInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
+placeCellInd = sameCellTuningStruc.placeCellInd;  % ind of place cells (Andres) w. re. to orig C/A
 cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
-placeCellAllInd = sameCellTuningStruc.placeCellAllOrigInd; % orig C/A index of all cells that are place cells in all sessions
-placeCellNoneInd = sameCellTuningStruc.placeCellInNoneOrigInd ;
-placeCellAnyInd = sameCellTuningStruc.placeCellInAnyOrigInd;
+placeCellAllInd = sameCellTuningStruc.placeCellAllInd; % orig C/A index of all cells that are place cells in all sessions
+placeCellNoneInd = sameCellTuningStruc.placeCellInNoneInd ;
+placeCellAnyInd = sameCellTuningStruc.placeCellInAnyInd;
 
 pfInAllPos = {}; pcGoodSegInd = {}; pfOutAllPos = {}; MeanposRatebyLapinPF = {};
 MeanposRatebyLapoutPF = {}; PCwidth = {}; InfoPerSpkZ = {}; InfoPerSpkP = {};
@@ -131,7 +131,7 @@ for i = 1:size (pfInAllPos2, 1)
     end
 end
 % collect all the sess1 2, 3 cells within 3 seperate arrays
-%and then plot the ;abhl-[
+%and then plot histogram
 
 % P1 = []; P2=[]; P3=[]; V1 = []; V2=[]; V3=[];
 for i = 1:size(pfInAllPos2, 1)

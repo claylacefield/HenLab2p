@@ -1,4 +1,4 @@
-function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, treadBehStruc,lapTypeInfo, )
+function [cueShiftStruc] = wrapCueShiftTuningMultSess(varargin) %pksCell, goodSeg, treadBehStruc,lapTypeInfo, )
 
 % Examples
 % [cueShiftStruc] = wrapCueShiftTuning(); % processes current folder, all
@@ -13,26 +13,26 @@ function [cueShiftStruc] = wrapCueShiftTuning(varargin); %pksCell, goodSeg, trea
 % (or any combinations of these?) 
 
 % load goodSeg if present
-try
-filename = findLatestFilename('_goodSeg_');
-load(filename); 
-catch
-    disp('Cant find goodSeg');
-end
-disp(['Calculating cue shift tuning for ' filename]);
+% try
+% filename = findLatestFilename('_goodSeg_');
+% load(filename); 
+% catch
+%     disp('Cant find goodSeg');
+% end
+% disp(['Calculating cue shift tuning for ' filename]);
 
 % load treadBehStruc or create if necessary (but watch out if you have run
-% guiSelectDGCs because it might create non-cue treadBehSTruc, which will
+% guiSelectDGCs because it might create non-cue treadBehStruc, which will
 % be used automatically I think
-try
-    load(findLatestFilename('treadBehStruc'));
-catch
-    disp('Couldnt find previous treadBehStruc so processing');
-    [treadBehStruc] = procHen2pBehav('auto', 'cue');
-end
+% try
+%     load(findLatestFilename('treadBehStruc'));
+% catch
+%     disp('Couldnt find previous treadBehStruc so processing');
+%     [treadBehStruc] = procHen2pBehav('auto', 'cue');
+
 
 % parse arguments (and fill in rest with defaults)
-if nargin==1
+if length(varargin) ==1
     if iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
         pksCell = varargin{1};
         goodSeg = 1:length(pksCell);
@@ -47,12 +47,14 @@ elseif length(varargin)==2
     if iscell(varargin{1})  % if cell arr, then its pksCell (for quickTuning)
         pksCell = varargin{1};
         goodSeg = 1:length(pksCell);
-        if length(varargin{2})==1
-            rewOmit = varargin{2};
-        else
-            lapTypeInfo = varargin{2};
-            rewOmit = 0;
-        end
+        treadBehStruc = varargin{2};
+        rewOmit = 0;
+%         if length(varargin{2})==1
+%             rewOmit = varargin{2};
+%         else
+%             lapTypeInfo = varargin{2};
+%             rewOmit = 0;
+%         end
     else
         if length(varargin{1})==1
             rewOmit = varargin{1};
@@ -83,9 +85,9 @@ end
 T = treadBehStruc.adjFrTimes(1:2:end);
 
 if exist('lapTypeInfo')==0
-[pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, rewOmit); %, lapTypeInfo);
+[pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimesMulti(pksCell, goodSeg, treadBehStruc, rewOmit); %, lapTypeInfo);
 else
-    [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, rewOmit, lapTypeInfo);
+    [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimesMulti(pksCell, goodSeg, treadBehStruc, rewOmit, lapTypeInfo);
 end
 
 % posLap1 = posLapCell{1}; posLap2 = posLapCell{2};
@@ -103,16 +105,16 @@ end
 % Calculate tuning for each lap type (and concat struc in cell array)
 shuffN = 1000;
 for typeNum = 1:length(pksCellCell)
-    %try
+    try
     spikes = spikeCell{typeNum};
     treadPos = posLapCell{typeNum}; treadPos = treadPos/max(treadPos);
     disp(['Calculating tuning for lapType ' num2str(typeNum)]); tic;
     PCLappedSessCell{typeNum} = computePlaceCellsLappedWithEdges3(spikes, treadPos, T(1:length(posLapCell{typeNum})), shuffN);
     toc;
-%     catch
-%         PCLappedSessCell{typeNum} = [];
-%         disp(['Prob with lapType ' num2str(typeNum)]);
-%     end
+    catch
+        PCLappedSessCell{typeNum} = [];
+        disp(['Prob with lapType ' num2str(typeNum)]);
+    end
 end
 
 % disp('Calc lapType2 tuning'); tic;

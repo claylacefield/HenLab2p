@@ -1,4 +1,4 @@
-function [lapCueStruc] = findCueLapTypes(varargin)
+function [lapCueStruc] = findCueLapTypesMulti(varargin)
 
 %% USAGE: [lapTypeArr] = findCueLapTypes();
 % numLapTypes = number of different e.g. cue locations, not including omits
@@ -6,11 +6,16 @@ function [lapCueStruc] = findCueLapTypes(varargin)
 
 if length(varargin)>0
     rewOmit=varargin{1};
+    if length(varargin) > 1
+        treadBehStruc = varargin{2};
+    end
 else
     rewOmit = 0;
 end
 
-load(findLatestFilename('treadBehStruc'));
+if ~exist('treadBehStruc')
+    load(findLatestFilename('treadBehStruc'));
+end
 
 numLaps = length(treadBehStruc.lapTime); % NOTE: these are the ends of laps so won't include last
 numLaps = numLaps+1; % including first and last partial laps
@@ -42,17 +47,17 @@ ledLap = treadBehStruc.ledLap+1;
 %[sortVals,order] = sort([length(ledPos), length(olfPos), length(tonePos)]);
 
 % sometimes one cue is missing so take the one with most
-if length(tonePos) > length(olfPos) && length(tonePos) > length(ledPos)
+if length(tonePos) >= length(olfPos) && length(tonePos) >= length(ledPos)
     cuePos = tonePos;
     cueLap = toneLap;
     cueTime = toneTime;
     cueType = 'tone';
-elseif length(olfPos) > length(tonePos) && length(olfPos) > length(ledPos)
+elseif length(olfPos) >= length(tonePos) && length(olfPos) >= length(ledPos)
     cuePos = olfPos;
     cueLap = olfLap;
     cueTime = olfTime;
     cueType = 'olf';
-elseif length(ledvPos) > length(olfPos) && length(ledPos) > length(tonePos)
+elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos)
     cuePos = ledPos;
     cueLap = ledLap;
     cueTime = ledTime;
