@@ -1,5 +1,7 @@
 function [groupCueStruc] = compileCueShiftStruc(groupCueStruc, cueShiftStruc, sessType)
 
+% add new cueShiftStruc from current folder to groupCueStruc (e.g. after
+% plotting to check it)
 
 % run out of current cueShiftStruc folder
 % sessType 1= omit, 2 = shift, 3 = both (sep, and add to shift and omit)

@@ -21,13 +21,13 @@ numLaps = length(treadBehStruc.lapTime); % NOTE: these are the ends of laps so w
 numLaps = numLaps+1; % including first and last partial laps
 
 try 
-olfTime = treadBehStruc.olfTime;
+olfTime = treadBehStruc.olfTimeStart;
 catch
     [treadBehStruc] = procHen2pBehav('auto', 'cue');
-    olfTime = treadBehStruc.olfTime;
+    olfTime = treadBehStruc.olfTimeStart;
 end
 
-olfPos = treadBehStruc.olfPos;
+olfPos = treadBehStruc.olfPosStart;
 olfLap = treadBehStruc.olfLap+1; % +1 so not zero-numbered
 
 rewTime = treadBehStruc.rewZoneStartTime;
@@ -35,33 +35,56 @@ rewPos = treadBehStruc.rewZoneStartPos;
 %toneLap = treadBehStruc.toneLap+1;
 
 % and for tone
-toneTime = treadBehStruc.toneTime;
-tonePos = treadBehStruc.tonePos;
+toneTime = treadBehStruc.toneTimeStart;
+tonePos = treadBehStruc.tonePosStart;
 toneLap = treadBehStruc.toneLap+1;
 
 % and for led
-ledTime = treadBehStruc.ledTime;
-ledPos = treadBehStruc.ledPos;
+try
+ledTime = treadBehStruc.ledTimeStart;
+ledPos = treadBehStruc.ledPosStart;
 ledLap = treadBehStruc.ledLap+1;
+catch
+    ledTime = [];
+ledPos = [];
+ledLap = [];
+end
+
+% and for tactile
+try
+tactTime = treadBehStruc.tactTimeStart;
+tactPos = treadBehStruc.tactPosStart;
+tactLap = treadBehStruc.tactLap+1;
+catch
+    tactTime = [];
+tactPos = [];
+tactLap = [];
+end
 
 %[sortVals,order] = sort([length(ledPos), length(olfPos), length(tonePos)]);
 
-% sometimes one cue is missing so take the one with most
-if length(tonePos) >= length(olfPos) && length(tonePos) >= length(ledPos)
+% sometimes one cue is missing so take the one with most to establish lap
+% types
+if length(tonePos) >= length(olfPos) && length(tonePos) >= length(ledPos) && length(tonePos) >= length(tactPos)
     cuePos = tonePos;
     cueLap = toneLap;
     cueTime = toneTime;
     cueType = 'tone';
-elseif length(olfPos) >= length(tonePos) && length(olfPos) >= length(ledPos)
+elseif length(olfPos) >= length(tonePos) && length(olfPos) >= length(ledPos) && length(olfPos) >= length(tactPos)
     cuePos = olfPos;
     cueLap = olfLap;
     cueTime = olfTime;
     cueType = 'olf';
-elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos)
+elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos) && length(ledPos) >= length(tactPos)
     cuePos = ledPos;
     cueLap = ledLap;
     cueTime = ledTime;
     cueType = 'led';
+    elseif length(tactPos) >= length(olfPos) && length(tactPos) >= length(tonePos) && length(tactPos) >= length(ledPos)
+    cuePos = tactPos;
+    cueLap = tactLap;
+    cueTime = tactTime;
+    cueType = 'tact';
 end
 
 % quickly estimate number of cue lap types (NOTE: does not include omitCue)

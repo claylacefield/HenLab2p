@@ -38,21 +38,22 @@ treadBehStruc.tdmlName = filename;
 time = [];
 y = [];
 currY = NaN;
-lap = 0;
 yTimes = []; yTimeNano = [];
 lickTime = []; lickPos = []; lickLap = [];
-lapTime = [];
+lapTime = []; lapNum = []; lap = 0; 
 rewTime = []; rewPos = []; rewLap = [];
 rewZoneStartTime = [];
 rewZoneStartPos = [];
 rewZoneStopTime = [];
 rewZoneStopPos = [];
 
-olfTime = []; olfPos = []; olfLap = []; olfTimeEnd = []; olfPosEnd = [];
-ledTime = []; ledPos = []; ledLap = []; ledTimeEnd = []; ledPosEnd = []; 
-toneTime = []; tonePos = []; toneLap = [];toneTimeEnd = []; tonePosEnd = [];
-tactTime = []; tactPos = []; tactLap = []; tactTimeEnd = []; tactPosEnd = []; 
+olfTimeStart = []; olfPosStart = []; olfLap = []; olfTimeEnd = []; olfPosEnd = [];
+ledTimeStart  = []; ledPosStart = []; ledLap = []; ledTimeEnd = []; ledPosEnd = []; 
+toneTimeStart = []; tonePosStart = []; toneLap = [];toneTimeEnd = []; tonePosEnd = [];
+tactTimeStart = []; tactPosStart = []; tactLap = []; tactTimeEnd = []; tactPosEnd = []; 
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
+ctxtTime = []; ctxtPos = []; ctxtLap = []; ctxtName = {};
+frCountTime = []; frCountPos = []; frCount = [];
 
 tic;
 for i=1:length(behCell)
@@ -88,7 +89,8 @@ for i=1:length(behCell)
         % lap time
         if ~isempty(strfind(rowStr, '"lap"'))
             lapTime = [lapTime currTime];
-            lap = lap+1;
+            lap = str2num(rowStr(strfind(rowStr, '"lap"')+7:strfind(rowStr, '"time"')-2)); % lap+1;
+            lapNum = [lapNum lap];
         end
         
         % lick time/pos
@@ -134,8 +136,8 @@ for i=1:length(behCell)
         
         % olfactory stim time/pos
         if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 3,'))
-            olfTime = [olfTime currTime];
-            olfPos = [olfPos currY];
+            olfTimeStart = [olfTimeStart currTime];
+            olfPosStart = [olfPosStart currY];
             olfLap = [olfLap lap];
         elseif ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"close"')) && ~isempty(strfind(rowStr, '"pin": 3,'))
             olfTimeEnd = [olfTimeEnd currTime];
@@ -144,8 +146,8 @@ for i=1:length(behCell)
         
         % LED stim time/pos
         if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
-            ledTime = [ledTime currTime];
-            ledPos = [ledPos currY];
+            ledTimeStart = [ledTimeStart currTime];
+            ledPosStart = [ledPosStart currY];
             ledLap = [ledLap lap];
         elseif ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"close"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
             ledTimeEnd = [ledTimeEnd currTime];
@@ -155,8 +157,8 @@ for i=1:length(behCell)
         
         % tone stim time/pos
         if ~isempty(strfind(rowStr, '"tone"')) && ~isempty(strfind(rowStr, '"open"')) %&& ~isempty(strfind(rowStr, '"pin":3'))
-            toneTime = [toneTime currTime];
-            tonePos = [tonePos currY];
+            toneTimeStart = [toneTimeStart currTime];
+            tonePosStart = [tonePosStart currY];
             toneLap = [toneLap lap];
             elseif ~isempty(strfind(rowStr, '"tone"')) && ~isempty(strfind(rowStr, '"close"')) 
             toneTimeEnd = [toneTimeEnd currTime];
@@ -166,8 +168,8 @@ for i=1:length(behCell)
         
         % Tactile stim time/pos
         if ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'start')) 
-            tactTime = [tactTime currTime];
-            tactPos = [tactPos currY];
+            tactTimeStart = [tactTimeStart currTime];
+            tactPosStart = [tactPosStart currY];
             tactLap = [tactLap lap];
         elseif ~isempty(strfind(rowStr, 'tact')) && ~isempty(strfind(rowStr, 'stop')) 
             tactTimeEnd = [tactTimeEnd currTime];
@@ -180,6 +182,23 @@ for i=1:length(behCell)
             rfidPos = [rfidPos currY];
             rfidLap = [rfidLap lap];
             rfidName = [rfidName {rowStr(strfind(rowStr, '"tag"')+8:strfind(rowStr, '"tag"')+19)}];
+        end
+        
+        
+        % make list of contexts as you go
+        if ~isempty(strfind(rowStr, 'context')) && ~isempty(strfind(rowStr, 'start')) 
+            ctxtTime = [ctxtTime currTime];
+            ctxtPos = [ctxtPos currY];
+            ctxtLap = [ctxtLap lap];
+            ctxtName = [ctxtName {rowStr(strfind(rowStr, '"id"')+7:strfind(rowStr, '"},')-1)}];
+        end
+        
+        % make list of frame counts
+        if ~isempty(strfind(rowStr, 'count'))
+            frCountTime = [frCountTime currTime];
+            frCountPos = [frCountPos currY];
+            count = str2num(rowStr(strfind(rowStr, '"count"')+9:strfind(rowStr, ',"millis"')-1));
+            frCount = [frCount count];
         end
         
         % other events: debug timeout,
@@ -212,7 +231,7 @@ yTimes2 = yTimes;
 yTimes2(dTimes>0.02) = yTimes(dTimes>0.02)-dTimes(dTimes>0.02);
 treadBehStruc.yTimesAdj = yTimes2;
 
-treadBehStruc.lapTime = lapTime;
+treadBehStruc.lapTime = lapTime; treadBehStruc.lapNum = lapNum;
 treadBehStruc.lickTime = lickTime; treadBehStruc.lickPos = lickPos; treadBehStruc.lickLap = lickLap;
 treadBehStruc.rewTime = rewTime; treadBehStruc.rewPos = rewPos;treadBehStruc.rewLap = rewLap;
 treadBehStruc.rewZoneStartTime = rewZoneStartTime;
@@ -220,14 +239,17 @@ treadBehStruc.rewZoneStartPos = rewZoneStartPos;
 treadBehStruc.rewZoneStopTime = rewZoneStopTime;
 treadBehStruc.rewZoneStopPos = rewZoneStopPos;
 
-treadBehStruc.olfTime = olfTime; treadBehStruc.olfPos = olfPos; treadBehStruc.olfLap = olfLap;
+treadBehStruc.olfTimeStart = olfTimeStart; treadBehStruc.olfPosStart = olfPosStart; treadBehStruc.olfLap = olfLap;
 treadBehStruc.olfTimeEnd = olfTimeEnd; treadBehStruc.olfPosEnd = olfPosEnd; 
-treadBehStruc.ledTime = ledTime; treadBehStruc.ledPos = ledPos; treadBehStruc.ledLap = ledLap;
+treadBehStruc.ledTimeStart = ledTimeStart; treadBehStruc.ledPosStart = ledPosStart; treadBehStruc.ledLap = ledLap;
 treadBehStruc.ledTimeEnd = ledTimeEnd; treadBehStruc.ledPosEnd = ledPosEnd;
-treadBehStruc.toneTime = toneTime; treadBehStruc.tonePos = tonePos; treadBehStruc.toneLap = toneLap;
+treadBehStruc.toneTimeStart = toneTimeStart; treadBehStruc.tonePosStart = tonePosStart; treadBehStruc.toneLap = toneLap;
 treadBehStruc.toneTimeEnd = toneTimeEnd; treadBehStruc.tonePosEnd = tonePosEnd; 
-treadBehStruc.tactTime = tactTime; treadBehStruc.tactPos = tactPos; treadBehStruc.tactLap = tactLap;
+treadBehStruc.tactTimeStart = tactTimeStart; treadBehStruc.tactPosStart = tactPosStart; treadBehStruc.tactLap = tactLap;
 treadBehStruc.tactTimeEnd = tactTimeEnd; treadBehStruc.tactPosEnd = tactPosEnd;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
+treadBehStruc.ctxtTime = ctxtTime; treadBehStruc.ctxtPos = ctxtPos; treadBehStruc.ctxtLap = ctxtLap; treadBehStruc.ctxtName = ctxtName;
+treadBehStruc.frCountTime = frCountTime; treadBehStruc.frCountPos = frCountPos; treadBehStruc.frCount = frCount;
+
 
 % NOTE: these times (e.g. rewTime) will be in register with adjFrTimes

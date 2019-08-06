@@ -4,6 +4,15 @@ function plotCueShiftStruc(cueShiftStruc, refLapType)
 
 numLapTypes = length(cueShiftStruc.pksCellCell);
 
+if refLapType==0
+    lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
+    lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
+    for i=1:length(cueShiftStruc.pksCellCell)
+        numLapType(i) = length(find(lapTypeArr==i));
+    end
+    [val, refLapType] = max(numLapType); % use ref lap from one with most laps
+end
+
 % select place cells
 pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
 % Now compile PCs from all types
@@ -64,4 +73,10 @@ end
 %title('posRates1=b, posRates2=g');
 legend(numCell);
 
+figure;
+load(findLatestFilename('segDict', 'goodSeg'),'C');
+cpc = C(pc,:);
+for i=1:length(pc); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
+imagesc(cpc2(sortInd,:));
+title('C for all PCs');
 

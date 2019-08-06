@@ -33,7 +33,7 @@ if toNorm
     end
 end
 
-figure;
+%figure;
 %subplot(2,3,1);
 colormap(jet);
 imagesc(posRates2);

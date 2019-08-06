@@ -1,4 +1,4 @@
-function [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, varargin) %, lapTypeInfo)
+function [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimesMulti(pksCell, goodSeg, treadBehStruc, varargin) %, lapTypeInfo)
 
 %% USAGE: [pksCellCell, posLapCell, lapFrInds] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, lapTypeInfo);
 % Strips out and concatenates unit events/pks and position of different lap types

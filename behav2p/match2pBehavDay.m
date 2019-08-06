@@ -6,7 +6,7 @@ function match2pBehavDay()
 % different with other file naming conventions, etc.
 
 
-behavDataFolder = uigetdir('/data/sebnem/behaviorData', 'Select behavior folder of animals'); %'/data/sebnem/behaviorData/WT';
+behavDataFolder = uigetdir('/home/clay/Documents/data/behavior/behaviorData/', 'Select behavior folder of animals'); %'/data/sebnem/behaviorData/WT';
 
 % mouseFolder = uigetdir();
 % folder = '/data/sebnem/DG_data/121718';
