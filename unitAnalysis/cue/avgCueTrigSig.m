@@ -63,10 +63,12 @@ end
 
 
 %% save vars to output struc
-
+cueTrigSigStruc.path = pwd;
 cueTrigSigStruc.omitCueSig = evTrigSig0;
 cueTrigSigStruc.midCueSig = evTrigSig2;
 
+filename = findLatestFilename('.xml');
+filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
 if toPlot
@@ -86,8 +88,10 @@ try
     plotMeanSEMshaderr(evTrigSig3, 'c',25:30);
 catch
 end
-
-title(['seg=' num2str(segNum)]);
+yl = ylim; xl = xlim;
+line([30 30], yl);
+ylim(yl); xlim(xl);
+title([filename ' ' eventName '-triggered avg., seg=' num2str(segNum)]);
 
 subplot(2,1,2);
 try
@@ -96,6 +100,9 @@ catch
 end
 hold on;
 plot(evTrigSig1, 'g');
+% yl = ylim; xl = xlim;
+% line([30 30], yl);
+% ylim(yl); xlim(xl);
 try
     plot(evTrigSig2, 'b');
 catch
@@ -104,6 +111,10 @@ try
     plot(evTrigSig3, 'c');
 catch
 end
+
+yl = ylim; xl = xlim;
+line([30 30], yl);
+ylim(yl); xlim(xl);
 
 % figure;
 % plot(evTrigSig1, 'b');

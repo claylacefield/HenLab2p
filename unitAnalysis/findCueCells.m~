@@ -225,19 +225,19 @@ title('midCueCell omitLaps');
 % c.) also look at shift in cue cells by omit, and all midCellInd (i.e. are
 % cells that don't show omit more likely to shift?
 
-if length(numLapType)==3 %3
+if length(numLapType)==0 %3
     
     posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
     
     lapTypeCuePos = cueShiftStruc.lapCueStruc.lapTypeCuePos;
     
     for i=1:length(midCellInd)
-        midFieldRateRef(i) = mean(posRatesRef(midCellInd(i),20:35),2);
+        midFieldRateRef(i) = mean(posRatesRef(midCellInd(i),maxInd(midCellInd(i))-5:maxInd(midCellInd(i))+5),2);
         midFieldRateShift(i) = mean(posRatesShift(midCellInd(i),20:35),2);
     end
     
     % now trying shuffle with laps
-    midCellRateDiff = midFieldRateShift-midFieldRateRef;
+    midCellRateDiff = midFieldRateRef-midFieldRateShift;
     posRateLapRef = cueShiftStruc.PCLappedSessCell{refLapType}.ByLap.posRateByLap;
     posRateLapShift = cueShiftStruc.PCLappedSessCell{1}.ByLap.posRateByLap;
     numRefLaps = size(posRateLapRef,3);
@@ -258,9 +258,9 @@ if length(numLapType)==3 %3
             posRateRefRes = squeeze(mean(posRateLapRefShift(midCellInd(i),:,refLapRes),3));
             posRateShiftRes = squeeze(mean(posRateLapRefShift(midCellInd(i),:,shiftLapRes),3));
             
-            midFieldRateRefRes = mean(posRateRefRes(20:35));
+            midFieldRateRefRes = mean(posRateRefRes(maxInd(midCellInd(i))-5:maxInd(midCellInd(i))+5));
             midFieldRateShiftRes = mean(posRateShiftRes(20:35));
-            resampMeanDiff(j) = midFieldRateShiftRes-midFieldRateRefRes;
+            resampMeanDiff(j) = midFieldRateRefRes-midFieldRateShiftRes;
         end
         
         numGreater = length(find(resampMeanDiff>=midCellRateDiff(i)));

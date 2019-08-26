@@ -1,5 +1,9 @@
 function procMcH5day()
 
+% This is just a wrapper script for procMcH5forCaiman
+% clay2019
+
+
 dayPath = uigetdir();
 cd(dayPath);
 dayDir = dir;

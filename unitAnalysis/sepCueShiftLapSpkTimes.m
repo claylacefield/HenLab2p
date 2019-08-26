@@ -20,7 +20,20 @@ function [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell
 %[caLapBin] = wrapLapTuning(C,treadBehStruc);
 
 % extract position and find lap boundaries (lapFrInds = ends of laps)
-pos = treadBehStruc.resampY(1:2:end);
+%pos = treadBehStruc.resampY(1:2:end);
+
+% auto detect temporal downsample
+pos = treadBehStruc.resampY;
+
+maxFr = [];
+for numSeg = 1:size(pksCell)
+    maxFr = max([pksCell{numSeg} maxFr]);
+end
+
+if length(pos)>maxFr*1.5
+    pos = pos(1:2:end);
+end
+
 %pos2 = pos;
 %pos2(pos2>2000)=pos2(pos2>2000)-2000;
 [lapFrInds, lapEpochs] = findLaps(pos);

@@ -1,4 +1,4 @@
-function plotCueShiftStruc(cueShiftStruc, refLapType)
+function plotCueShiftStruc(cueShiftStruc, refLapType, usePC)
 
 % for use with wrapCueShiftTuning
 
@@ -25,7 +25,12 @@ pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
 % pc = sort(unique(pc));
 
 % find PCs and posRates for reference lap type
-posRates = cueShiftStruc.PCLappedSessCell{refLapType}.posRates(pc,:);
+posRates = cueShiftStruc.PCLappedSessCell{refLapType}.posRates;
+
+if usePC == 1
+    posRates = posRates(pc,:);
+end
+
 [maxVal, maxInd] = max(posRates');
 [newInd, oldInd] = sort(maxInd);
 sortInd = oldInd;
@@ -35,9 +40,13 @@ posRatesCell{refLapType} = posRates;
 % now for all lap types with PCs and sorted based upon reference type 
 for i = 1:numLapTypes
     try
-posRates = cueShiftStruc.PCLappedSessCell{i}.posRates(pc,:);
-posRatesCell{i} = posRates(sortInd,:);
+        posRates = cueShiftStruc.PCLappedSessCell{i}.posRates;
+        if usePC==1
+            posRates = posRates(pc,:);
+        end
+        posRatesCell{i} = posRates(sortInd,:);
     catch
+        disp(['Prob with lap type ' num2str(i)]);
     end
 end
 
@@ -73,10 +82,18 @@ end
 %title('posRates1=b, posRates2=g');
 legend(numCell);
 
+
+% sorted unit time plot
 figure;
 load(findLatestFilename('segDict', 'goodSeg'),'C');
+
+if usePC==1
 cpc = C(pc,:);
-for i=1:length(pc); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
+else
+    cpc = C;
+end
+
+for i=1:size(cpc,1); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
 imagesc(cpc2(sortInd,:));
 title('C for all PCs');
 
