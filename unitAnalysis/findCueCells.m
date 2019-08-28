@@ -50,7 +50,9 @@ plotUnitsByTuning(posRatesRef(startCueCellInd,:), 0, 1);
 title('start cue cells');
 
 %% Middle PC ind
-midCellInd = pc(find(pcPkPos>=45 & pcPkPos<=65));
+midCellInd = pc(find(pcPkPos>=40 & pcPkPos<=65)); % pc(find(pcPkPos>=45 & pcPkPos<=65));
+% NOTE that 45 might not include some predictive cells that fire just
+% before the cue (but may not omit/shift)
 
 % plot to check
 %maxVal = max(max(posRatesRef(midCellInd,:)));
@@ -76,6 +78,7 @@ for i=1:length(midCellInd)
     midFieldRateOmit(i) = mean(posRatesOmit(midCellInd(i),maxInd(midCellInd(i))-5:maxInd(midCellInd(i))+5),2);
 end
 
+%% Method #1: "cue cells" are middle cells with >= 2x posRate for cue trials vs. omit
 % quick and dirty for now: midCueCellInd = twice as big response to cue as omit
 midCueCellInd = midCellInd(find(midFieldRateRef./midFieldRateOmit>2));
 % NOTE: some are Inf, which is still>2, but these points don't plot below
@@ -123,7 +126,8 @@ title('midCueCell omitLaps');
 % 3.) put together cue and omit and randomly resample cue and omit laps
 % 4.) calc diff in mean response
 
-% This is based upon ttest2 bet cue and omit
+%% Method #2: "cue cells" are middle cells w. ttest2<0.05 for event amp
+% This is based upon ttest2 bet cue and omit (NOTE: event max amp)
 %eventName = 'tact';
 midCueCellInd2 = [];
 for i = 1:length(midCellInd)
@@ -158,8 +162,9 @@ subplot(2,1,2);
 colormap(jet); imagesc(posRatesOmit(midCueCellInd2(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
 
+%% Method #3: "cue cells" have posRate diff cue-omit > 95% lap shuffled
 % now trying shuffle with laps
-midCellRateDiff = midFieldRateRef-midFieldRateOmit;
+midCellRateDiff = midFieldRateRef-midFieldRateOmit; % observed diff in middle rate for every middle cell
 posRateLapRef = cueShiftStruc.PCLappedSessCell{refLapType}.ByLap.posRateByLap;
 posRateLapOmit = cueShiftStruc.PCLappedSessCell{end}.ByLap.posRateByLap;
 numRefLaps = size(posRateLapRef,3);
@@ -212,3 +217,67 @@ title('midCueCell omitLaps');
 %    lags(i)=100-lag;
 % end
 
+%% shift
+% testing on 190628_B4, seg 46, 87 (lower on shift)
+% a.) calc rate at normal location vs shift location
+% OR
+% b.) shuffle avgCueTrigSig; [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot)
+% c.) also look at shift in cue cells by omit, and all midCellInd (i.e. are
+% cells that don't show omit more likely to shift?
+
+if length(numLapType)==3 %3
+    
+    posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    
+    lapTypeCuePos = cueShiftStruc.lapCueStruc.lapTypeCuePos;
+    
+    for i=1:length(midCellInd)
+        midFieldRateRef(i) = mean(posRatesRef(midCellInd(i),20:35),2);
+        midFieldRateShift(i) = mean(posRatesShift(midCellInd(i),20:35),2);
+    end
+    
+    % now trying shuffle with laps
+    midCellRateDiff = midFieldRateShift-midFieldRateRef;
+    posRateLapRef = cueShiftStruc.PCLappedSessCell{refLapType}.ByLap.posRateByLap;
+    posRateLapShift = cueShiftStruc.PCLappedSessCell{1}.ByLap.posRateByLap;
+    numRefLaps = size(posRateLapRef,3);
+    numShiftLaps = size(posRateLapShift,3);
+    
+    posRateLapRefShift = cat(3, posRateLapRef, posRateLapShift);
+    
+    midShiftCellInd3 = [];
+    for i = 1:length(midCellInd)
+        
+        for j=1:100
+            
+            % resample laps
+            refLapRes = randsample(numRefLaps+numShiftLaps, numRefLaps);
+            shiftLapRes = setdiff(1:(numRefLaps+numShiftLaps),refLapRes);
+            
+            % find rates based upon resampled laps
+            posRateRefRes = squeeze(mean(posRateLapRefShift(midCellInd(i),:,refLapRes),3));
+            posRateShiftRes = squeeze(mean(posRateLapRefShift(midCellInd(i),:,shiftLapRes),3));
+            
+            midFieldRateRefRes = mean(posRateRefRes(20:35));
+            midFieldRateShiftRes = mean(posRateShiftRes(20:35));
+            resampMeanDiff(j) = midFieldRateShiftRes-midFieldRateRefRes;
+        end
+        
+        numGreater = length(find(resampMeanDiff>=midCellRateDiff(i)));
+        
+        if numGreater<=5
+            midShiftCellInd3 = [midShiftCellInd3 midCellInd(i)];
+        end
+        
+    end
+    
+end
+
+figure('Position', [200,50,400,1200]);
+subplot(2,1,1); 
+[sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd3,:), 0, 1);
+cl = caxis;
+title('midShiftCell (shuff) cueLaps');
+subplot(2,1,2); 
+colormap(jet); imagesc(posRatesShift(midShiftCellInd3(sortInd),:)); caxis(cl);
+title('midShiftCell shiftLaps');

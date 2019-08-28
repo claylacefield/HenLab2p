@@ -80,8 +80,20 @@ end
 
 
 %% format other stuff
-T = treadBehStruc.adjFrTimes(1:2:end);
 
+% auto detect temporal downsample
+T = treadBehStruc.adjFrTimes;
+
+maxFr = [];
+for numSeg = 1:size(pksCell)
+    maxFr = max([pksCell{numSeg} maxFr]);
+end
+
+if length(T)>maxFr*1.5
+    T = T(1:2:end);
+end
+
+% find lap type/epochs
 if exist('lapTypeInfo')==0
 [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell, goodSeg, treadBehStruc, rewOmit); %, lapTypeInfo);
 else

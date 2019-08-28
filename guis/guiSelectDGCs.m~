@@ -122,11 +122,11 @@ maxFr = size(C,2);
 if length(treadBehStruc.adjFrTimes)>maxFr*1.5
     tempDs = 2;
 else
-    tempDs = 1;
+    
 end
 
 
-treadPos = treadBehStruc.resampY(1:tempDs:end);
+treadPos = treadBehStruc.resampY(1:2:end);
 
 C = C/max(C(:));
 
@@ -138,7 +138,7 @@ handles.treadBehStruc = treadBehStruc;
 
 handles.deconvC = zeros(size(C));
 
-vel = fixVel(treadBehStruc.vel(1:tempDs:end));
+vel = fixVel(treadBehStruc.vel(1:2:end));
 vel = vel/max(vel(:));
 handles.vel = vel;
 
