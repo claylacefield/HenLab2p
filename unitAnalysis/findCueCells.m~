@@ -64,7 +64,7 @@ subplot(2,2,2);
 %figure;
 plot(mean(posRatesRef(startCueCellInd,:),1), 'b');
 hold on; 
-plot(mean(posRatesOmit(startCueCellInd,:),1), 'r');
+plot(mean(posRatesOmit(midCellInd,:),1), 'r');
 title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
@@ -84,7 +84,7 @@ cl = caxis;
 title('midCellInd');
 
 % extract posRates for omit laps
-%posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
+posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
 
 % plot to check
 subplot(2,2,3); 
@@ -168,10 +168,10 @@ figure('Position', [50,100,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(nonCueCellInd,:), 0, 1);
 cl = caxis;
-title('nonCueCell (<2x PF rate) cueLaps');
+title('midCueCell (2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(nonCueCellInd(sortInd),:)); caxis(cl);
-title('nonCueCell omitLaps');
+title('midCueCell omitLaps');
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(nonCueCellInd,:),1), 'b');

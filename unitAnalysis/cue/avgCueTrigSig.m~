@@ -1,10 +1,19 @@
-function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot)
+function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot, varargin)
 
 
 % eventName = 'led' to make 'ledTime', etc.
 
-%load(findLatestFilename('_segDict_', 'goodSeg'));
-segDictName = uigetfile('*.mat', 'Select segDict to use');
+if length(varargin)>0 % like 'auto'
+    if length(varargin{1}>4)
+        segDictName = varargin{1};
+    else
+        segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    end
+else
+    segDictName = uigetfile('*.mat', 'Select segDict to use');
+    
+end
+
 load(segDictName);
 
 if ~isempty(strfind(segDictName, 'seg2P'))
