@@ -11,8 +11,8 @@ end
 %[multSessSegStruc] = wrapMultSessStrucSelectCue2P();
 close all; clear all;
 load(findLatestFilename('multSessSegStruc')); load(findLatestFilename('cellRegistered')); 
-[sameCellTuningStruc] = sameCellTuning2P(multSessSegStruc, cell_registered_struct, 0);
-save('sameCellTuningStruc.mat', 'sameCellTuningStruc');
+ [sameCellCueShiftTuningStruc] = sameCellCueShiftTuning2P(multSessSegStruc, cell_registered_struct);
+save('sameCellCueShiftTuningStruc.mat', 'sameCellCueShiftTuningStruc');
 
 %%
 close all; clear all;
