@@ -117,8 +117,8 @@ FracCOM = [FracCOM [MidCue; EdgeCue; Rew1500; Rew500]];
 
 %%
 %remap struc by animals
-%  omitrewshiftcumPCMatchedAny = {}; omitrewshiftPCAnyCorrCoef121323 = []; omitrewshiftPCAnyShuffSig121323 = [];
-%  omitrewshiftcumPCMatchedAny1 = []; omitrewshiftcumPCMatchedAny2 = []; omitrewshiftcumPCMatchedAny3 = []; 
+ omitrewshiftcumPCMatchedAny = {}; omitrewshiftPCAnyCorrCoef121323 = []; omitrewshiftPCAnyShuffSig121323 = [];
+ omitrewshiftcumPCMatchedAny1 = []; omitrewshiftcumPCMatchedAny2 = []; omitrewshiftcumPCMatchedAny3 = []; 
 
 
 omitrewshiftcumPCMatchedAny1 = [omitrewshiftcumPCMatchedAny1; remapStruc.PCMatchedAny{1,1}];

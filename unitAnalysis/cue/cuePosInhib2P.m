@@ -1,15 +1,18 @@
-function [posBinNumCells, pcRatesBlanked, pcOmitRatesBlanked] = cuePosInhib(cueShiftStruc, goodSeg, refLapType);
+function [posBinNumCells, pcRatesBlanked, pcOmitRatesBlanked] = cuePosInhib2P(cueShiftStruc);
 
-% formerly popPosInfo
-
-%refLapType = 2; 
-posRates = cueShiftStruc.PCLappedSessCell{refLapType}.posRates;
-if goodSeg==0
-pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
-else
-    pc = goodSeg;
+lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
+lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
+for i=1:length(cueShiftStruc.pksCellCell)
+    numLapType(i) = length(find(lapTypeArr==i));
 end
-pcRates = posRates(pc,:);
+[val, refLapType] = max(numLapType);
+[val, shiftLapType] = min(numLapType);
+
+PCLappedSessCue = cueShiftStruc.PCLappedSessCell{1,refLapType};
+posRates = cueShiftStruc.PCLappedSessCell{refLapType}.posRates;
+pc = find(PCLappedSessCue.Shuff.isPC==1);
+pcRates = PCLappedSessCue.posRates(pc,:);
+
 
 [maxs, inds] = max(pcRates'); % find bin of peak firing rate for PCs
 
@@ -40,8 +43,8 @@ title('pos mean info per spk');
 [sorted, sortInds] = sort(inds);
 pcRatesSorted = pcRates(sortInds,:);
 %figure; imagesc(pcRatesSorted);
-posRates2 = cueShiftStruc.PCLappedSessCell{end}.posRates; % for Omit laps
-pcRates2 = posRates2(pc,:);
+posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates; % for Omit laps
+pcRates2 = posRatesOmit(pc,:);
 omitRatesSorted = pcRates2(sortInds,:);
 
 % go through posRates, and blank out time around peak
@@ -76,8 +79,6 @@ for i = 1:size(pcRatesSorted,1)
     pcOmitRatesBlanked(i,:) = rates2;
 end
 
-% cuePosRate = cuePosRate(cuePosRate~=0); % just elim zeros
-% omitPosRate = omitPosRate(omitPosRate~=0);
 
 figure; 
 colormap(jet); 
@@ -92,14 +93,15 @@ plot(nanmean(pcRatesBlanked,1));
 hold on;
 plot(nanmean(pcOmitRatesBlanked,1),'r');
 legend('refLaps', 'omitLaps');
-subplot(2,2,4);
-%plot(cuePosRate,omitPosRate,'x');
-plot(cuePkPos,cuePosRate-omitPosRate,'x');
-%hold on; line([0 0.2], [0 0.2]);
-title('middle cell mean ref lap rate - omit');
+% subplot(2,2,4);
+% %plot(cuePosRate,omitPosRate,'x');
+% plot(cuePkPos,cuePosRate-omitPosRate,'x');
+% %hold on; line([0 0.2], [0 0.2]);
+% title('middle cell mean ref lap rate - omit');
 
 figure;
 %bar([mean(mean(pcRates(:,40:60),2),1) mean(mean(pcRates2(:,40:60),2),1)]);
-bar([mean([nanmean(mean(pcRatesBlanked(:,1:10),2),1) nanmean(mean(pcRatesBlanked(:,90:100),2),1)]) mean([nanmean(mean(pcRatesBlanked(:,11:44),2),1) nanmean(mean(pcRatesBlanked(:,56:89),2),1)]) nanmean(mean(pcRatesBlanked(:,45:55),2),1) nanmean(mean(pcOmitRatesBlanked(:,45:55),2),1)]);
-title('pkPos blanked non-cue, startCue, middleCue');
+bar([mean([nanmean(mean(pcRatesBlanked(:,11:44),2),1) nanmean(mean(pcRatesBlanked(:,56:89),2),1)]) mean([nanmean(mean(pcRatesBlanked(:,1:10),2),1) nanmean(mean(pcRatesBlanked(:,90:100),2),1)]) nanmean(mean(pcRatesBlanked(:,45:55),2),1) nanmean(mean(pcOmitRatesBlanked(:,45:55),2),1)]);
+title('pkPos blanked non-cue, startCue, middleCue, omitCue');
 %legend('startCueBlanked', 'middleCueBlanked', 'middleOmitBlanked');
+ylabel('mean rate');

@@ -1,4 +1,4 @@
-function [remapSubsetsStruc] = sameCellRemapSubsets(sameCellTuningStruc);
+function [remapSubsetsStruc] = sameCellRemapSubsets(sameCellCueShiftTuningStruc);
 
 %% USAGE: [remapStruc] = sameCellRemap(sameCellTuningStruc);
 
@@ -13,21 +13,21 @@ function [remapSubsetsStruc] = sameCellRemapSubsets(sameCellTuningStruc);
 
 
 %% unpack some variables
-multSessSegStruc = sameCellTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
-unitSpatCell = sameCellTuningStruc.unitSpatCell;  % cell array of spatial profiles of ziv cells
-zivCentroids = sameCellTuningStruc.zivCentroids;    % centroids of these cells
-placeCellOrigInd = sameCellTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
-rewCellOrigInd = sameCellTuningStruc.rewCellOrigInd;
-cellsInAll = sameCellTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
-placeCellAllOrigInd = sameCellTuningStruc.placeCellAllOrigInd;% orig C/A index of all cells that are place cells in all sessions
-placeCellAnyOrigInd = sameCellTuningStruc.placeCellInAnyOrigInd;
-placeCellNoneOrigInd = sameCellTuningStruc.placeCellInNoneOrigInd;
-rewCellAllOrigInd = sameCellTuningStruc.rewCellAllOrigInd; 
-rewCellNoneOrigInd = sameCellTuningStruc.rewCellInNoneOrigInd; 
-rewCellAnyOrigInd = sameCellTuningStruc.rewCellInAnyOrigInd; 
-regMapOrigInd = sameCellTuningStruc.regMapOrigInd; % orig C/A ind for all cells in ziv mat
-regMapGoodSegInd = sameCellTuningStruc.regMapGoodSegInd;
-sameCellPlaceBool = sameCellTuningStruc.sameCellPlaceBool;  % boolean for this mat (no its not)
+multSessSegStruc = sameCellCueShiftTuningStruc.multSessSegStruc; % just save orig struc (not too huge)
+unitSpatCell = sameCellCueShiftTuningStruc.unitSpatCell;  % cell array of spatial profiles of ziv cells
+zivCentroids = sameCellCueShiftTuningStruc.zivCentroids;    % centroids of these cells
+placeCellOrigInd = sameCellCueShiftTuningStruc.placeCellOrigInd;  % ind of place cells (Andres) w. re. to orig C/A
+rewCellOrigInd = sameCellCueShiftTuningStruc.rewCellOrigInd;
+cellsInAll = sameCellCueShiftTuningStruc.cellsInAll; % orig C/A index of all ziv registered cells present in all sessions
+placeCellAllOrigInd = sameCellCueShiftTuningStruc.placeCellAllOrigInd;% orig C/A index of all cells that are place cells in all sessions
+placeCellAnyOrigInd = sameCellCueShiftTuningStruc.placeCellInAnyOrigInd;
+placeCellNoneOrigInd = sameCellCueShiftTuningStruc.placeCellInNoneOrigInd;
+rewCellAllOrigInd = sameCellCueShiftTuningStruc.rewCellAllOrigInd; 
+rewCellNoneOrigInd = sameCellCueShiftTuningStruc.rewCellInNoneOrigInd; 
+rewCellAnyOrigInd = sameCellCueShiftTuningStruc.rewCellInAnyOrigInd; 
+regMapOrigInd = sameCellCueShiftTuningStruc.regMapOrigInd; % orig C/A ind for all cells in ziv mat
+regMapGoodSegInd = sameCellCueShiftTuningStruc.regMapGoodSegInd;
+sameCellPlaceBool = sameCellCueShiftTuningStruc.sameCellPlaceBool;  % boolean for this mat (no its not)
 
 
 %% find place cells in diff combin of sessions

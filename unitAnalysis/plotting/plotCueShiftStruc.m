@@ -82,6 +82,14 @@ end
 %title('posRates1=b, posRates2=g');
 legend(numCell);
 
+<<<<<<< HEAD
+% figure;
+% load(findLatestFilename('segDict', 'goodSeg'),'C');
+% cpc = C(pc,:);
+% for i=1:length(pc); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
+% imagesc(cpc2(sortInd,:));
+% title('C for all PCs');
+=======
 
 % sorted unit time plot
 figure;
@@ -96,4 +104,5 @@ end
 for i=1:size(cpc,1); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
 imagesc(cpc2(sortInd,:));
 title('C for all PCs');
+>>>>>>> ef8bac3879c73b091bec3bfcd44d2579352419d9
 

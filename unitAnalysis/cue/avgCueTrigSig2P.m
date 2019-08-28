@@ -40,7 +40,7 @@ if min(lapTypeArr)==0
 end
 
 % times for all cues
-evTimes = treadBehStruc.([eventName 'Time']);
+evTimes = treadBehStruc.([eventName 'TimeStart']);
 
 % find times of cues at different locations
 if length(cuePos)>1
