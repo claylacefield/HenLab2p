@@ -69,45 +69,45 @@ cueTrigSigStruc.midCueSig = evTrigSig2;
 
 
 %% Plotting
-if toPlot
-figure;
-subplot(2,1,1);
-try
-plotMeanSEMshaderr(evTrigSig0, 'r',25:30);
-catch
-end
-hold on;
-plotMeanSEMshaderr(evTrigSig1, 'g',25:30);
-try
-    plotMeanSEMshaderr(evTrigSig2, 'b',25:30);
-catch
-end
-try
-    plotMeanSEMshaderr(evTrigSig3, 'c',25:30);
-catch
-end
-
-title(['seg=' num2str(segNum)]);
-
-subplot(2,1,2);
-try
-plot(evTrigSig0, 'r');
-catch
-end
-hold on;
-plot(evTrigSig1, 'g');
-try
-    plot(evTrigSig2, 'b');
-catch
-end
-try
-    plot(evTrigSig3, 'c');
-catch
-end
-
+% if toPlot
 % figure;
-% plot(evTrigSig1, 'b');
+% subplot(2,1,1);
+% try
+% plotMeanSEMshaderr(evTrigSig0, 'r',25:30);
+% catch
+% end
 % hold on;
+% plotMeanSEMshaderr(evTrigSig1, 'g',25:30);
+% try
+%     plotMeanSEMshaderr(evTrigSig2, 'b',25:30);
+% catch
+% end
+% try
+%     plotMeanSEMshaderr(evTrigSig3, 'c',25:30);
+% catch
+% end
+% 
+% title(['seg=' num2str(segNum)]);
+% 
+% subplot(2,1,2);
+% try
 % plot(evTrigSig0, 'r');
-
-end
+% catch
+% end
+% hold on;
+% plot(evTrigSig1, 'g');
+% try
+%     plot(evTrigSig2, 'b');
+% catch
+% end
+% try
+%     plot(evTrigSig3, 'c');
+% catch
+% end
+% 
+% % figure;
+% % plot(evTrigSig1, 'b');
+% % hold on;
+% % plot(evTrigSig0, 'r');
+% 
+% end

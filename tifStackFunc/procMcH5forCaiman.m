@@ -165,7 +165,7 @@ imwrite(double(avCh2ds/max(avCh2ds(:))), [basename '_avCaChDs.tif']); % save tif
 outfile = [basename '_caChExpDs.h5'];
 disp(['Saving filtered, downsampled calcium channel as H5 (tzyxc order):' outfile]);
 tic;
-saveH5(Y, outfile, info);
+saveH5(Y, outfile);
 toc;
 
 if saveRed

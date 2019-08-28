@@ -4,6 +4,8 @@ close all;
 %[cueShiftStruc] = quickTuningS2P() ;
 load(findLatestFilename('2PcueShiftStruc')); 
 
+[MidCueCellInd, EdgeCueCellInd, nonCueCellInd] =  AllCueCells(cueShiftStruc);
+%%
 % select the  PCLappedSess of the refLap type
 lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
 lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
@@ -12,12 +14,6 @@ for i=1:length(cueShiftStruc.pksCellCell)
 end
 [val, refLapType] = max(numLapType);
 [val, shiftLapType] = min(numLapType);
-
-plotCueShiftStruc(cueShiftStruc, refLapType);
-
-[MidCueCellInd, EdgeCueCellInd, nonCueCellInd] =  AllCueCells(cueShiftStruc);
-
-%%
 PCLappedSessCue = cueShiftStruc.PCLappedSessCell{1,refLapType};
 posRatesRef = cueShiftStruc.PCLappedSessCell{refLapType}.posRates;
 

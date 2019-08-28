@@ -88,7 +88,7 @@ while stillAdding
     catch
         stillAdding = 0;
         disp('Canceled folder selection so aborting.');
-        saveFilename = ['/Backup20TB/clay/DGdata/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
+        saveFilename = ['/data/sebnem/DG_data/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
         save(saveFilename, 'multSessSegStruc');
     end
     cd ..;

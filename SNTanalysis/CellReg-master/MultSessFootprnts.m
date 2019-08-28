@@ -8,8 +8,17 @@ save(['footprints' num2str(i)],'footprints')
 end
 
 %%
+%[multSessSegStruc] = wrapMultSessStrucSelectCue2P();
 close all; clear all;
 load(findLatestFilename('multSessSegStruc')); load(findLatestFilename('cellRegistered')); 
-[sameCellCueShiftTuningStruc] = sameCellCueShiftTuning2P(multSessSegStruc, cell_registered_struct, 0);
-save('sameCellCueShiftTuningStruc.mat', 'sameCellCueShiftTuningStruc');
-cesv
+[sameCellTuningStruc] = sameCellTuning2P(multSessSegStruc, cell_registered_struct, 0);
+save('sameCellTuningStruc.mat', 'sameCellTuningStruc');
+
+%%
+close all; clear all;
+load('sameCellCueShiftTuningStruc.mat');
+[remapSpatCellStruc] = sameSpatCellRemap2P(sameCellCueShiftTuningStruc);
+save('remapSpatCellStruc.mat', 'remapSpatCellStruc');
+[remapCueShiftStruc] = CueShiftsameCellRemap2P(sameCellCueShiftTuningStruc);
+save('remapCueShiftStruc.mat', 'remapCueShiftStruc');
+

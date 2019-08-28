@@ -28,6 +28,7 @@ catch
 end
 
 olfPos = treadBehStruc.olfPosStart;
+olfPosEnd = treadBehStruc.olfPosEnd;
 olfLap = treadBehStruc.olfLap+1; % +1 so not zero-numbered
 
 rewTime = treadBehStruc.rewZoneStartTime;
@@ -37,28 +38,31 @@ rewPos = treadBehStruc.rewZoneStartPos;
 % and for tone
 toneTime = treadBehStruc.toneTimeStart;
 tonePos = treadBehStruc.tonePosStart;
+tonePosEnd = treadBehStruc.tonePosEnd;
 toneLap = treadBehStruc.toneLap+1;
 
 % and for led
 try
-ledTime = treadBehStruc.ledTimeStart;
-ledPos = treadBehStruc.ledPosStart;
-ledLap = treadBehStruc.ledLap+1;
+    ledTime = treadBehStruc.ledTimeStart;
+    ledPos = treadBehStruc.ledPosStart;
+    ledPosEnd = treadBehStruc.ledPosEnd;
+    ledLap = treadBehStruc.ledLap+1;
 catch
     ledTime = [];
-ledPos = [];
-ledLap = [];
+    ledPos = [];
+    ledLap = [];
 end
 
 % and for tactile
 try
-tactTime = treadBehStruc.tactTimeStart;
-tactPos = treadBehStruc.tactPosStart;
-tactLap = treadBehStruc.tactLap+1;
+    tactTime = treadBehStruc.tactTimeStart;
+    tactPos = treadBehStruc.tactPosStart;
+    tactPosEnd = treadBehStruc.tactPosEnd;
+    tactLap = treadBehStruc.tactLap+1;
 catch
     tactTime = [];
-tactPos = [];
-tactLap = [];
+    tactPos = [];
+    tactLap = [];
 end
 
 %[sortVals,order] = sort([length(ledPos), length(olfPos), length(tonePos)]);
@@ -67,21 +71,25 @@ end
 % types
 if length(tonePos) >= length(olfPos) && length(tonePos) >= length(ledPos) && length(tonePos) >= length(tactPos)
     cuePos = tonePos;
+    cuePosEnd = tonePosEnd;
     cueLap = toneLap;
     cueTime = toneTime;
     cueType = 'tone';
 elseif length(olfPos) >= length(tonePos) && length(olfPos) >= length(ledPos) && length(olfPos) >= length(tactPos)
     cuePos = olfPos;
+    cuePosEnd = olfPosEnd;
     cueLap = olfLap;
     cueTime = olfTime;
     cueType = 'olf';
 elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos) && length(ledPos) >= length(tactPos)
     cuePos = ledPos;
+    cuePosEnd = ledPosEnd;
     cueLap = ledLap;
     cueTime = ledTime;
     cueType = 'led';
     elseif length(tactPos) >= length(olfPos) && length(tactPos) >= length(tonePos) && length(tactPos) >= length(ledPos)
     cuePos = tactPos;
+    cuePosEnd = tactPosEnd;
     cueLap = tactLap;
     cueTime = tactTime;
     cueType = 'tact';
@@ -146,6 +154,8 @@ lapCueStruc.lapTypeArr = lapTypeArr;
 lapCueStruc.lapFrInds = lapFrInds;
 lapCueStruc.lapEpochs = lapEpochs;
 lapCueStruc.cuePos = cuePos; 
+lapCueStruc.cuePosEnd = cuePosEnd; 
 lapCueStruc.cueLap = cueLap;
 lapCueStruc.cueType = cueType;
 lapCueStruc.lapTypeCuePos = lapTypeCuePos;
+lapCueStruc.numLapTypes = numLapTypes;
