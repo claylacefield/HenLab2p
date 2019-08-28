@@ -1,10 +1,19 @@
-function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot)
+function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot, varargin)
 
 
 % eventName = 'led' to make 'ledTime', etc.
 
-%load(findLatestFilename('_segDict_', 'goodSeg'));
-segDictName = uigetfile('*.mat', 'Select segDict to use');
+if length(varargin)>0 % like 'auto'
+    if length(varargin{1}>4)
+        segDictName = varargin{1};
+    else
+        segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    end
+else
+    segDictName = uigetfile('*.mat', 'Select segDict to use');
+    
+end
+
 load(segDictName);
 
 if ~isempty(strfind(segDictName, 'seg2P'))
@@ -71,6 +80,7 @@ end
 
 %% save vars to output struc
 cueTrigSigStruc.path = pwd;
+cueTrigSigStruc.segDictName = segDictName;
 try
 cueTrigSigStruc.omitCueSig = evTrigSig0;
 catch
@@ -87,6 +97,10 @@ filename = findLatestFilename('.xml');
 filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
+<<<<<<< HEAD
+=======
+
+>>>>>>> 319e13cfd264ad117e4373c412f0da6e9b0eaa96
 % if toPlot
 
 if toPlot
@@ -134,6 +148,11 @@ yl = ylim; xl = xlim;
 line([30 30], yl);
 ylim(yl); xlim(xl);
 
+<<<<<<< HEAD
+=======
+end
+
+>>>>>>> 319e13cfd264ad117e4373c412f0da6e9b0eaa96
 % figure;
 % subplot(2,1,1);
 % try
