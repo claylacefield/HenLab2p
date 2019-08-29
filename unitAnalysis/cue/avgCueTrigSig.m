@@ -97,7 +97,10 @@ filename = findLatestFilename('.xml');
 filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
+<<<<<<< HEAD
+=======
 
+>>>>>>> 319e13cfd264ad117e4373c412f0da6e9b0eaa96
 % if toPlot
 
 if toPlot
@@ -145,8 +148,11 @@ yl = ylim; xl = xlim;
 line([30 30], yl);
 ylim(yl); xlim(xl);
 
+<<<<<<< HEAD
+=======
 end
 
+>>>>>>> 319e13cfd264ad117e4373c412f0da6e9b0eaa96
 % figure;
 % subplot(2,1,1);
 % try

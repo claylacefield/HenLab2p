@@ -7,13 +7,13 @@ load(findLatestFilename('2PcueShiftStruc'));
 % select the  PCLappedSess of the refLap type
 lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
 lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
-for i=1:length(cueShiftStruc.pksCellCell)
+for i=1:length(cueShiftStruc.pksCellCell)bis
     numLapType(i) = length(find(lapTypeArr==i));
 end
 [val, refLapType] = max(numLapType);
 [val, shiftLapType] = min(numLapType);
 
-plotCueShiftStruc(cueShiftStruc, refLapType);
+plotCueShiftStruc(cueShiftStruc, refLapType,1);
 
 [MidCueCellInd, EdgeCueCellInd, nonCueCellInd] =  AllCueCells(cueShiftStruc);
 
