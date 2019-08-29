@@ -21,9 +21,6 @@ function moviePosTiff()
 filename = findLatestFilename('.h5', 'posY');
 [Y, Ysiz] = h5readClay(1, 0, filename);
 
-Y = squeeze(Y);
-Y = permute(Y, [2 1 3]);
-
 % load cueShiftStruc (for lap info)
 load(findLatestFilename('treadBehStruc'));
 
@@ -115,29 +112,30 @@ refLaps = find(lapTypeArr==refLapType);
 
 pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);
 
+minLapFr = min(diff(lapFrInds(1:end-1)));
+
+%lapFrInds = [1 lapFrInds];
 tic;
-Ypos3 = zeros(d1*d2,100);
-for i=1:length(pc)
+Ypos3 = zeros(
+for i=1:length(lapFrInds)-1
     try
-    posRateSeg = cueShiftStruc.PCLappedSessCell{refLapType}.posRates(pc(i),:);
-    posRateSeg = posRateSeg/max(posRateSeg);
-    aSeg = A(:,pc(i)); aSeg = aSeg/max(aSeg(:));
-    posRateA = aSeg*posRateSeg;
-    Ypos3 = Ypos3+posRateA;
+    lapY = Y(:,:,lapFrInds(i):lapFrInds(i+1)-1);
+    lapY = lapY(:,:,1:minLapFr); % just truncate to smallest for now (but cuts out a few frames from some, <3)
+    YposLap(:,:,:,i+1) = lapY;
     catch
     end
 end
 toc;
 
 
-Ypos3 = reshape(Ypos3, d1, d2, 100);
+Ypos = squeeze(mean(YposLap(:,:,:,refLaps),4));
 
 % save H5
-Ypos3 = im2uint16(Ypos3/max(Ypos3(:))); % change to uint16
+Ypos = im2uint16(Ypos/max(Ypos(:))); % change to uint16
 
 basename = filename(1:strfind(filename, '.h5')-1);
-outfile = [basename '_posY3.h5'];
+outfile = [basename '_posY2.h5'];
 disp(['Saving posY as H5 (tzyxc order):' outfile]);
 tic;
-saveH5(Ypos3, outfile);
+saveH5(Ypos, outfile);
 toc;
