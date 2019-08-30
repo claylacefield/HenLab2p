@@ -64,7 +64,7 @@ subplot(2,2,2);
 %figure;
 plot(mean(posRatesRef(startCueCellInd,:),1), 'b');
 hold on; 
-plot(mean(posRatesOmit(midCellInd,:),1), 'r');
+plot(mean(posRatesOmit(startCueCellInd,:),1), 'r');
 title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
@@ -84,7 +84,7 @@ cl = caxis;
 title('midCellInd');
 
 % extract posRates for omit laps
-posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
+%posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
 
 % plot to check
 subplot(2,2,3); 
@@ -168,10 +168,10 @@ figure('Position', [50,100,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(nonCueCellInd,:), 0, 1);
 cl = caxis;
-title('midCueCell (2x PF rate) cueLaps');
+title('nonCueCell (<2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(nonCueCellInd(sortInd),:)); caxis(cl);
-title('midCueCell omitLaps');
+title('nonCueCell omitLaps');
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(nonCueCellInd,:),1), 'b');
@@ -385,3 +385,73 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'shift laps');
+
+%% now shuffle on shift amplitudes
+
+if length(numLapType)==3
+    midShiftCellInd2 = [];
+    for i = 1:length(midCellInd)
+        
+        % calc avgCueTrigSig for each middle cell
+        try
+            [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, cueTrigSigStruc.segDictName);
+        catch
+            [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0);
+        end
+        
+        shiftCueSig = cueTrigSigStruc.shiftCueSig;
+        midCueSig = cueTrigSigStruc.midCueSig;
+        
+        % find max event amplitude following cue (minus baseline) for norm laps
+        for j=1:size(midCueSig,2)
+            midCueAmp(j) = max(midCueSig(30:130,j)-midCueSig(30,j));
+        end
+        
+        % and Shift laps
+        for j=1:size(omitCueSig,2)
+            shiftCueAmp(j) = max(shiftCueSig(30:130,j)-shiftCueSig(30,j));
+        end
+        
+        % ttest2 on event amplitudes
+        [h,p,ci,stats] = ttest2(midCueAmp, shiftCueAmp);
+        
+        % shuffle
+        allAmps = [midCueAmp shiftCueAmp];
+        for j = 1:100
+            % resample laps
+            
+            refLapRes = randsample(length(midCueAmp)+length(shiftCueAmp), length(midCueAmp));
+            shiftLapRes = setdiff(1:(length(midCueAmp)+length(shiftCueAmp)),refLapRes);
+            
+            avMidCueAmpRes(j) = mean(allAmps(refLapRes));
+            avShiftCueAmpRes(j) = mean(allAmps(shiftLapRes));
+            
+        end
+        
+        % if cue event amplitudes signif > omit, then add cell to list
+        if length(find(avgMidCueAmpRes-avShiftCueAmpRes>=midCueAmp-shiftCueAmp))<5
+            midShiftCellInd2 = [midShiftCellInd2 midCellInd(i)];
+        end
+        
+    end
+    
+    % plot
+    figure('Position', [100,150,800,800]);
+    subplot(2,2,1);
+    [sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd2,:), 0, 1);
+    cl = caxis;
+    title('midCueCell (ttest) cueLaps');
+    subplot(2,2,3);
+    colormap(jet); imagesc(posRatesOmit(midShiftCellInd2(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+    
+    subplot(2,2,2);
+    plot(mean(posRatesRef(midShiftCellInd2,:),1), 'b');
+    hold on;
+    plot(mean(posRatesOmit(midShiftCellInd2,:),1), 'r');
+    title('avgs');
+    xlabel('pos');
+    ylabel('mean rate (Hz)');
+    legend('cue laps', 'Shift laps');
+    
+end
