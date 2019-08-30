@@ -74,4 +74,4 @@ for i=1:length(cueShiftStruc.pksCellCell)
 end
 [val, refLapType] = max(numLapType); % use ref lap from one with most laps 
 
-plotCueShiftStruc(cueShiftStruc, refLapType);
+plotCueShiftStruc(cueShiftStruc, refLapType,1);
