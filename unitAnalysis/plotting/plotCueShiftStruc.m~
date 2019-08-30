@@ -83,21 +83,29 @@ end
 legend(numCell);
 
 
+% figure;
+% load(findLatestFilename('segDict', 'goodSeg'),'C');
+% cpc = C(pc,:);
+% for i=1:length(pc); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
+% imagesc(cpc2(sortInd,:));
+% title('C for all PCs');
+
+
 
 % sorted unit time plot
-figure;
-load(findLatestFilename('segDict', 'goodSeg'),'C');
-
-try
-if usePC==1
-cpc = C(pc,:);
-else
-    cpc = C;
-end
-catch
-    cpc = C(pc,:);
-end
-
-for i=1:size(cpc,1); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
-imagesc(cpc2(sortInd,:));
-title('C for all PCs');
+% figure;
+% load(findLatestFilename('segDict', 'goodSeg'),'C');
+% 
+% try
+% if usePC==1
+% cpc = C(pc,:);
+% else
+%     cpc = C;
+% end
+% catch
+%     cpc = C(pc,:);
+% end
+% 
+% for i=1:size(cpc,1); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
+% imagesc(cpc2(sortInd,:));
+% title('C for all PCs');
