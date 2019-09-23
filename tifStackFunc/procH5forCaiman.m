@@ -44,7 +44,7 @@ end
 endFr = 0;  % to read all frames from Ch2 (GCaMP)
 filename = 0; %
 [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
-
+t
 Y = squeeze(Y);
 Y = permute(Y, [2 1 3]);
 

@@ -1,4 +1,4 @@
-function [startCueCellInd, midCueCellInd3] = findCueCells(cueShiftStruc, eventName)
+function [cueCellStruc] = findCueCells(cueShiftStruc, eventName, segDictCode, toPlot)
 
 %% USAGE: findCueCells(cueShiftStruc);
 % This function finds the identity of putative start and middle/variable
@@ -44,16 +44,17 @@ pcPkPos = maxInd(pc); % just PCs
 % find start cue cells just based upon position (ind w.re. to all seg)
 startCueCellInd = pc(find(pcPkPos>=90 | pcPkPos<=10));
 
+% extract posRates for omit laps
+posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
+
 % plot to check
+if toPlot
 figure('Position',[0,50,800,800]);
 
 subplot(2,2,1);
 [sortInd] = plotUnitsByTuning(posRatesRef(startCueCellInd,:), 0, 1);
 cl = caxis;
 title('start cue cells');
-
-% extract posRates for omit laps
-posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
 
 % plot to check
 subplot(2,2,3); 
@@ -69,6 +70,7 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'omit laps');
+end
 
 %% Middle PC ind
 midCellInd = pc(find(pcPkPos>=40 & pcPkPos<=65)); % pc(find(pcPkPos>=45 & pcPkPos<=65));
@@ -76,6 +78,7 @@ midCellInd = pc(find(pcPkPos>=40 & pcPkPos<=65)); % pc(find(pcPkPos>=45 & pcPkPo
 % before the cue (but may not omit/shift)
 
 % plot to check
+if toPlot
 %maxVal = max(max(posRatesRef(midCellInd,:)));
 figure('Position',[0,50,800,800]);
 subplot(2,2,1);
@@ -100,6 +103,7 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'omit laps');
+end
 
 %% Criteria 3: lack of omitCue response
 
@@ -125,6 +129,7 @@ end
 nonCueCellInd = setdiff(midCellInd, midCueCellInd);
 
 % plots
+if toPlot
 figure; 
 subplot(2,2,1);
 plot(maxInd(midCellInd),refOmitRatio,'.');
@@ -181,6 +186,7 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'omit laps');
+end
 
 %% scratch
 
@@ -196,14 +202,27 @@ legend('cue laps', 'omit laps');
 %% Method #2: "cue cells" are middle cells w. ttest2<0.05 for event amp
 % This is based upon ttest2 bet cue and omit (NOTE: event max amp)
 %eventName = 'tact';
+
+if segDictCode~=0
+    if isnumeric(segDictCode)
+    segDictName = findLatestFilename('segDict', 'goodSeg');
+    else
+        segDictName = segDictCode;
+    end
+end
+
 midCueCellInd2 = [];
 for i = 1:length(midCellInd)
     
     % calc avgCueTrigSig for each middle cell
+    if segDictCode~=0
+        [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, segDictName);
+    else
     try
     [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, cueTrigSigStruc.segDictName);
     catch
         [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0);
+    end
     end
     
     omitCueSig = cueTrigSigStruc.omitCueSig;
@@ -230,6 +249,7 @@ for i = 1:length(midCellInd)
 end
 
 % plot
+if toPlot
 figure('Position', [100,150,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(midCueCellInd2,:), 0, 1);
@@ -247,6 +267,7 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'omit laps');
+end
 
 %% Method #3: "cue cells" have posRate diff cue-omit > 95% lap shuffled
 % now trying shuffle with laps
@@ -283,6 +304,7 @@ for i = 1:length(midCellInd)
     
 end
 
+if toPlot
 figure('Position', [150,200,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(midCueCellInd3,:), 0, 1);
@@ -300,6 +322,7 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'omit laps');
+end
 
 %% old stuff with COM, xcorr
 
@@ -368,6 +391,7 @@ if length(numLapType)==3 %3
     
 end
 
+if toPlot
 figure('Position', [200,250,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd3,:), 0, 1);
@@ -385,18 +409,22 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'shift laps');
+end
 
 %% now shuffle on shift amplitudes
 
-inds = midCueCellInd3;
+inds = midCueCellInd3; % only look amongst midCueCells
+% midCueCellInd3 = posRate diff cue-omit > 95% lap shuffled
+% midCueCellInd2 =  middle cells w. ttest2<0.05 for event amp
+% midCueCellInd = 2x posRate at cue vs. omit
 
-if length(numLapType)==3
+if length(numLapType)==3 % if there are 3 lap types (thus shift)
     midShiftCellInd2 = [];
     for i = 1:length(inds)
         
         % calc avgCueTrigSig for each middle cell
         try
-            [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0, cueTrigSigStruc.segDictName);
+            [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0, segDictName); % cueTrigSigStruc.
         catch
             [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0);
         end
@@ -406,12 +434,12 @@ if length(numLapType)==3
         
         % find max event amplitude following cue (minus baseline) for norm laps
         for j=1:size(midCueSig,2)
-            midCueAmp(j) = max(midCueSig(30:130,j)-midCueSig(30,j));
+            midCueAmp(j) = max(midCueSig(30:130,j)-midCueSig(30,j)); % or sum?
         end
         
         % and Shift laps
         for j=1:size(shiftCueSig,2)
-            shiftCueAmp(j) = max(shiftCueSig(30:130,j)-shiftCueSig(30,j));
+            shiftCueAmp(j) = max(shiftCueSig(30:130,j)-shiftCueSig(30,j)); % or sum?
         end
         
 %         % ttest2 on event amplitudes
@@ -433,12 +461,13 @@ if length(numLapType)==3
         % if cue event amplitudes signif > omit, then add cell to list
         avMidCueAmp(i) = mean(midCueAmp); avShiftCueAmp(i) = mean(shiftCueAmp);
         if length(find((avMidCueAmpRes-avShiftCueAmpRes)>=(avMidCueAmp(i)-avShiftCueAmp(i))))<=5
-            midShiftCellInd2 = [midShiftCellInd2 midShiftCellInd3(i)];
+            midShiftCellInd2 = [midShiftCellInd2 inds(i)];
         end
         
     end
     
     % plot
+    if toPlot
     figure('Position', [100,150,800,800]);
     subplot(2,2,1);
     [sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd2,:), 0, 1);
@@ -456,5 +485,25 @@ if length(numLapType)==3
     xlabel('pos');
     ylabel('mean rate (Hz)');
     legend('cue laps', 'Shift laps');
-    
+    end
 end
+
+
+% pack some stuff in output structure
+cueCellStruc.path = cueShiftStruc.path;
+cueCellStruc.cueShiftName = cueShiftStruc.filename;
+cueCellStruc.startCueCellInd = startCueCellInd; 
+cueCellStruc.midCellInd = midCellInd;
+cueCellStruc.midCueCellInd = midCueCellInd;
+cueCellStruc.midCueCellInd2 = midCueCellInd2;
+cueCellStruc.midCueCellInd3 = midCueCellInd3;
+cueCellStruc.midShiftCellInd3 = midShiftCellInd3;
+cueCellStruc.midShiftCellInd2 = midShiftCellInd2;
+
+cueCellStruc.avMidCueAmp = avMidCueAmp; 
+cueCellStruc.avShiftCueAmp = avShiftCueAmp;
+
+
+
+
+
