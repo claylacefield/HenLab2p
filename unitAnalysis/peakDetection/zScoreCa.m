@@ -20,9 +20,14 @@ end
 
 % find mean/std for epochs just before transients
 for i=1:length(pks)
-    epochCa = ca(pks(i)-299:pks(i)-100);
-    epochMean(i) = mean(epochCa);
-    epochStd(i) = std(epochCa);
+    try
+        epochCa = ca(pks(i)-299:pks(i)-100);
+        epochMean(i) = mean(epochCa);
+        epochStd(i) = std(epochCa);
+    catch
+        epochMean(i) = 0; % just make =0 if epoch error (these will be filtered out later)
+        epochStd(i) = 0;
+    end
 end
 
 % throw out epochs with std=0 (only happens in weird cases)
