@@ -86,16 +86,18 @@ IR2D12ShiftOmitCueRewTuningStruc.rew1= 'random';
 
 %% plot cue shift omit:
 posRate={};
-posRate{1,1}= IR2D12ShiftOmitCueRewTuningStruc.posRate1;
-posRate{1,2}= IR2D12ShiftOmitCueRewTuningStruc.posRate3;
+posRate{1,1}= RefNCposRates;
+posRate{1,2}= OmNCposRates;
 [~, s1] = nanmax(posRate{1}, [], 2);
 [~, s2] = sort(s1);
 for i = 1:length(posRate)
     posRate{i} = posRate{i}(s2, :);
+        posRate{i}(isnan(posRate{i})) = 0;
+
 end
 figure;
 maxRate = Inf;
-CLims = [0, 0.5];
+CLims = [0, 0.7];
 for i = 1:2
     subplot(1, 2, i);
     c = posRate{i};
@@ -104,8 +106,16 @@ for i = 1:2
     set (gca, 'CLim', CLims)
 end
 suptitle('nonNormRates');
-colormap hot;
 
+%colormap hot;
+
+figure;
+for i = 1:2
+    subplot(1, 2, i);
+    c = posRate{i};
+    imagesc(c);
+end
+suptitle('NormRates');
 
 
 %% to plot shifted for Di15

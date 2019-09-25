@@ -40,8 +40,8 @@ posRatesOmit= cueShiftStruc.PCLappedSessCell{end}.posRates;
 %% select MidCuePc and EdgeCuePcs based on place field overlap with cue bins
 % single field bins are in PCLappedSess.Shuff.PFInPos (PFInAllPos is for multiple fields)
 [N, edges, bin] = histcounts(cueShiftStruc.lapCueStruc.cuePos, cueShiftStruc.lapCueStruc.numLapTypes);
-cuePosStart = round(mean((cueShiftStruc.lapCueStruc.cuePos((bin(1:end-1)==refLapType)) /20));
-cuePosEnd = round(mean(cueShiftStruc.lapCueStruc.cuePosEnd((bin(1:end-1)==refLapType))+/20));
+cuePosStart = round(mean((cueShiftStruc.lapCueStruc.cuePos((bin(1:end-1)==refLapType))/20));
+cuePosEnd = round(mean(cueShiftStruc.lapCueStruc.cuePosEnd((bin(1:end-1)==refLapType))+[]/20));
 %cuePosShift = round(mean((cueShiftStruc.lapCueStruc.cuePos(bin==shiftLapType))/20));
 %cuePosEndShift = round(mean((cueShiftStruc.lapCueStruc.cuePosEnd(bin==shiftLapType))/20));
 
@@ -86,7 +86,7 @@ nonCuePc = find (PCLappedSessCue.Shuff.isPC==1 & pfOverlapsMidCue == 0 & pfOverl
 try
 for i=1:length(MidCuePc)
     midFieldRateRef(i) = mean(posRatesRef(MidCuePc(i),MidCueRegion),2);
-    midFieldRateOmit(i) = mean(posRatesOmit(MidCuePc(i),MidCueRegion),2);
+    midFieldRateOmit(i) = mean(posRatesShift(MidCuePc(i),MidCueRegion),2);
 end
 % quick and dirty for now: midCueCellInd = twice as big response to cue as omit
 MidCueCellInd = MidCuePc(find((midFieldRateRef./midFieldRateOmit)>2));
@@ -97,7 +97,7 @@ end
     
 for i=1:length(EdgeCuePc)
     edgeFieldRateRef(i) = mean(posRatesRef(EdgeCuePc(i),EdgeCueRegion),2);
-    edgemidFieldRateOmit(i) = mean(posRatesOmit(EdgeCuePc(i),EdgeCueRegion),2);
+    edgemidFieldRateOmit(i) = mean(posRatesShift(EdgeCuePc(i),EdgeCueRegion),2);
 end
 
 % quick and dirty for now: EdgeCueCellInd = stable responses to both ref
@@ -116,7 +116,7 @@ subplot(3,2,1);
 [sortInd] = plotUnitsByTuning(posRatesRef(EdgeCueCellInd,:), 0, 1);
 cl = caxis; title('EdgeCueInd');
 subplot(3,2,2); 
-colormap(jet); imagesc(posRatesOmit(EdgeCueCellInd(sortInd),:));  caxis(cl);
+colormap(jet); imagesc(posRatesShift(EdgeCueCellInd(sortInd),:));  caxis(cl);
 title('omit/shift laps');
 
 % plot to check Mid
@@ -126,7 +126,7 @@ subplot(3,2,3);
 cl = caxis;
 title('MidCueInd');
 subplot(3,2,4); 
-colormap(jet); imagesc(posRatesOmit(MidCueCellInd(sortInd),:));  caxis(cl);
+colormap(jet); imagesc(posRatesShift(MidCueCellInd(sortInd),:));  caxis(cl);
 title('omit/shift laps');
 
 subplot(3,2,5);
@@ -134,7 +134,7 @@ subplot(3,2,5);
 cl = caxis;
 title('nonCueInd');
 subplot(3,2,6); 
-colormap(jet); imagesc(posRatesOmit(nonCueCellInd(sortInd),:));  caxis(cl);
+colormap(jet); imagesc(posRatesShift(nonCueCellInd(sortInd),:));  caxis(cl);
 title('omit/shift laps');
 
 %% plot to check posRates without criteria 2

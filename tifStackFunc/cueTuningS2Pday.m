@@ -11,7 +11,7 @@ for i = 3:length(dayDir)
             cd(dayDir(i).name);
             %sessDir = dir;
             if isempty(findLatestFilename('_2PcueShiftStruc_'))
-                [cueShiftStruc] = quickTuningS2P();                basename = dayDir(i).name;
+                [cueShiftStruc] = quickTuningS2P();                
             end
         end
     catch

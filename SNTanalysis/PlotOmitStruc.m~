@@ -1,7 +1,7 @@
 %collect everything in a structure
- PlotShiftStruc = {};
- RefPCposRates = []; RefMCposRates = []; RefECposRates = []; RefNCposRates = []; 
-OmPCposRates = []; OmMCposRates = []; OmECposRates = []; OmNCposRates = []; 
+  IROmitStruc = {};
+%   RefPCposRates = []; RefMCposRates = []; RefECposRates = []; RefNCposRates = []; 
+%  OmPCposRates = []; OmMCposRates = []; OmECposRates = []; OmNCposRates = []; 
 close all;
  load(findLatestFilename('treadBehStruc'));
  load(findLatestFilename('_seg2P_'));
@@ -14,7 +14,7 @@ TotalCell{3}=seg2P;
 TotalCell{4}=cueShiftStruc;
 
 [MidCueCellInd, EdgeCueCellInd, nonCueCellInd, refLapType, shiftLapType] =  AllCueCells(cueShiftStruc);
-plotACByCellType (seg2P, MidCueCellInd, EdgeCueCellInd, nonCueCellInd);
+%plotACByCellType (seg2P, MidCueCellInd, EdgeCueCellInd, nonCueCellInd);
 
 % now collect posRates
 
@@ -33,35 +33,57 @@ OmitposRatesMidCue= posRatesOmit(MidCueCellInd,:);
 OmitposRatesEdgeCue = posRatesOmit(EdgeCueCellInd,:);
 OmitposRatesnonCue = posRatesOmit(nonCueCellInd,:);
 
-PlotShiftStruc{1}.TotalCell=TotalCell;
-PlotShiftStruc{1}.RefposRatesAllpc=RefposRatesAllpc;
-PlotShiftStruc{1}.OmitposRatesAllpc=OmitposRatesAllpc;
-PlotShiftStruc{1}.RefposRatesMidCue=RefposRatesMidCue;
-PlotShiftStruc{1}.OmitposRatesMidCue=OmitposRatesMidCue;
-PlotShiftStruc{1}.RefposRatesEdgeCue=RefposRatesEdgeCue;
-PlotShiftStruc{1}.OmitposRatesEdgeCue=OmitposRatesEdgeCue;
-PlotShiftStruc{1}.RefposRatesnonCue=RefposRatesnonCue;
-PlotShiftStruc{1}.OmitposRatesnonCue=OmitposRatesnonCue;
-%save ('PlotShiftStruc.mat', 'PlotShiftStruc');
+IROmitStruc{1}.TotalCell=TotalCell;
+IROmitStruc{1}.RefposRatesAllpc=RefposRatesAllpc;
+IROmitStruc{1}.OmitposRatesAllpc=OmitposRatesAllpc;
+IROmitStruc{1}.RefposRatesMidCue=RefposRatesMidCue;
+IROmitStruc{1}.OmitposRatesMidCue=OmitposRatesMidCue;
+IROmitStruc{1}.RefposRatesEdgeCue=RefposRatesEdgeCue;
+IROmitStruc{1}.OmitposRatesEdgeCue=OmitposRatesEdgeCue;
+IROmitStruc{1}.RefposRatesnonCue=RefposRatesnonCue;
+IROmitStruc{1}.OmitposRatesnonCue=OmitposRatesnonCue;
+save ('IRShiftStruc.mat', 'IRShiftStruc');
 
-RefPCposRates=[RefPCposRates; RefposRatesAllpc];
-OmPCposRates=[OmPCposRates; OmitposRatesAllpc];
-RefMCposRates=[RefMCposRates; RefposRatesMidCue];
-OmMCposRates=[OmMCposRates; OmitposRatesMidCue];
-RefECposRates=[RefECposRates; RefposRatesEdgeCue];
-OmECposRates=[OmECposRates; OmitposRatesEdgeCue];
-RefNCposRates=[RefNCposRates;RefposRatesnonCue];
-OmNCposRates=[OmNCposRates; OmitposRatesnonCue];
+% RefPCposRates=[RefPCposRates; RefposRatesAllpc];
+% OmPCposRates=[OmPCposRates; OmitposRatesAllpc];
+% RefMCposRates=[RefMCposRates; RefposRatesMidCue];
+% OmMCposRates=[OmMCposRates; OmitposRatesMidCue];
+% RefECposRates=[RefECposRates; RefposRatesEdgeCue];
+% OmECposRates=[OmECposRates; OmitposRatesEdgeCue];
+% RefNCposRates=[RefNCposRates;RefposRatesnonCue];
+% OmNCposRates=[OmNCposRates; OmitposRatesnonCue];
 
 
-%%
-TotalShposRates ={};
-TotalShposRates.RefPCposRates=RefPCposRates;
-TotalShposRates.OmPCposRates=ShPCposRates;
-TotalShposRates.RefMCposRates=RefMCposRates;
-TotalShposRates.OmMCposRates=ShMCposRates;
-TotalShposRates.RefECposRates=RefECposRates;
-TotalShposRates.OmECposRates=ShECposRates;
-TotalShposRates.RefNCposRates=RefNCposRates;
-TotalShposRates.OmNCposRates=ShNCposRates;
- save ('TotalShposRates.mat', 'TotalShposRates');
+% %%
+% TotalOmposRates ={};
+% TotalOmposRates.RefPCposRates=RefPCposRates;
+% TotalOmposRates.OmPCposRates=OmPCposRates;
+% TotalOmposRates.RefMCposRates=RefMCposRates;
+% TotalOmposRates.OmMCposRates=OmMCposRates;
+% TotalOmposRates.RefECposRates=RefECposRates;
+% TotalOmposRates.OmECposRates=OmECposRates;
+% TotalOmposRates.RefNCposRates=RefNCposRates;
+% TotalOmposRates.OmNCposRates=OmNCposRates;
+%  save ('TotalOmposRates.mat', 'TotalOmposRates');
+
+%% plot cue shift omit:
+% posRate={};
+% posRate{1,1}= ShiftStruc.;
+% posRate{1,2}= OmPCposRates;
+% [~, s1] = nanmax(posRate{1}, [], 2);
+% [~, s2] = sort(s1);
+% for i = 1:length(posRate)
+%     posRate{i} = posRate{i}(s2, :);
+% end
+% figure;
+% maxRate = Inf;
+% CLims = [0, 0.1];
+% for i = 1:2
+%     subplot(1, 2, i);
+%     c = posRate{i};
+%     c(c> maxRate) = maxRate;
+%     imagesc(c);
+%     set (gca, 'CLim', CLims)
+% end
+% suptitle('nonNormRates');
+% colormap hot;
