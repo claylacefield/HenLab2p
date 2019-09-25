@@ -33,7 +33,7 @@ for i = 1:length(evTimes)
     zeroFr(i) = nrstInd(1);
     evTrigSig(:,i) = sig(nrstInd+interval(1):nrstInd+interval(2));
     catch
-        disp(['Prob with event #' num2str(i)]);
+        %disp(['Prob with event #' num2str(i)]);
     end
 end
 

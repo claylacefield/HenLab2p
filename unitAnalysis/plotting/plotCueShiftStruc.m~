@@ -96,12 +96,8 @@ legend(numCell);
 
 % sorted unit time plot
 figure;
-if ~contains(cueShiftStruc.filename, '2P')
+if contains(cueShiftStruc.filename, '2P')
 load(findLatestFilename('segDict', 'goodSeg'),'C');
-else
-    load(findLatestFilename('seg2P'));
-    C = seg2P.C2p;
-end
 
 try
 if usePC==1

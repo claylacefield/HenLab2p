@@ -31,9 +31,11 @@ try
     disp('Loading latest segDict');
     pksCell = pksCell(goodSeg);
 catch
-[segDictName, path] = uigetfile('*.mat', 'Choose segDict to perform quick tuning (curr for cue task)');
-cd(path);
-load([path '/' segDictName]);
+% [segDictName, path] = uigetfile('*.mat', 'Choose segDict to perform quick tuning (curr for cue task)');
+% cd(path);
+% load([path '/' segDictName]);
+segDictName = findLatestFilename('segDict');
+load(segDictName);
 
 fps = 15;
 
