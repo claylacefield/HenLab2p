@@ -1,4 +1,4 @@
-function [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
+function [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
 
 % formerly popPosInfo
 
@@ -14,7 +14,7 @@ end
 pcRates = posRates(pc,:);
 
 [maxs, inds] = max(pcRates'); % find bin of peak firing rate for PCs
-[maxs, inds2] = max(pcRates(find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1),:)');
+[maxs, inds2] = max(posRates(find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1),:)');
 
 numBins = 20; %10;
 [counts, edges, binInd] = histcounts(inds2, numBins);
@@ -53,23 +53,40 @@ omitRatesSorted = pcRates2(sortInds,:);
 
 % go through posRates, and blank out time around peak
 j=0;
-for i = 1:size(pcRatesSorted,1)
+for i = 1:size(pcRatesSorted,1) % for all cells (actually not just pc now)
     rates = pcRatesSorted(i,:);
     rates2 = omitRatesSorted(i,:);
+    pfRates = pcRatesSorted(i,:);
+    pfRates2 = omitRatesSorted(i,:);
     pkPos = sorted(i); % pos bin of place field peak
-    if pkPos <= 10
+    if pkPos <= 10 % wraparound for units at beginning
         rates(1:pkPos+10) = NaN;
         rates(100-10-pkPos:100) = NaN;
         rates2(1:pkPos+10) = NaN;
         rates2(100-10-pkPos:100) = NaN;
-    elseif pkPos>90
+        
+        % place field rates only 
+        pfRates(pkPos+10:100-(10-pkPos)) = NaN;
+        pfRates2(pkPos+10:100-(10-pkPos)) = NaN;
+        
+    elseif pkPos>90 % wraparound for units at end
         rates(pkPos-10:100) = NaN;
         rates(1:10-(100-pkPos)) = NaN;
         rates2(pkPos-10:100) = NaN;
         rates2(1:10-(100-pkPos)) = NaN;
-    else
+        
+        % place field rates only 
+        pfRates(10-(100-pkPos):pkPos-10) = NaN;
+        pfRates2(10-(100-pkPos):pkPos-10) = NaN;
+    else % units in middle
         rates(pkPos-10:pkPos+10) = NaN;
         rates2(pkPos-10:pkPos+10) = NaN;
+        
+        % place field rates only 
+        pfRates(1:pkPos-10) = NaN;
+        pfRates(pkPos+10:end) = NaN;
+        pfRates2(1:pkPos-10) = NaN;
+        pfRates2(pkPos+10:end) = NaN;
         
         if pkPos>45 && pkPos<55 % for potential middle-cue cells (PF in pos 40-60)
             j=j+1;
@@ -81,6 +98,8 @@ for i = 1:size(pcRatesSorted,1)
     end
     pcRatesBlanked(i,:) = rates;
     pcOmitRatesBlanked(i,:) = rates2;
+    pfOnlyRates(i,:) = pfRates;
+    pfOnlyRatesOmit(i,:) = pfRates2;   
 end
 
 % cuePosRate = cuePosRate(cuePosRate~=0); % just elim zeros
@@ -120,4 +139,12 @@ bar([mean([nanmean(mean(pcRatesBlanked(:,nonEp1),2),1) nanmean(mean(pcRatesBlank
 title('pkPos blanked non-cue, startCue, middleCue, omitCue');
 %legend('startCueBlanked', 'middleCueBlanked', 'middleOmitBlanked');
 ylabel('mean rate');
+
+figure; 
+subplot(2,1,2);
+plot(nanmean(pfOnlyRates,1));
+subplot(2,1,1);
+imagesc(pfOnlyRates);
+title('pfOnly rates');
+
 end

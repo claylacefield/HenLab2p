@@ -6,7 +6,7 @@ function [caz] = zScoreCa(ca, varargin)
 % - find times just before events
 % - take mean and std for these
 % - pick epochs with low mean and std (but not zero! because sometimes NMF
-% produces zeros)
+% produces zeros, e.g. when it splits nuclear signal out)
 % - average these epoch mean/std and use these for Zscoring
 
 % varargin for imaging fps (or default to 15fps)
@@ -25,8 +25,8 @@ for i=1:length(pks)
         epochMean(i) = mean(epochCa);
         epochStd(i) = std(epochCa);
     catch
-        epochMean(i) = mean(epochCa);
-        epochStd(i) = std(epochCa);
+        epochMean(i) = 0; % just make =0 if epoch error (these will be filtered out later)
+        epochStd(i) = 0;
     end
 end
 

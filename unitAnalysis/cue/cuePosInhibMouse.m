@@ -8,6 +8,8 @@ mouseDir = dir;
 
 normRatesBlanked = []; normRatesBlankedCell={};
 omitRatesBlanked = []; omitRatesBlankedCell={};
+pfRates = []; pfRatesCell = {};
+pfOmitRates = []; pfOmitRatesCell = {};
 pathCell = {}; cueShiftNameCell={};
 posBinFracCell={}; posInfoCell={};
 
@@ -47,12 +49,14 @@ for j=3:length(mouseDir)
                     % make sure it's shiftOmit, and not 'led'?
                     if contains(dayDir(i).name, 'mit') || contains(dayDir(i).name, 'hift') %&& ~isempty(find(lapTypeArr==0))
                         disp(['Processing Omit file ' dayDir(i).name]); tic;
-                        toPlot=0; goodSeg = 1; %toAuto=1; 
-                        [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
+                        toPlot=0; goodSeg = 0; % is PC only % goodSeg = 1; % is all cells
+                        [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
                         normRatesBlanked = [normRatesBlanked; pcRatesBlanked];
                         normRatesBlankedCell = [normRatesBlankedCell pcRatesBlanked];
                         omitRatesBlanked = [omitRatesBlanked; pcOmitRatesBlanked];
                         omitRatesBlankedCell = [omitRatesBlankedCell pcOmitRatesBlanked];
+                        pfRates = [pfRates; pfOnlyRates]; pfRatesCell = [pfRatesCell pfOnlyRates];
+                        pfOmitRates = [pfOmitRates; pfOnlyRatesOmit]; pfOmitRatesCell = [pfOmitRatesCell pfOnlyRatesOmit];
                         pathCell = [pathCell cueShiftStruc.path];
                         cueShiftNameCell = [cueShiftNameCell cueShiftStrucName];
                         posBinFracCell = [posBinFracCell posBinFrac];
@@ -83,7 +87,10 @@ cueInhibStruc.normRatesBlanked = normRatesBlanked;
 cueInhibStruc.normRatesBlankedCell = normRatesBlankedCell;
 cueInhibStruc.omitRatesBlanked = omitRatesBlanked;
 cueInhibStruc.omitRatesBlankedCell = omitRatesBlankedCell;
-
+cueInhibStruc.pfRates = pfRates;
+cueInhibStruc.pfRatesCell = pfRatesCell;
+cueInhibStruc.pfOmitRates = pfOmitRates;
+cueInhibStruc.pfOmitRatesCell = pfOmitRatesCell;
 
 %% save and plot
 try
@@ -113,6 +120,17 @@ bar([mean([nanmean(mean(normRatesBlanked(:,nonEp1),2),1) nanmean(mean(normRatesB
 title('pkPos blanked non-cue, startCue, middleCue, omitCue');
 %legend('startCueBlanked', 'middleCueBlanked', 'middleOmitBlanked');
 ylabel('mean rate');
+end
+
+if toPlot
+figure; 
+%plot(nanmean(normRatesBlanked,1));
+plotMeanSEMshaderr(pfRates','b');
+hold on;
+%plot(nanmean(omitRatesBlanked,1),'r');
+plotMeanSEMshaderr(pfOmitRates','r');
+legend('refLaps', 'omitLaps');
+title('place field rate only');
 end
 
 catch
