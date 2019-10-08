@@ -8,7 +8,7 @@ function [pks] = clayCaTransients(ca, fps, varargin);
 % requirements:
 % LocalMinima (old script from Buzsaki lab)
 
-defSdThresh = 3;
+defSdThresh = 4;
 defTimeoutSec = 3;
 
 if isempty(varargin)

@@ -174,7 +174,7 @@ title('Varience of standardized firing rates ');
 %% correlation of within field firing across cells in a session
  mean(posRatesCellByLap{1, 1}(:, pfInAllPos2{1, 1}), 2);
  a = mean(posRatesCellByLap{1, 1}(:, pfInAllPos2{1, 1}), 2);
-a = mean(posRatesCellByLap{1, 1}(:, pfInAllPos2{1, 1}), 2);
+a = mean(posRatesCellByLap{1,ilt 1}(:, pfInAllPos2{1, 1}), 2);
 a = [];
 j = 1;
 for i = 1:size(pfInAllPos2, 1)

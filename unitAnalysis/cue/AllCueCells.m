@@ -1,4 +1,4 @@
-function [MidCueCellInd, EdgeCueCellInd, nonCueCellInd, refLapType, shiftLapType] =  AllCueCells(cueShiftStruc)
+function [MidCueCellInd, EdgeCueCellInd, nonCueCellInd, refLapType, shiftLapType] =  AllCueCells(PCLappedSessCell,lapCueStruc,pksCellCell)
 
 %% USAGE: AllCueCells(cueShiftStruc);
 % This function finds the identity of putative Edge, middle/variable and
@@ -19,29 +19,29 @@ function [MidCueCellInd, EdgeCueCellInd, nonCueCellInd, refLapType, shiftLapType
 %   no omit?
 
 % select the  PCLappedSess of the refLap type
-lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
+lapTypeArr =lapCueStruc.lapTypeArr;
 lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
-for i=1:length(cueShiftStruc.pksCellCell)
+for i=1:length(pksCellCell)
     numLapType(i) = length(find(lapTypeArr==i));
 end
 [val, refLapType] = max(numLapType);
 [val, shiftLapType] = min(numLapType);
 
-PCLappedSessCue = cueShiftStruc.PCLappedSessCell{1,refLapType};
-posRatesRef = cueShiftStruc.PCLappedSessCell{refLapType}.posRates;
+PCLappedSessCue = PCLappedSessCell{1,refLapType};
+posRatesRef = PCLappedSessCell{refLapType}.posRates;
 nCells = length(PCLappedSessCue.Shuff.isPC);
 Allpc = find(PCLappedSessCue.Shuff.isPC==1);
 posRatesAllpc = PCLappedSessCue.posRates(Allpc,:);
 % extract posRates for omit/shift laps
 
-posRatesShift= cueShiftStruc.PCLappedSessCell{shiftLapType}.posRates;
-posRatesOmit= cueShiftStruc.PCLappedSessCell{end}.posRates;
+posRatesShift= PCLappedSessCell{shiftLapType}.posRates;
+posRatesOmit= PCLappedSessCell{end}.posRates;
 
 %% select MidCuePc and EdgeCuePcs based on place field overlap with cue bins
 % single field bins are in PCLappedSess.Shuff.PFInPos (PFInAllPos is for multiple fields)
-[N, edges, bin] = histcounts(cueShiftStruc.lapCueStruc.cuePos, cueShiftStruc.lapCueStruc.numLapTypes);
-cuePosStart = round(mean((cueShiftStruc.lapCueStruc.cuePos((bin(1:end-1)==refLapType))-[50])/20));
-cuePosEnd = round(mean((cueShiftStruc.lapCueStruc.cuePosEnd((bin(1:end-1)==refLapType))+[100])/20));
+[N, edges, bin] = histcounts(lapCueStruc.cuePos, lapCueStruc.numLapTypes);
+cuePosStart = round(mean((lapCueStruc.cuePos((bin(1:end-1)==refLapType))-[50])/20));
+cuePosEnd = round(mean((lapCueStruc.cuePosEnd((bin(1:end-1)==refLapType))+[100])/20));
 %cuePosShift = round(mean((cueShiftStruc.lapCueStruc.cuePos(bin==shiftLapType))/20));
 %cuePosEndShift = round(mean((cueShiftStruc.lapCueStruc.cuePosEnd(bin==shiftLapType))/20));
 

@@ -6,17 +6,18 @@ dayDir = dir;
 
 
 for i = 3:length(dayDir)
-    try
+    %try
         if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) % 'TSeries')
             cd(dayDir(i).name);
             %sessDir = dir;
             if isempty(findLatestFilename('_2PcueShiftStruc_'))
-                [cueShiftStruc] = quickTuningS2P();                
+               lapTypeInfo=[1 4 7 10];
+                [cueShiftStruc] = quickTuningS2P(lapTypeInfo);                
             end
         end
-    catch
+    %catch
         disp(['Some problem processing ' dayDir(i).name ' so skipping']);
-    end
+    %end
     cd(dayPath);
 end
 
