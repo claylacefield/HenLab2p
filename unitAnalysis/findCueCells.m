@@ -46,6 +46,7 @@ startCueCellInd = pc(find(pcPkPos>=90 | pcPkPos<=10));
 
 % extract posRates for omit laps
 posRatesOmit = cueShiftStruc.PCLappedSessCell{end}.posRates;
+%posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
 
 % plot to check
 if toPlot
@@ -159,6 +160,12 @@ title('midCueCell (2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd,:),1), 'b');
@@ -177,6 +184,13 @@ title('nonCueCell (<2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(nonCueCellInd(sortInd),:)); caxis(cl);
 title('nonCueCell omitLaps');
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(nonCueCellInd(sortInd),:)); caxis(cl);
+    title('nonCueCell ShiftLaps');
+end
+
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(nonCueCellInd,:),1), 'b');
@@ -209,21 +223,23 @@ if segDictCode~=0
     else
         segDictName = segDictCode;
     end
+else
+    segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
 end
 
 midCueCellInd2 = [];
 for i = 1:length(midCellInd)
     
     % calc avgCueTrigSig for each middle cell
-    if segDictCode~=0
+%     if segDictCode~=0
         [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, segDictName);
-    else
-    try
-    [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, cueTrigSigStruc.segDictName);
-    catch
-        [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0);
-    end
-    end
+%     else
+%         try
+%             [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0, cueTrigSigStruc.segDictName);
+%         catch
+%             [cueTrigSigStruc] = avgCueTrigSig(midCellInd(i), eventName, 0);
+%         end
+%     end
     
     omitCueSig = cueTrigSigStruc.omitCueSig;
     midCueSig = cueTrigSigStruc.midCueSig;
@@ -258,6 +274,12 @@ title('midCueCell (ttest) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd2(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd2(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd2,:),1), 'b');
@@ -313,6 +335,12 @@ title('midCueCell (shuff) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd3(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd3(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd,:),1), 'b');
@@ -345,7 +373,7 @@ end
 
 if length(numLapType)==3 %3
     
-    posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
     
     lapTypeCuePos = cueShiftStruc.lapCueStruc.lapTypeCuePos;
     
@@ -396,10 +424,13 @@ figure('Position', [200,250,800,800]);
 subplot(2,2,1); 
 [sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd3,:), 0, 1);
 cl = caxis;
-title('midShiftCell (shuff) cueLaps');
+title('midShiftCell (posRates shuff) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesShift(midShiftCellInd3(sortInd),:)); caxis(cl);
 title('midShiftCell shiftLaps');
+subplot(2,2,4);
+    colormap(jet); imagesc(posRatesOmit(midShiftCellInd3(sortInd),:)); caxis(cl);
+    title('midShiftCell omitLaps');
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midShiftCellInd3,:),1), 'b');
@@ -460,7 +491,7 @@ if length(numLapType)==3 % if there are 3 lap types (thus shift)
         
         % if cue event amplitudes signif > omit, then add cell to list
         avMidCueAmp(i) = mean(midCueAmp); avShiftCueAmp(i) = mean(shiftCueAmp);
-        if length(find((avMidCueAmpRes-avShiftCueAmpRes)>=(avMidCueAmp(i)-avShiftCueAmp(i))))<=5
+        if length(find(abs(avMidCueAmpRes-avShiftCueAmpRes)>=abs(avMidCueAmp(i)-avShiftCueAmp(i))))<=5
             midShiftCellInd2 = [midShiftCellInd2 inds(i)];
         end
         
@@ -472,10 +503,13 @@ if length(numLapType)==3 % if there are 3 lap types (thus shift)
     subplot(2,2,1);
     [sortInd] = plotUnitsByTuning(posRatesRef(midShiftCellInd2,:), 0, 1);
     cl = caxis;
-    title('midShiftCell (shuff) cueLaps');
+    title('midShiftCell (evAmp shuff) cueLaps');
     subplot(2,2,3);
+    colormap(jet); imagesc(posRatesShift(midShiftCellInd2(sortInd),:)); caxis(cl);
+    title('midShiftCell ShiftLaps');
+    subplot(2,2,4);
     colormap(jet); imagesc(posRatesOmit(midShiftCellInd2(sortInd),:)); caxis(cl);
-    title('midCueCell ShiftLaps');
+    title('midShiftCell omitLaps');
     
     subplot(2,2,2);
     plot(mean(posRatesRef(midShiftCellInd2,:),1), 'b');

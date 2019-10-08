@@ -57,31 +57,26 @@ evTimes = treadBehStruc.([eventName 'TimeStart']);
 
 %% find times of cues at different locations, and do eventTrigSig
 
-ca = C(segNum,:);
-
-toZ = 1;
-if toZ==1
-    ca = zScoreCa(ca);
-end
+ca = C(seg
 
 if length(cuePos)>1
     cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
     pos1evInd = find(cueLapArr==1);
     pos2evInd = find(cueLapArr==2);
-    [evTrigSig1, zeroFr] = eventTrigSig(ca, evTimes(pos1evInd), 0, [-30 120], frTimes(1:2:end));
-    [evTrigSig2, zeroFr] = eventTrigSig(ca, evTimes(pos2evInd), 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos1evInd), 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig2, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos2evInd), 0, [-30 120], frTimes(1:2:end));
     if length(cuePos)>2
         pos3evInd = find(cueLapArr==3);
-        [evTrigSig3, zeroFr] = eventTrigSig(ca, evTimes(pos3evInd), 0, [-30 120], frTimes(1:2:end));
+        [evTrigSig3, zeroFr] = eventTrigSig(C(segNum,:), evTimes(pos3evInd), 0, [-30 120], frTimes(1:2:end));
         
     end
 else
     
-    [evTrigSig1, zeroFr] = eventTrigSig(ca, evTimes, 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig1, zeroFr] = eventTrigSig(C(segNum,:), evTimes, 0, [-30 120], frTimes(1:2:end));
 end
 
 try
-    [evTrigSig0, zeroFr] = eventTrigSig(ca, omitCueTimes, 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig0, zeroFr] = eventTrigSig(C(segNum,:), omitCueTimes, 0, [-30 120], frTimes(1:2:end));
 catch
 end
 
