@@ -34,8 +34,8 @@ catch
     % [segDictName, path] = uigetfile('*.mat', 'Choose segDict to perform quick tuning (curr for cue task)');
     % cd(path);
     % load([path '/' segDictName]);
-    segDictName = findLatestFilename('_segDict_', 'goodSeg');
-    load(segDictName);
+    segDictName = findLatestFilename('segDict', 'goodSeg');
+    load(segDictName, 'C');
     
     fps = 15;
     

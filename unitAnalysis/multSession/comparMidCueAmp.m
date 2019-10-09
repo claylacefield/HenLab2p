@@ -1,0 +1,1 @@
+function compareMidCueAmp(cueCellStruc, cell_registered_struct, 

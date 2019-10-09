@@ -26,14 +26,14 @@ lapTypeArr = lapCueStruc.lapTypeArr;
 
 
 for i=1:size(lapEpochs,1) % for each lap
-    lapPks = pks(find(pks>lapEpochs(i,1) & pks<lapEpochs(i,2))); % find spikes in that lap
-    for j=1:length(lapPks)  % for each spike
-        pkAmp(j) = max(ca(lapPks(j):lapPks(j)+100)); % find its amplitude
+    lapPks = pks(find(pks>lapEpochs(i,1) & pks<lapEpochs(i,2))); % find peaks 
+    for j=1:length(lapPks)
+        pkAmp(j) = max(ca(lapPks(j):lapPks(j)+100));
     end
     if ~isempty(lapPks)
-        lapAvAmp(i) = mean(pkAmp); % take mean of spike amplitudes in this lap
+    lapAvAmp(i) = mean(pkAmp);
     else
-        lapAvAmp(i) = 0; %[];
+        lapAvAmp(i) = NaN; %[];
     end
 end
     

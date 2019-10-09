@@ -102,6 +102,13 @@ load([path file]);
 handles.file = file;
 handles.path = path;
 
+if ~isempty(strfind(file, 'seg2P'))
+    C = seg2P.C2p;
+    A = seg2P.A2p;
+    d1 = seg2P.d12p;
+    d2 = seg2P.d22p;
+end
+
 handles.tiff = imread(findLatestFilename('_avCaChDs.tif'));
 
 basename = file(1:strfind(file,'.mat')-1);

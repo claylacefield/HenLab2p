@@ -304,6 +304,7 @@ save(fullfile(results_directory,['cellRegistered_' datestr(clock,'yyyymmdd_HHMMs
 
 % Saving a log file with all the chosen parameters:
 comments=''; % anything written here will be added to the log file
+file_names = {multSessSegStruc.segDictName};
 if strcmp(registration_approach,'Probabilistic')
     if strcmp(model_type,'Spatial correlation')
         save_log_file(results_directory,file_names,imaging_technique,microns_per_pixel,adjusted_x_size,adjusted_y_size,alignment_type,reference_session_index,maximal_distance,number_of_bins,initial_registration_type,initial_threshold,registration_approach,model_type,final_threshold,optimal_cell_to_index_map,cell_registered_struct,comments,uncertain_fraction_spatial_correlations,false_positive_per_correlation_threshold,true_positive_per_correlation_threshold,MSE_spatial_correlations_model)

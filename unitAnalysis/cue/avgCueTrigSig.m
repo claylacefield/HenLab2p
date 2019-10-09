@@ -9,8 +9,16 @@ if length(varargin)>0 % like 'auto'
     else
         segDictName = findLatestFilename('_segDict_', 'goodSeg');
     end
+    
+    if length(varargin)>1
+        toZ = varargin{2};
+    else
+        toZ = 0;
+    end
+    
 else
     segDictName = uigetfile('*.mat', 'Select segDict to use');
+    toZ = 0;
     
 end
 
@@ -31,6 +39,7 @@ lapTypeArr = lapCueStruc.lapTypeArr;
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
 frTimes = treadBehStruc.adjFrTimes; %(1:2:end);
 
+%% Estimate omit times
 % if there are omitCue laps, estimate a time for typical cue position each
 % lap
 cuePos = lapCueStruc.lapTypeCuePos;
@@ -59,12 +68,14 @@ evTimes = treadBehStruc.([eventName 'TimeStart']);
 
 ca = C(segNum,:);
 
-toZ = 1;
+% zScore Ca if desired
+%toZ = 1;
 if toZ==1
     ca = zScoreCa(ca);
 end
 
-if length(cuePos)>1
+% evTrigSig for each cue type/pos
+if length(cuePos)>1 % if multiple cue positions
     cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
     pos1evInd = find(cueLapArr==1);
     pos2evInd = find(cueLapArr==2);
@@ -75,9 +86,9 @@ if length(cuePos)>1
         [evTrigSig3, zeroFr] = eventTrigSig(ca, evTimes(pos3evInd), 0, [-30 120], frTimes(1:2:end));
         
     end
-else
+else % else if only one (probably middle cue)
     
-    [evTrigSig1, zeroFr] = eventTrigSig(ca, evTimes, 0, [-30 120], frTimes(1:2:end));
+    [evTrigSig2, zeroFr] = eventTrigSig(ca, evTimes, 0, [-30 120], frTimes(1:2:end));
 end
 
 try
@@ -99,7 +110,10 @@ cueTrigSigStruc.shiftCueSig = evTrigSig1;
 catch
     disp('No shift laps');
 end
+try
 cueTrigSigStruc.midCueSig = evTrigSig2;
+catch
+end
 
 filename = findLatestFilename('.xml');
 filename = filename(1:strfind(filename, '.xml')-1);
@@ -107,14 +121,16 @@ filename = filename(1:strfind(filename, '.xml')-1);
 %% Plotting
 
 if toPlot
-figure;
-subplot(2,1,1);
+figure; 
+subplot(2,1,1); hold on;
 try
 plotMeanSEMshaderr(evTrigSig0, 'r',25:30);
 catch
 end
-hold on;
+try
 plotMeanSEMshaderr(evTrigSig1, 'g',25:30);
+catch
+end
 try
     plotMeanSEMshaderr(evTrigSig2, 'b',25:30);
 catch
@@ -134,7 +150,10 @@ plot(evTrigSig0, 'r');
 catch
 end
 hold on;
+try
 plot(evTrigSig1, 'g');
+catch
+end
 % yl = ylim; xl = xlim;
 % line([30 30], yl);
 % ylim(yl); xlim(xl);

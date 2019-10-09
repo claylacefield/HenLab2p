@@ -18,6 +18,16 @@ function [cueCellStruc] = findCueCells(cueShiftStruc, eventName, segDictCode, to
 %   - omitCue response: should I take from avgCueTrigSig? or posRates at
 %   middle cue location?
 
+if segDictCode~=0
+    if isnumeric(segDictCode)
+    segDictName = findLatestFilename('segDict', 'goodSeg');
+    else
+        segDictName = segDictCode;
+    end
+else
+    segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
+end
+
 
 %% Find "normal" lap type (middle cue in typical location)
 lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
@@ -217,15 +227,15 @@ end
 % This is based upon ttest2 bet cue and omit (NOTE: event max amp)
 %eventName = 'tact';
 
-if segDictCode~=0
-    if isnumeric(segDictCode)
-    segDictName = findLatestFilename('segDict', 'goodSeg');
-    else
-        segDictName = segDictCode;
-    end
-else
-    segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
-end
+% if segDictCode~=0
+%     if isnumeric(segDictCode)
+%     segDictName = findLatestFilename('segDict', 'goodSeg');
+%     else
+%         segDictName = segDictCode;
+%     end
+% else
+%     segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
+% end
 
 midCueCellInd2 = [];
 for i = 1:length(midCellInd)
@@ -417,7 +427,7 @@ if length(numLapType)==3 %3
         
     end
     
-end
+%end
 
 if toPlot
 figure('Position', [200,250,800,800]);
@@ -441,6 +451,8 @@ xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'shift laps');
 end
+
+% end % end IF numLapType>=3
 
 %% now shuffle on shift amplitudes
 
@@ -522,6 +534,7 @@ if length(numLapType)==3 % if there are 3 lap types (thus shift)
     end
 end
 
+end % end IF numLapType>=3
 
 % pack some stuff in output structure
 cueCellStruc.path = cueShiftStruc.path;
@@ -531,13 +544,16 @@ cueCellStruc.midCellInd = midCellInd;
 cueCellStruc.midCueCellInd = midCueCellInd;
 cueCellStruc.midCueCellInd2 = midCueCellInd2;
 cueCellStruc.midCueCellInd3 = midCueCellInd3;
+try % in case no shift laps
 cueCellStruc.midShiftCellInd3 = midShiftCellInd3;
 cueCellStruc.midShiftCellInd2 = midShiftCellInd2;
+
 
 cueCellStruc.avMidCueAmp = avMidCueAmp; 
 cueCellStruc.avShiftCueAmp = avShiftCueAmp;
 
-
+catch
+end
 
 
 

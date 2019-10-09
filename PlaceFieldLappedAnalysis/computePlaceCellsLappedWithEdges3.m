@@ -15,7 +15,7 @@ lapPerc = 20;
 lapPerc = lapPerc/100;
 
 %absolute minimum number of laps (for sessions with few laps)
-lapMin = 3;
+lapMin = 2; %3;
 
 %calculate which lap is which:
 [lapVec, ~] = calcLaps1(treadPos, T);

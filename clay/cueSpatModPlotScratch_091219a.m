@@ -31,3 +31,6 @@ figure;
 % boxplot
 figure; boxplot(Y);
 
+% linear fit
+lm = fitlm(norm, shift)
+

@@ -1,4 +1,4 @@
-function [cueShiftStruc, pksCell] = quickTuning(varargin) % lapTypeInfo)
+function [cueShiftStruc, pksCell] = quickTuning2P(varargin) % lapTypeInfo)
 
 % Quickly performs rough peak detection post-Caiman and looks at tuning
 
@@ -25,31 +25,25 @@ end
 
 
 % load in goodSeg if present?
-try
-    segDictName = findLatestFilename('_segDict_goodSeg');
-    load(segDictName); %, 'goodSeg'));
-    disp('Loading latest segDict');
-    pksCell = pksCell(goodSeg);
-catch
-    % [segDictName, path] = uigetfile('*.mat', 'Choose segDict to perform quick tuning (curr for cue task)');
-    % cd(path);
-    % load([path '/' segDictName]);
-    segDictName = findLatestFilename('_segDict_', 'goodSeg');
-    load(segDictName);
-    
-    fps = 15;
-    
-    disp('Calculating transients');
-    sdThresh = 3;
-    timeout = 3;
-    toPlot = 0;
-    tic;
-    for seg = 1:size(C,1)
-        pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
-    end
-    toc;
-    
-end
+
+segDictName = findLatestFilename('_seg2P_');
+load(segDictName);
+
+C = seg2P.C2p;
+pksCell = seg2P.pksCell;
+
+fps = 15;
+
+% disp('Calculating transients');
+% sdThresh = 3;
+% timeout = 3;
+% toPlot = 0;
+% tic;
+% for seg = 1:size(C,1)
+%     pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
+% end
+% toc;
+
 
 cueShiftStruc.segDictName = segDictName;
 
@@ -68,7 +62,7 @@ end
 % make filename and save to output struc
 basename = findLatestFilename('.xml');
 basename = basename(1:strfind(basename, '.xml')-1);
-filename = [basename '_cueShiftStrucQuickTuning_' date '.mat'];
+filename = [basename '_cueShiftStrucQuick2P_' date '.mat'];
 cueShiftStruc.filename = filename;
 cueShiftStruc.path = pwd;
 

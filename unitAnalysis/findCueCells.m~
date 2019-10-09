@@ -18,6 +18,16 @@ function [cueCellStruc] = findCueCells(cueShiftStruc, eventName, segDictCode, to
 %   - omitCue response: should I take from avgCueTrigSig? or posRates at
 %   middle cue location?
 
+if segDictCode~=0
+    if isnumeric(segDictCode)
+    segDictName = findLatestFilename('segDict', 'goodSeg');
+    else
+        segDictName = segDictCode;
+    end
+else
+    segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
+end
+
 
 %% Find "normal" lap type (middle cue in typical location)
 lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
@@ -160,6 +170,12 @@ title('midCueCell (2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd,:),1), 'b');
@@ -178,10 +194,13 @@ title('nonCueCell (<2x PF rate) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(nonCueCellInd(sortInd),:)); caxis(cl);
 title('nonCueCell omitLaps');
-
-if 
-    posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(nonCueCellInd(sortInd),:)); caxis(cl);
+    title('nonCueCell ShiftLaps');
 end
+
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(nonCueCellInd,:),1), 'b');
@@ -208,15 +227,15 @@ end
 % This is based upon ttest2 bet cue and omit (NOTE: event max amp)
 %eventName = 'tact';
 
-if segDictCode~=0
-    if isnumeric(segDictCode)
-    segDictName = findLatestFilename('segDict', 'goodSeg');
-    else
-        segDictName = segDictCode;
-    end
-else
-    segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
-end
+% if segDictCode~=0
+%     if isnumeric(segDictCode)
+%     segDictName = findLatestFilename('segDict', 'goodSeg');
+%     else
+%         segDictName = segDictCode;
+%     end
+% else
+%     segDictName = uigetfile('*.mat', 'Select segDict/seg2P file');
+% end
 
 midCueCellInd2 = [];
 for i = 1:length(midCellInd)
@@ -265,6 +284,12 @@ title('midCueCell (ttest) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd2(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd2(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd2,:),1), 'b');
@@ -320,6 +345,12 @@ title('midCueCell (shuff) cueLaps');
 subplot(2,2,3); 
 colormap(jet); imagesc(posRatesOmit(midCueCellInd3(sortInd),:)); caxis(cl);
 title('midCueCell omitLaps');
+if length(numLapType)==3
+    %posRatesShift = cueShiftStruc.PCLappedSessCell{1}.posRates;
+    subplot(2,2,4);
+    colormap(jet); imagesc(posRatesShift(midCueCellInd3(sortInd),:)); caxis(cl);
+    title('midCueCell ShiftLaps');
+end
 
 subplot(2,2,2); 
 plot(mean(posRatesRef(midCueCellInd,:),1), 'b');
@@ -396,7 +427,7 @@ if length(numLapType)==3 %3
         
     end
     
-end
+%end
 
 if toPlot
 figure('Position', [200,250,800,800]);
@@ -419,6 +450,8 @@ title('avgs');
 xlabel('pos');
 ylabel('mean rate (Hz)');
 legend('cue laps', 'shift laps');
+end
+
 end
 
 %% now shuffle on shift amplitudes
