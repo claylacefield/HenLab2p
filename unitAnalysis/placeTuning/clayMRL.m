@@ -33,8 +33,9 @@ for j = 1:size(posRates,1) % for all units
 end
 
 if toPlot
-% figure;
-% polarplot([theta 0], [rho 0], '-o'); %meanLength);
+%figure;
+%polarplot([theta 0], [rho 0], '-o'); %meanLength);
+
 figure; compass(xSumAll', ySumAll');
 title('Normalized MRL');
 end
