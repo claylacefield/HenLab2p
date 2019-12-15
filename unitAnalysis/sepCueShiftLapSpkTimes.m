@@ -61,7 +61,7 @@ end
 
 % build lapTypeArr
 if autoLapType==1
-    [lapCueStruc] = findCueLapTypes(rewOmit);
+    [lapCueStruc] = findCueLapTypes2(rewOmit);
     lapTypeArr = lapCueStruc.lapTypeArr;
 else
     if length(lapTypeInfo)<10 % if length of lapTypeInfo is <10 then it's prob lap sequence

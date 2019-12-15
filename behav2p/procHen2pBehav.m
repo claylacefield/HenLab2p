@@ -58,6 +58,7 @@ frEpochInds = find(yTimes>=adjFrTimes(1) & yTimes<=adjFrTimes(end));
 y2 = y(frEpochInds);
 yTimes2 = yTimes(frEpochInds);
 
+% position resampled to 2p frame times
 resampY = interp1(yTimes2, y2, adjFrTimes); % THIS IS REALLY THE POSITION OUTPUT YOU WANT
 
 % now fix resamples at lap boundaries

@@ -1,4 +1,4 @@
-function noCueTuning()
+function [cueShiftStruc] = noCueTuning()
 
 
 

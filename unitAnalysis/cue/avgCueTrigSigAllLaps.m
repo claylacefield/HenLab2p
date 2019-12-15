@@ -1,39 +1,94 @@
 function [cueTrigSigStruc, segDictName] = avgCueTrigSigAllLaps(eventName, toPlot, varargin)
 
+%% USAGE: [cueTrigSigStruc, segDictName] = avgCueTrigSigAllLaps(eventName, toPlot, varargin);
+% Clay 2019
+% description:
+% Performs avgCueTrigSig on all cells in segDict, then compares the event
+% triggered avg with a lap-shuffled distribution of activity from the same
+% cell (i.e. distribution of positions is the same as real but whether
+% event is on that lap is shuffled).
+% This works well for "random" events (randRew, randCue), but doesn't seem
+% to work for shift (why?).
+% >>> because the lower % of other laps types means that the resampling
+% will produce many of the same cue positions
 
+% Examples:
+% [cueTrigSigStruc, segDictName] = avgCueTrigSigAllLaps(eventName, toPlot, toZ, C, treadBehStruc);
+
+% basically needs C and treadBehStruc
 % eventName = 'led' to make 'ledTime', etc.
 
 if length(varargin)>0 % like 'auto'
-    if length(varargin{1}>4)
+    if ~isempty(strfind(varargin{1},'seg'))
         segDictName = varargin{1};
-    else
+    elseif varargin{1}==0
         segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    elseif varargin{1}==1
+        toZ=1;
+    end
+    
+    try
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+    catch
+    end
+    
+    if length(varargin)==2
+        toZ = varargin{2};
+    end
+    
+    if length(varargin)==3
+        toZ = varargin{1};
+        C = varargin{2};
+        treadBehStruc = varargin{3};
     end
 else
     segDictName = uigetfile('*.mat', 'Select segDict to use');
-    
+    %load(findLatestFilename('_treadBehStruc_'));
+    try
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+    catch
+    end
 end
 
-load(segDictName);
-
-if ~isempty(strfind(segDictName, 'seg2P'))
-    C = seg2P.C2p;
+if ~exist('treadBehStruc')
+    load(findLatestFilename('_treadBehStruc_'));
 end
 
-%load(findLatestFilename('goodSeg'));
-load(findLatestFilename('_treadBehStruc_'));
+if ~exist('C')
+    segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+end
+
+if ~exist('toZ')
+    toZ = 0;
+end
 
 
 %[lapFrInds, lapEpochs] = findLaps(treadBehStruc.resampY(1:2:end));
-[lapCueStruc] = findCueLapTypes(0);
+[lapCueStruc] = findCueLapTypes2(0);
 lapTypeArr = lapCueStruc.lapTypeArr;
 
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
 frTimes = treadBehStruc.adjFrTimes; %(1:2:end);
 
 
-% times for all cues
+% times (and positions) for all cues (slightly diff for rew)
+if isempty(strfind(eventName, 'rew'))
 evTimes = treadBehStruc.([eventName 'TimeStart']);
+evPos = treadBehStruc.([eventName 'PosStart']);
+else
+    evTimes = treadBehStruc.rewZoneStartTime; %rewTime;
+    evPos = treadBehStruc.rewZoneStartPos; %rewPos;
+end
 
 %% find times of cues at different locations
 
@@ -82,15 +137,17 @@ numShuff = 100;
 %cueLaps = find(lapTypeArr~=0);
 %cueLapTypes = 
 %resInds = randsample(length(cueLaps),length(cueLaps));
-evPos = treadBehStruc.([eventName 'PosStart']);
+%evPos = treadBehStruc.([eventName 'PosStart']);
 numLaps = size(lapEpochs,1);
 numOmitLaps = length(find(lapTypeArr==0));
 tic;
-for i = 1:size(C,1)
+for i = 1:size(C,1) % for each unit/seg
     [evTrigSig1, zeroFr] = eventTrigSig(C(i,:), evTimes, 0, [-30 120], frTimes2);   % normal cueTrigSig for this unit
     for k = 1:numShuff  % shuffle
         evPos2 = [evPos evPos(randsample(length(evPos),numOmitLaps))]; % fill in omit lap pos with random pos from other laps
-        rs1 = randsample(numLaps,numLaps); rs2 = randsample(numLaps,numLaps); rs = rs1(rs2); % randomize random (because too many same!)
+        rs1 = randsample(numLaps,numLaps); 
+        rs2 = randsample(numLaps,numLaps); 
+        rs = rs1(rs2); % randomize random (because too many same!)
         evPos2 = evPos2(rs); % resample event positions by lap (thus same distr of event positions)
         for j=1:numLaps     % for each lap/eventPosition, find nearest frame for that pseudo-event
             try
@@ -98,27 +155,45 @@ for i = 1:size(C,1)
             catch
             end
         end
-        evFrIndRes = evFrIndRes(evFrIndRes>30);    % just trim first if necessary
+        evFrIndRes = evFrIndRes(evFrIndRes>30);    % just trim first event if necessary (<30 fr from beg)
         [evTrigSig, zeroFr] = eventTrigSig(C(i,:), evFrIndRes, 0, [-30 120]); % find evTrigSig for that pseudo-event
         evTrigSigShuff(:,k) = mean(evTrigSig,2); % just take mean of all event evTrigSigs for this shuffle iteration
     end
     maxShuff = max(evTrigSigShuff(41:100,:),[],1); %-mean(evTrigSigShuff(25:30,:),1),[],1);
-    avEvTrigSig1 = mean(evTrigSig1,2);
+    shuffBaseline = mean(evTrigSigShuff(1:29,:),1); % baseline for shuffle
+    avEvTrigSig1 = mean(evTrigSig1,2); % mean event ca response for all laps
+    realBaseline = mean(avEvTrigSig1(1:29));    % baseline for real mean evTrigSig
+    %sdRef = std(evTrigSig1,0,2); sd = mean(sdRef(:));
     
     sd = std(evTrigSigShuff(:)); %meanShuff = mean(evTrigSigShuff(:));
     
-    if length(find((maxShuff+2*sd)>(max(avEvTrigSig1(41:100)))))==0 %-mean(avEvTrigSig1(25:30))))))<=1 %max(avEvTrigSig1(31:100))>meanShuff+2*sd  %
+    % if real peak is always much larger than any shuffled peaks, then is cueCell
+    if length(find((maxShuff+3*sd)-shuffBaseline>(max(avEvTrigSig1(41:100)))-realBaseline))==0 %-mean(avEvTrigSig1(25:30))))))<=1 %max(avEvTrigSig1(31:100))>meanShuff+2*sd  %
         isCueCell(i)=1; disp(['cue cell, seg ' num2str(i)]);
-        figure; plot(evTrigSigShuff); hold on; plot(avEvTrigSig1,'k'); title(['cue cell, seg ' num2str(i)]);
+        figure; 
+        subplot(2,1,1); 
+        plot(evTrigSigShuff); hold on; plot(avEvTrigSig1,'k'); title(['cue cell, seg ' num2str(i)]);
+        subplot(2,1,2); 
+         hold on;
+        plotMeanSEMshaderr(evTrigSigShuff,'k');
+        plotMeanSEMshaderr(evTrigSig1,'b');
+        line([30 30], get(gca,'ylim'));
     else
         isCueCell(i)=0;
     end
 end
 toc;
 
+if sum(isCueCell)==0
+    disp(['No ' eventName ' cue cells!!!']);
+end
+
 %% save vars to output struc
+try
 cueTrigSigStruc.path = pwd;
 cueTrigSigStruc.segDictName = segDictName;
+catch
+end
 
 cueTrigSigStruc.isCueCell = isCueCell;
 
@@ -129,29 +204,29 @@ filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
 
-if toPlot
-figure;
-% subplot(2,1,1);
-% try
-% plotMeanSEMshaderr(evTrigSig1, 'g',25:30);
-% catch
-% end
-% yl = ylim; xl = xlim;
-% line([30 30], yl);
-% ylim(yl); xlim(xl);
-% title([filename ' ' eventName '-triggered avg., seg=' num2str(segNum)]);
+% if toPlot
+% figure;
+% % subplot(2,1,1);
+% % try
+% % plotMeanSEMshaderr(evTrigSig1, 'g',25:30);
+% % catch
+% % end
+% % yl = ylim; xl = xlim;
+% % line([30 30], yl);
+% % ylim(yl); xlim(xl);
+% % title([filename ' ' eventName '-triggered avg., seg=' num2str(segNum)]);
+% % 
+% % subplot(2,1,2);
+% plot(evTrigSig1, 'g');
+% % yl = ylim; xl = xlim;
+% % line([30 30], yl);
+% % ylim(yl); xlim(xl);
 % 
-% subplot(2,1,2);
-plot(evTrigSig1, 'g');
+% 
 % yl = ylim; xl = xlim;
 % line([30 30], yl);
 % ylim(yl); xlim(xl);
-
-
-yl = ylim; xl = xlim;
-line([30 30], yl);
-ylim(yl); xlim(xl);
-
-end
-
-
+% 
+% end
+% 
+% 

@@ -1,4 +1,4 @@
-function plotCueShiftStruc(cueShiftStruc, refLapType, usePC)
+function plotGroupCueStruc(groupCueStruc, refLapType, usePC)
 
 % for use with wrapCueShiftTuning
 
@@ -96,8 +96,12 @@ legend(numCell);
 
 % sorted unit time plot
 figure;
-if contains(cueShiftStruc.filename, '2P')
-load(findLatestFilename('segDict', 'goodSeg'),'C');
+if ~contains(cueShiftStruc.filename, '2P')
+load(findLatestFilename('segDict', 'goodSeg'),'C'); % exclude goodSeg files
+else
+    load(findLatestFilename('seg2P', 'goodSeg'));
+    C = seg2P.C2p;
+end
 
 try
 if usePC==1

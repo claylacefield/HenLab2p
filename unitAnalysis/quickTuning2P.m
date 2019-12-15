@@ -26,7 +26,7 @@ end
 
 % load in goodSeg if present?
 
-segDictName = findLatestFilename('_seg2P_');
+segDictName = findLatestFilename('_seg2P_', 'goodSeg');
 load(segDictName);
 
 C = seg2P.C2p;

@@ -30,7 +30,7 @@ if length(varargin)>0
             if length(varargin{1})==1
                 segCh = varargin{1}; % if varargin{1} is numeric, it's segCh
                 filename = 0;
-                [ v, Ysiz, filename, info] = h5readClay(segCh, endFr, filename);
+                [Y, Ysiz, filename, info] = h5readClay(segCh, endFr, filename);
                 Y = squeeze(Y);
                 Y = permute(Y, [2 1 3]);
             else

@@ -97,9 +97,9 @@ legend(numCell);
 % sorted unit time plot
 figure;
 if ~contains(cueShiftStruc.filename, '2P')
-load(findLatestFilename('segDict', 'goodSeg'),'C');
+load(findLatestFilename('segDict', 'goodSeg'),'C'); % exclude goodSeg files
 else
-    load(findLatestFilename('seg2P'));
+    load(findLatestFilename('seg2P', 'goodSeg'));
     C = seg2P.C2p;
 end
 

@@ -1,39 +1,78 @@
 function [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot, varargin)
 
+%% USAGE: [cueTrigSigStruc] = avgCueTrigSig(segNum, eventName, toPlot, varargin)
 
+% for varargin, want to be able to input C, treadBehStruc
 % eventName = 'led' to make 'ledTime', etc.
 
 if length(varargin)>0 % like 'auto'
-    if length(varargin{1}>4)
+    if ~isempty(strfind(varargin{1},'seg'))
         segDictName = varargin{1};
-    else
+    elseif varargin{1}==0
         segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    elseif varargin{1}==1
+        toZ=1;
     end
     
-    if length(varargin)>1
+    try
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+    catch
+    end
+    
+    if length(varargin)==2
         toZ = varargin{2};
-    else
-        toZ = 0;
     end
     
+    if length(varargin)==3
+        toZ = varargin{1};
+        C = varargin{2};
+        treadBehStruc = varargin{3};
+    end
 else
     segDictName = uigetfile('*.mat', 'Select segDict to use');
+    %load(findLatestFilename('_treadBehStruc_'));
+    try
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+    catch
+    end
+end
+
+if ~exist('treadBehStruc')
+    load(findLatestFilename('_treadBehStruc_'));
+end
+
+if ~exist('C')
+    segDictName = findLatestFilename('_segDict_', 'goodSeg');
+    load(segDictName);
+    if ~isempty(strfind(segDictName, 'seg2P'))
+        C = seg2P.C2p;
+    end
+end
+
+if ~exist('toZ')
     toZ = 0;
+end
     
-end
-
-load(segDictName);
-
-if ~isempty(strfind(segDictName, 'seg2P'))
-    C = seg2P.C2p;
-end
 
 %load(findLatestFilename('goodSeg'));
-load(findLatestFilename('_treadBehStruc_'));
 
+% times (and positions) for all cues (slightly diff for rew)
+if isempty(strfind(eventName, 'rew'))
+evTimes = treadBehStruc.([eventName 'TimeStart']);
+evPos = treadBehStruc.([eventName 'PosStart']);
+else
+    evTimes = treadBehStruc.rewZoneStartTime; %rewTime;
+    evPos = treadBehStruc.rewZoneStartPos; %rewPos;
+end
 
 %[lapFrInds, lapEpochs] = findLaps(treadBehStruc.resampY(1:2:end));
-[lapCueStruc] = findCueLapTypes(0);
+[lapCueStruc] = findCueLapTypes2(0);
 lapTypeArr = lapCueStruc.lapTypeArr;
 
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
@@ -61,8 +100,8 @@ if min(lapTypeArr)==0
     
 end
 
-% times for all cues
-evTimes = treadBehStruc.([eventName 'TimeStart']);
+% % times for all cues
+% evTimes = treadBehStruc.([eventName 'TimeStart']);
 
 %% find times of cues at different locations, and do eventTrigSig
 
@@ -99,16 +138,19 @@ end
 
 %% save vars to output struc
 cueTrigSigStruc.path = pwd;
+try
 cueTrigSigStruc.segDictName = segDictName;
+catch
+end
 try
 cueTrigSigStruc.omitCueSig = evTrigSig0;
 catch
-    disp('No omit laps');
+    %disp('No omit laps');
 end
 try
 cueTrigSigStruc.shiftCueSig = evTrigSig1;
 catch
-    disp('No shift laps');
+    %disp('No shift laps');
 end
 try
 cueTrigSigStruc.midCueSig = evTrigSig2;
@@ -143,6 +185,7 @@ yl = ylim; xl = xlim;
 line([30 30], yl);
 ylim(yl); xlim(xl);
 title([filename ' ' eventName '-triggered avg., seg=' num2str(segNum)]);
+%legend({'omit' 'pos1' 'pos2' 'pos3'});
 
 subplot(2,1,2);
 try
@@ -169,6 +212,7 @@ end
 yl = ylim; xl = xlim;
 line([30 30], yl);
 ylim(yl); xlim(xl);
+
 
 end
 

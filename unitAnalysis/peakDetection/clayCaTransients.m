@@ -1,4 +1,4 @@
-function [pks] = clayCaTransients(ca, fps, varargin);
+function [pks, amps, wavef] = clayCaTransients(ca, fps, varargin);
 
 % Clay Oct 2017
 % 
@@ -8,7 +8,7 @@ function [pks] = clayCaTransients(ca, fps, varargin);
 % requirements:
 % LocalMinima (old script from Buzsaki lab)
 
-defSdThresh = 4;
+defSdThresh = 3;
 defTimeoutSec = 3;
 
 if isempty(varargin)
@@ -57,23 +57,56 @@ for j = 1:3
     pks = sort([pks; pks2]);
 end
 
-% figure; t = 1:length(ca);
-%     plot(ca);
-%     hold on;
-%     plot(t(pks), ca(pks), 'r*');
+%% peak amplitudes (vs pre-peak level)
+for i=1:length(pks)
+    try
+    [maxs(i),inds] = max(ca(pks(i):pks(i)+timeoutSec*fps));
+    pkInds(i) = inds+pks(i); % pkInd of ca transient
+    mins(i) = min(ca(pks(i)-round(timeoutSec*fps/2):pks(i)));
+    amps(i) = maxs(i)-mins(i); % relative amplitude of ca transient
+    wavef(i,:) = ca(pks(i)-100:pks(i)+300); % now also save waveforms
+    catch
+    end
+end
 
-% Plotting
+try
+kind = kmeans(amps',2);  % kmeans clustering on event amplitudes
+catch
+    disp('cant do kmeans');
+end
+
+%% Plotting
 if toPlot
-    figure; t = 1:length(ca);
+    figure; 
+    subplot(2,2,1);
+    t = 1:length(ca);
     plot(ca);
     hold on;
     plot(t(pks), ca(pks), 'r*');
+    try
+    plot(t(pkInds(kind==1)), ca(pkInds(kind==1)), 'gx');
+    plot(t(pkInds(kind==2)), ca(pkInds(kind==2)), 'mx');
+    catch
+        plot(t(pkInds), ca(pkInds), 'go');
+    end
     
-    figure; hold on;
+    %figure; hold on;
+    subplot(2,2,2); hold on;
     for i = 1:length(pks)
         try
             plot(ca(pks(i)-100:pks(i)+300)-ca(pks(i)-15));
         catch
         end
     end
+    
+    %figure; hold on; 
+    subplot(2,2,3); hold on;
+    dPks = diff(pks);
+    plot((dPks/max(dPks))*max(amps)); 
+    plot(amps);
+    legend('1/rate', 'amps');
+    xlabel('spk #');
+    
+    subplot(2,2,4);
+    plot(ones(1,length(amps)),amps, 'x');
 end

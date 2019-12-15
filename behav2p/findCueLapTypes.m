@@ -1,16 +1,21 @@
 function [lapCueStruc] = findCueLapTypes(varargin)
 
-%% USAGE: [lapTypeArr] = findCueLapTypes();
+%% USAGE: [lapTypeArr] = findCueLapTypes(varargin{rewOmit, treadBehStruc});
 % numLapTypes = number of different e.g. cue locations, not including omits
 % (now using automated estimate based upon cuePos)
 
 if length(varargin)>0
     rewOmit=varargin{1};
+    if length(varargin)==2
+        treadBehStruc = varargin{2};
+    else
+        load(findLatestFilename('treadBehStruc'));
+    end
 else
     rewOmit = 0;
+    load(findLatestFilename('treadBehStruc'));
 end
 
-load(findLatestFilename('treadBehStruc'));
 
 numLaps = length(treadBehStruc.lapTime); % NOTE: these are the ends of laps so won't include last
 numLaps = numLaps+1; % including first and last partial laps
@@ -36,7 +41,8 @@ tonePos = treadBehStruc.tonePosStart;
 tonePosEnd = treadBehStruc.tonePosEnd;
 toneLap = treadBehStruc.toneLap+1;
 
-% and for led
+% and for led (have to try/catch because earlier treadBehStruc may not have
+% these)
 try
     ledTime = treadBehStruc.ledTimeStart;
     ledPos = treadBehStruc.ledPosStart;
@@ -82,7 +88,7 @@ elseif length(ledPos) >= length(olfPos) && length(ledPos) >= length(tonePos) && 
     cueLap = ledLap;
     cueTime = ledTime;
     cueType = 'led';
-    elseif length(tactPos) >= length(olfPos) && length(tactPos) >= length(tonePos) && length(tactPos) >= length(ledPos)
+elseif length(tactPos) >= length(olfPos) && length(tactPos) >= length(tonePos) && length(tactPos) >= length(ledPos)
     cuePos = tactPos;
     cuePosEnd = tactPosEnd;
     cueLap = tactLap;

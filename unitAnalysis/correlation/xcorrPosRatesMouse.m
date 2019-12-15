@@ -118,11 +118,24 @@ if toPlot
     set(gca, 'YTickLabel', ylab);
     %ylim([10 65]);
     
-    
-   hlrs
+    shInds = 15:35; %17:37; % indices for shift window (around 25)
+    nshInds = 40:60; %42:62; % and non-shift (around 50, which is zero shift)
+    otherInds = setxor(setxor(1:100,shInds), nshInds);
+    nonShift = sum(N3(nshInds,:),1); % or mean % sum(N3(nshInds,:),1)./sum(N3,1);%
+    shift = sum(N3(shInds,:),1);    % or mean % sum(N3(shInds,:),1)./sum(N3,1);%
+    baseline = 0; %mean(N3(otherInds,:),1); %sum(N3(37:42,:),1)*4;
+    %shift = shift-sum(N2(37:42,:),1)*4 +mean(sum(N2(10:15,:),1))*4;
+    nonShift = nonShift-baseline; 
+    shift = shift-baseline;
+    figure; 
+    %plot(nonShift); 
+    plot(runmean(nonShift,2));
+    hold on;
+    %plot(shift,'g'); 
+    plot(runmean(shift,2),'g');
     title('nonshift cells (b), shift cells (g)');
     xlabel('pkPos');
-    ylabel('# cells');
+    ylabel('# cells/spatial bin');
     
 end
 

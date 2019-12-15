@@ -22,7 +22,7 @@ behavDataFolder = uigetdir('/home/clay/Documents/data/behavior/behaviorData/', '
 %        dayName = mouseDir(i).name;
 %        dayPath = [mouseFolder '/' dayName];
 
-dayPath = uigetdir('/data/sebnem/DG_data/', 'Select day folder of sessions to match');
+dayPath = uigetdir('/Backup20TB/clay/DGdata/', 'Select day folder of sessions to match');
 
 cd(dayPath);
 dayDir = dir;

@@ -13,9 +13,13 @@ end
 sem = nanstd(ca,0,2)/sqrt(size(ca,2));
 avCa = nanmean(ca,2);
 
-if size(varargin)==1
+if size(varargin)>=1
     baselineFr = varargin{1};
 avCa = avCa - mean(avCa(baselineFr));
+if length(varargin)>1
+   xAx = varargin{2}; 
+end
+
 end
 
 %errorbar(xAx, nanmean(ca, 2),sem, 'Color', color); xlim([xAx(1) xAx(end)]);

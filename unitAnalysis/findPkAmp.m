@@ -1,4 +1,4 @@
-function [lapAvAmp] = findPkAmp(pks, C)
+function [lapAvAmp] = findPkAmp(pks, ca)
 
 % find the amplitude of peaks identified in pksCell
 
@@ -7,7 +7,7 @@ function [lapAvAmp] = findPkAmp(pks, C)
 % and from subset of cells
 % so have to find the correct cells and laps in C
 
-ca = C(seg,:);
+%ca = C(seg,:);
 
 numFr = length(ca); %size(C,2);
 y = treadBehStruc.resampY;
@@ -25,7 +25,7 @@ end
 lapTypeArr = lapCueStruc.lapTypeArr;
 
 
-for i=1:size(lapEpochs,1) % for each lap
+for i=1:size(pks,1) % for each detected peak
     lapPks = pks(find(pks>lapEpochs(i,1) & pks<lapEpochs(i,2))); % find spikes in that lap
     for j=1:length(lapPks)  % for each spike
         pkAmp(j) = max(ca(lapPks(j):lapPks(j)+100)); % find its amplitude

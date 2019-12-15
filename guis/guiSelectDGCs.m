@@ -474,32 +474,51 @@ guidata(hObject, handles);
 %% 
 function plotTemp(hObject, handles)
 segNum = handles.segNum;
-c = handles.C(segNum,:);
+ca = handles.C(segNum,:);
 
+% to plot position
 if handles.plotPos == 1
-plot(handles.temporalAxes, max(c)*handles.treadPos, 'm');
-hold(handles.temporalAxes, 'on');
+    plot(handles.temporalAxes, max(ca)*handles.treadPos, 'm');
+    hold(handles.temporalAxes, 'on');
+    
+    % now plot lap numbers also
+    [lapFrInds, lapEpochs] = findLaps(handles.treadPos);
+    numLaps = length(lapFrInds);
+    for i=1:numLaps
+        try
+        text('Parent', handles.temporalAxes, 'Position', [lapFrInds(i), max(ca)], 'String', num2str(i));
+        catch
+            disp('prob printing lap numbers');
+        end
+    end
+    
 end
+
+% plot velocity
 if handles.plotVel == 1
-plot(handles.temporalAxes, max(c)*handles.vel, 'c');
-hold(handles.temporalAxes, 'on');
+    plot(handles.temporalAxes, max(ca)*handles.vel, 'c');
+    hold(handles.temporalAxes, 'on');
 end
+
+% plot dF/F
 if handles.plotDff == 1
-plot(handles.temporalAxes, handles.deconvC(handles.segNum,:), 'g');
-hold(handles.temporalAxes, 'on');
+    plot(handles.temporalAxes, handles.deconvC(handles.segNum,:), 'g');
+    hold(handles.temporalAxes, 'on');
 end
-plot(handles.temporalAxes, c);
+
+plot(handles.temporalAxes, ca);
 hold(handles.temporalAxes, 'on');
 
+% plot events/pks
 if handles.plotPks == 1
     pks = handles.pksCell{segNum};
-    t = 1:length(c);
-    plot(handles.temporalAxes, t(pks), c(pks), 'r*');
+    t = 1:length(ca);
+    plot(handles.temporalAxes, t(pks), ca(pks), 'r*');
     %hold(handles.temporalAxes, 'on');
     
     for i = 1:length(pks)
         try
-            caPks(:,i) = c(pks(i)-100:pks(i)+300)-c(pks(i)-15);
+            caPks(:,i) = ca(pks(i)-100:pks(i)+300)-ca(pks(i)-15);
         catch
         end
     end

@@ -35,7 +35,7 @@ disp(['Processing treadmill behavior data (cue shift task) from: ' filename]);
 treadBehStruc.tdmlName = filename;
 
 % initialize variables
-time = [];
+time = 0; %[];
 y = [];
 currY = NaN;
 yTimes = []; yTimeNano = [];
@@ -51,6 +51,7 @@ olfTimeStart = []; olfPosStart = []; olfLap = []; olfTimeEnd = []; olfPosEnd = [
 ledTimeStart  = []; ledPosStart = []; ledLap = []; ledTimeEnd = []; ledPosEnd = []; 
 toneTimeStart = []; tonePosStart = []; toneLap = [];toneTimeEnd = []; tonePosEnd = [];
 tactTimeStart = []; tactPosStart = []; tactLap = []; tactTimeEnd = []; tactPosEnd = []; 
+optoTimeStart = []; optoPosStart = []; optoLap = []; optoTimeEnd = []; optoPosEnd = [];
 rfidTime = []; rfidPos = []; rfidLap = []; rfidName = {};
 ctxtTime = []; ctxtPos = []; ctxtLap = []; ctxtName = {};
 frCountTime = []; frCountPos = []; frCount = [];
@@ -72,18 +73,27 @@ for i=1:length(behCell)
     end
     
     if ~isempty(strfind(rowStr, '"time"'))
+        skip=0;
         timeInd = strfind(rowStr, '"time"');
         currTime = str2num(rowStr(timeInd+8:end-1));
+        lastTime = time(end);
+        if currTime>=lastTime
         time = [time currTime];
+        else 
+            skip=1;
+        end
         
+        if skip~=1
         if ~isempty(strfind(rowStr, '"position"'))
             yInd = strfind(rowStr, '"y"');
-            currY = str2num(rowStr(yInd+5:timeInd-2));
-            y = [y currY];
-            yTimes = [yTimes currTime];
-            millisInd = strfind(rowStr, '"millis"');
-            millis = str2num(rowStr(millisInd+9:yInd-3));
-            yTimeNano = [yTimeNano millis];
+            if length(yInd)==1 && currTime>lastTime %&& abs(str2num(rowStr(yInd+5:timeInd-2)))<% built this in because sometimes pos messages garbled, so throw out
+                currY = str2num(rowStr(yInd+5:timeInd-2));
+                y = [y currY];
+                yTimes = [yTimes currTime];
+                millisInd = strfind(rowStr, '"millis"');
+                millis = str2num(rowStr(millisInd+9:yInd-3));
+                yTimeNano = [yTimeNano millis];
+            end
         end
         
         % lap time
@@ -126,7 +136,7 @@ for i=1:length(behCell)
             rewLap = [rewLap lap];
         end
         
-        
+        % sync pin activation for 2p trig (start of 2p imaging)
         if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, ['"pin": ' num2str(syncPin)]))
             treadBehStruc.syncOnTime = currTime;
             %rewPos = [rewPos currY];
@@ -176,6 +186,16 @@ for i=1:length(behCell)
             tactPosEnd = [tactPosEnd currY];
         end
         
+        % opto stim time/pos
+        if ~isempty(strfind(rowStr, 'opto')) && ~isempty(strfind(rowStr, 'start')) 
+            optoTimeStart = [optoTimeStart currTime];
+            optoPosStart = [optoPosStart currY];
+            optoLap = [optoLap lap];
+        elseif ~isempty(strfind(rowStr, 'opto')) && ~isempty(strfind(rowStr, 'stop')) 
+            optoTimeEnd = [optoTimeEnd currTime];
+            optoPosEnd = [optoPosEnd currY];
+        end
+        
         % RFID time/pos
         if ~isempty(strfind(rowStr, '"tag_reader"')) %&& ~isempty(strfind(rowStr, '"open"')) %&& ~isempty(strfind(rowStr, '"pin":3'))
             rfidTime = [rfidTime currTime];
@@ -203,6 +223,7 @@ for i=1:length(behCell)
         
         % other events: debug timeout,
         
+        end % end IF skip~=1
     end
     
 end
@@ -247,6 +268,8 @@ treadBehStruc.toneTimeStart = toneTimeStart; treadBehStruc.tonePosStart = tonePo
 treadBehStruc.toneTimeEnd = toneTimeEnd; treadBehStruc.tonePosEnd = tonePosEnd; 
 treadBehStruc.tactTimeStart = tactTimeStart; treadBehStruc.tactPosStart = tactPosStart; treadBehStruc.tactLap = tactLap;
 treadBehStruc.tactTimeEnd = tactTimeEnd; treadBehStruc.tactPosEnd = tactPosEnd;
+treadBehStruc.optoTimeStart = optoTimeStart; treadBehStruc.optoPosStart = optoPosStart; treadBehStruc.optoLap = optoLap;
+treadBehStruc.optoTimeEnd = optoTimeEnd; treadBehStruc.optoPosEnd = optoPosEnd;
 treadBehStruc.rfidTime = rfidTime; treadBehStruc.rfidPos = rfidPos; treadBehStruc.rfidLap = rfidLap; treadBehStruc.rfidName = rfidName;
 treadBehStruc.ctxtTime = ctxtTime; treadBehStruc.ctxtPos = ctxtPos; treadBehStruc.ctxtLap = ctxtLap; treadBehStruc.ctxtName = ctxtName;
 treadBehStruc.frCountTime = frCountTime; treadBehStruc.frCountPos = frCountPos; treadBehStruc.frCount = frCount;
