@@ -25,11 +25,9 @@ end
 %pc = find(PCLappedSess.Shuff.isPC==1);
 cueShiftStruc.PCLappedSessCell{1} = PCLappedSess;
 
-% pc's only
+% Look at PFs only to look for periodicity of PFs without cues
+% PFs of pc's only
 [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, 0, 1, 1);
-
-
-
 
 figure; 
 subplot(2,1,2);

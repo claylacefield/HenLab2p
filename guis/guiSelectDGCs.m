@@ -120,7 +120,7 @@ try
 load(findLatestFilename('treadBehStruc'));
 catch
     disp('Cant find treadBehStruc file so calculating');
-    [treadBehStruc] = procHen2pBehav('auto');
+    [treadBehStruc] = procHen2pBehav('auto', 'cue');
 end
 
 

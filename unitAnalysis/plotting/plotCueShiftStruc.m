@@ -2,7 +2,7 @@ function plotCueShiftStruc(cueShiftStruc, refLapType, usePC)
 
 % for use with wrapCueShiftTuning
 
-numLapTypes = length(cueShiftStruc.pksCellCell);
+numLapTypes = length(cueShiftStruc.PCLappedSessCell); %pksCellCell);
 
 if refLapType==0
     lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
