@@ -83,10 +83,26 @@ lapTypeArr = lapCueStruc.lapTypeArr;
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
 frTimes = treadBehStruc.adjFrTimes; %(1:2:end);
 
+
+% times (and positions) for all cues (slightly diff for rew)
+if isempty(strfind(eventName, 'rew'))
+evTimes = treadBehStruc.([eventName 'TimeStart']);
+evPos = treadBehStruc.([eventName 'PosStart']);
+else
+    evTimes = treadBehStruc.rewZoneStartTime; %rewTime;
+    evPos = treadBehStruc.rewZoneStartPos; %rewPos;
+end
+
 %% Estimate omit times
 % if there are omitCue laps, estimate a time for typical cue position each
 % lap. For shiftOmit, choose midCue pos, for rand, use rand pos (not done yet).
-cuePos = lapCueStruc.lapTypeCuePos;
+%cuePos = lapCueStruc.lapTypeCuePos;
+
+% find avg pos for this cue
+[N,edges,bin] = histcounts(evPos,'BinWidth', 200);
+[val,ind] = max(N);
+cuePos = round(mean(evPos(find(bin==ind))));
+
 lapEpochs = lapCueStruc.lapEpochs;
 evRow = find(strcmp(lapCueStruc.cueNameCell, eventName));
 omitLaps = find(lapCueStruc.cuesPosLap(evRow,:)==0);
@@ -97,9 +113,9 @@ if length(omitLaps)~=0%min(lapTypeArr)==0
     
     for i=1:length(omitLaps)
         try
-        epochPos = y(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2));
-        cuePosInd = find(epochPos>cuePos(end),1);
-        epochTimes = frTimes(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2));
+        epochPos = y(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2)); % array of positions for this omit lap
+        cuePosInd = find(epochPos>cuePos(end),1); % find index of normal cue pos on this lap
+        epochTimes = frTimes(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2)); % match with time for this pos/lap
         omitCueTimes(i) = epochTimes(cuePosInd);
         catch
         end
@@ -107,14 +123,6 @@ if length(omitLaps)~=0%min(lapTypeArr)==0
     
 end
 
-% times (and positions) for all cues (slightly diff for rew)
-if isempty(strfind(eventName, 'rew'))
-evTimes = treadBehStruc.([eventName 'TimeStart']);
-evPos = treadBehStruc.([eventName 'PosStart']);
-else
-    evTimes = treadBehStruc.rewZoneStartTime; %rewTime;
-    evPos = treadBehStruc.rewZoneStartPos; %rewPos;
-end
 
 %% find times of cues at different locations, and do eventTrigSig
 

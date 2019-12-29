@@ -83,29 +83,6 @@ lapTypeArr = lapCueStruc.lapTypeArr;
 y = treadBehStruc.resampY; %(1:2:end); % NOTE that lapEpochs are based upon original (non-downsampled) frames
 frTimes = treadBehStruc.adjFrTimes; %(1:2:end);
 
-%% Estimate omit times
-% if there are omitCue laps, estimate a time for typical cue position each
-% lap. For shiftOmit, choose midCue pos, for rand, use rand pos (not done yet).
-cuePos = lapCueStruc.lapTypeCuePos;
-lapEpochs = lapCueStruc.lapEpochs;
-evRow = find(strcmp(lapCueStruc.cueNameCell, eventName));
-omitLaps = find(lapCueStruc.cuesPosLap(evRow,:)==0);
-if length(omitLaps)~=0%min(lapTypeArr)==0
-%     cuePos = lapCueStruc.lapTypeCuePos;
-%     lapEpochs = lapCueStruc.lapEpochs;
-    %omitLaps = find(lapTypeArr==0);
-    
-    for i=1:length(omitLaps)
-        try
-        epochPos = y(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2));
-        cuePosInd = find(epochPos>cuePos(end),1);
-        epochTimes = frTimes(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2));
-        omitCueTimes(i) = epochTimes(cuePosInd);
-        catch
-        end
-    end
-    
-end
 
 % times (and positions) for all cues (slightly diff for rew)
 if isempty(strfind(eventName, 'rew'))
@@ -116,9 +93,48 @@ else
     evPos = treadBehStruc.rewZoneStartPos; %rewPos;
 end
 
+%% Estimate omit times
+% if there are omitCue laps, estimate a time for typical cue position each
+% lap. For shiftOmit, choose midCue pos, for rand, use rand pos (not done yet).
+%cuePos = lapCueStruc.lapTypeCuePos;
+
+% find avg pos for this cue
+[N,edges,bin] = histcounts(evPos,'BinWidth', 200);
+[val,ind] = max(N);
+cuePos = round(mean(evPos(find(bin==ind))));
+
+lapEpochs = lapCueStruc.lapEpochs;
+evRow = find(strcmp(lapCueStruc.cueNameCell, eventName));
+omitLaps = find(lapCueStruc.cuesPosLap(evRow,:)==0);
+if length(omitLaps)~=0%min(lapTypeArr)==0
+%     cuePos = lapCueStruc.lapTypeCuePos;
+%     lapEpochs = lapCueStruc.lapEpochs;
+    %omitLaps = find(lapTypeArr==0);
+    
+    for i=1:length(omitLaps)
+        try
+        epochPos = y(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2)); % array of positions for this omit lap
+        cuePosInd = find(epochPos>cuePos(end),1);
+        epochTimes = frTimes(lapEpochs(omitLaps(i),1):lapEpochs(omitLaps(i),2));
+        omitCueTimes(i) = epochTimes(cuePosInd);
+        catch
+        end
+    end
+    
+end
+
+
 %% find times of cues at different locations, and do eventTrigSig
 
 ca = C(segNum,:);
+
+% compute downsample
+if length(y)>length(ca)*1.5
+    ds = 2;
+else
+    ds = 1;
+end
+
 
 % zScore Ca if desired
 %toZ = 1;
@@ -128,13 +144,13 @@ end
 
 % evTrigSig for each cue type/pos
 % questionable conditions: two cuePos/lap, one type of cue omitted laps, 
-cueLapArr = lapTypeArr(~omitLaps);%lapTypeArr(find(lapTypeArr~=0)); 
+cueLapArr = lapTypeArr(setxor(1:length(lapTypeArr),omitLaps));%lapTypeArr(find(lapTypeArr~=0)); 
 if max(cueLapArr)>1%length(cuePos)>1 % if multiple cue positions
     %cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
     for i=1:max(cueLapArr)
         posEvInd = find(cueLapArr==i);
         try
-        [evTrigSig{i}, zeroFr] = eventTrigSig(ca, evTimes(posEvInd), 0, [-30 180], frTimes(1:2:end));
+        [evTrigSig{i}, zeroFr] = eventTrigSig(ca, evTimes(posEvInd), 0, [-30 180], frTimes(1:ds:end));
         catch
             disp(['prob with lap type ' num2str(i)]);
         end
@@ -143,12 +159,12 @@ if max(cueLapArr)>1%length(cuePos)>1 % if multiple cue positions
     
 else % else if only one (probably middle cue)
     i=1;
-    [evTrigSig{i}, zeroFr] = eventTrigSig(ca, evTimes, 0, [-30 180], frTimes(1:2:end));
+    [evTrigSig{i}, zeroFr] = eventTrigSig(ca, evTimes, 0, [-30 180], frTimes(1:ds:end));
 end
 
 % tack omit onto end if present
 try
-    [evTrigSig0, zeroFr] = eventTrigSig(ca, omitCueTimes, 0, [-30 180], frTimes(1:2:end));
+    [evTrigSig0, zeroFr] = eventTrigSig(ca, omitCueTimes, 0, [-30 180], frTimes(1:ds:end));
 catch
 end
 
