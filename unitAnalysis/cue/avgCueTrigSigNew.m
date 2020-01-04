@@ -147,12 +147,16 @@ end
 cueLapArr = lapTypeArr(setxor(1:length(lapTypeArr),omitLaps));%lapTypeArr(find(lapTypeArr~=0)); 
 if max(cueLapArr)>1%length(cuePos)>1 % if multiple cue positions
     %cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
+    goodLaps = 0;
     for i=1:max(cueLapArr)
         posEvInd = find(cueLapArr==i);
-        try
-        [evTrigSig{i}, zeroFr] = eventTrigSig(ca, evTimes(posEvInd), 0, [-30 180], frTimes(1:ds:end));
-        catch
-            disp(['prob with lap type ' num2str(i)]);
+        if length(posEvInd)>3 % just in case few weird laps (e.g. end)
+            goodLaps = goodLaps+1;
+            try
+                [evTrigSig{goodLaps}, zeroFr] = eventTrigSig(ca, evTimes(posEvInd), 0, [-30 180], frTimes(1:ds:end));
+            catch
+                disp(['prob with lap type ' num2str(i)]);
+            end
         end
     end
     
