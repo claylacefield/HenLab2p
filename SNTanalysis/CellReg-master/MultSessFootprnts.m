@@ -13,7 +13,7 @@ close all; clear all;
 load(findLatestFilename('multSessSegStruc')); load(findLatestFilename('cellRegistered')); 
  [sameCellCueShiftTuningStruc] = sameCellCueShiftTuning2P(multSessSegStruc, cell_registered_struct);
 save('sameCellCueShiftTuningStruc.mat', 'sameCellCueShiftTuningStruc');
-
+%%
 [remapSpatCellStruc] = sameSpatCellRemap2P(sameCellCueShiftTuningStruc);
 save('remapSpatCellStruc.mat', 'remapSpatCellStruc');
 [remapCueShiftStruc] = CueShiftsameCellRemap2P(sameCellCueShiftTuningStruc);

@@ -2,7 +2,7 @@ function [out, bins] = makeSlidingMedianForCircPos(pos, vals, edgeWidth, varargi
 % function makeSlidingMedianForCircPos(pos, vals, edgeWidth, nShuffles (def = 200)
 
 rng('shuffle');
-nShuff = 200;
+nShuff = 1000;
 if ~isempty(varargin)
     nShuff = varargin{1};
 end

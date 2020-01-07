@@ -20,8 +20,7 @@ for i = 1:size(mapInd,2)
     [cueShiftStruc] = wrapCueShiftTuningMultSess(multSessSegStruc(i).pksCell, multSessSegStruc(i).treadBehStruc);
     % Find CueCells based on position and 2XPF omit/shift respons
     PCLappedSessCell= cueShiftStruc.PCLappedSessCell;
-    lapCueStruc = cueShiftStruc.lapCueStruc;
-    pksCellCell= cueShiftStruc.pksCellCell;
+    
     [MidCueCellInd, EdgeCueCellInd, nonCueCellInd, refLapType, shiftLapType] =  AllCueCells(PCLappedSessCell,lapCueStruc,pksCellCell);
 
     PCLappedSessCue = cueShiftStruc.PCLappedSessCell{1,refLapType};

@@ -1,4 +1,4 @@
-function [bayesRec, transMatOut] = bayesReconstructionWithinSession(spikes, T, treadPos, lapVec, binEveryNFrames, kFolds, useCells)
+function [bayesRec] = bayesReconstructionWithinSession(spikes, T, treadPos, lapVec, binEveryNFrames, kFolds, useCells)
 %function bayesReconstructionWithinSession(spikes, T, treadPos, lapVec, binEveryNFrames, kFolds, useCells)
 
 bayesRec = [];
@@ -47,12 +47,12 @@ bayesRec.predPos = NaN(size(treadPosCircOut));
 bayesRec.whichFold = NaN(size(treadPosCircOut));
 bayesRec.meanBinFR = nanmean(transMatOut, 2);
 bayesRec.BayesPost = NaN(length(treadPosCircOut), 100);
-lapVecOut = round(lapVecOut);
+nBins = 1:length(lapVecOut);
 
 for i = 0:(kFolds - 1)
     spikes2 = spikes;
-    compBins = find(mod(lapVecOut, kFolds) == i);
-%     treadPos2(mod(lapVec, kFolds) == i)  = NaN;
+    compBins = find(mod(nBins, kFolds) == i);
+%     treadPos2(mod(nBins, kFolds) == i)  = NaN;
     spikes2(ismember(whichFramesInBin, compBins), :) = NaN;
     PCLapped = computePlaceTransVectorLapCircShuffWithEdges4(spikes2, treadPos, T, lapVec, 0);
     
