@@ -1,4 +1,4 @@
-function [cueShiftPairStruc] = cueShiftPairingMouse()
+function [cueOmitPairStruc] = cueOmitPairingMouse()
 
 
 %{
@@ -25,7 +25,7 @@ mouseDir = dir;
 pfOmitRates = []; pfOmitRatesCell = {};
 pathCell = {}; cueShiftNameCell={};
 posBinFracCell={}; posInfoCell={};
-preLap = []; shiftLap = []; postLap = [];
+preLap = []; omitLap = []; postLap = [];
 
 for j=3:length(mouseDir)
     dayName = mouseDir(j).name;
@@ -35,7 +35,7 @@ for j=3:length(mouseDir)
         
         for i = 3:length(dayDir)
              try
-                if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) && contains(dayDir(i).name, 'mit') && contains(dayDir(i).name, 'hift') && contains(dayDir(i).name, 'mit')
+                if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) && contains(dayDir(i).name, 'mit') && contains(dayDir(i).name, 'hift') %&& contains(dayDir(i).name, 'mit')
                     cd([mousePath '/' dayName '/' dayDir(i).name]);
                     %sessDir = dir;
                     cueShiftStrucName = findLatestFilename('cueShiftStruc');
@@ -72,12 +72,12 @@ for j=3:length(mouseDir)
                     
                     omitLapInds = omitLapInds(omitLapInds~=1 & omitLapInds<numLaps); % trim omit laps
                     
-                    if refLapType==2
-                        shiftLapType = 1;
-                    else
-                        shiftLapType = 2;
-                    end
-                    shiftLapInds = find(lapTypeArr==shiftLapType);
+%                     if refLapType==2
+%                         shiftLapType = 1;
+%                     else
+%                         shiftLapType = 2;
+%                     end
+%                     shiftLapInds = find(lapTypeArr==shiftLapType);
                     
                     
                     % make sure it's shiftOmit, and not 'led'?
@@ -108,7 +108,7 @@ for j=3:length(mouseDir)
                         try
                             [cueCellStruc] = findCueCells(cueShiftStruc, eventName, segDictName, toPlot);
                             %n=n+1;
-                            midCueCellInd = cueCellStruc.midCueCellInd3; % 2x normal/omit PF rate
+                            midCueCellInd = cueCellStruc.midCueCellInd3; % 2x normal/omit PF rate; NO shuff cells
                         catch e
                             disp('Problem finding cue cells');
                             fprintf(1,'The identifier was:\n%s', e.identifier);
@@ -133,21 +133,21 @@ for j=3:length(mouseDir)
                         
                         %preLap = []; omitLap = []; postLap = [];
                         for seg=1:length(midCueCellInd)
-                            preLapSeg = []; shiftLapSeg = []; postLapSeg = [];
+                            preLapSeg = []; omitLapSeg = []; postLapSeg = [];
                             toPlot = 0;
                             try
                                 % calc interp lap calcium for each
                                 % midCueCell 
                                 [lapAvAmp, lapRate, lapCa] = findCaPkAmpLap(C(midCueCellInd(seg),:), toPlot);
-                                lapCa2 = (lapCa-min(lapCa(:)))./max(lapCa(:)-min(lapCa(:)));
+                                lapCa2 = lapCa; %(lapCa-min(lapCa(:)))./max(lapCa(:)-min(lapCa(:))); % option to normalize
                                 
-                                % concatena
+                                
                                 %try
-                                for shift=1:length(shiftLapInds) % have to go lap-by-lap because of end cases
+                                for omit=1:length(omitLapInds) % have to go lap-by-lap because of end cases
                                     try
-                                        preLapSeg = [preLapSeg lapCa2(:,shiftLapInds(shift)-1)]; % lapCa(:,omitLapInds-1);%
-                                        shiftLapSeg = [shiftLapSeg lapCa2(:,shiftLapInds(shift))]; % lapCa(:,omitLapInds); %
-                                        postLapSeg = [postLapSeg lapCa2(:,shiftLapInds(shift)+1)]; % lapCa(:,omitLapInds+1); %
+                                        preLapSeg = [preLapSeg lapCa2(:,omitLapInds(omit)-1)]; % lapCa(:,omitLapInds-1);%
+                                        omitLapSeg = [omitLapSeg lapCa2(:,omitLapInds(omit))]; % lapCa(:,omitLapInds); %
+                                        postLapSeg = [postLapSeg lapCa2(:,omitLapInds(omit)+1)]; % lapCa(:,omitLapInds+1); %
                                     catch e
                                         disp('Problem tabulating lap ca');
                                         fprintf(1,'The identifier was:\n%s', e.identifier);
@@ -156,8 +156,8 @@ for j=3:length(mouseDir)
                                     end
                                 end
                                 
-                                preLap = [preLap mean(preLapSeg,2)];
-                                shiftLap = [shiftLap mean(shiftLapSeg,2)];
+                                preLap = [preLap mean(preLapSeg,2)]; % just average all laps for each cell and add to list
+                                omitLap = [omitLap mean(omitLapSeg,2)];
                                 postLap = [postLap mean(postLapSeg,2)];
                                 
                             catch e
@@ -200,26 +200,26 @@ for j=3:length(mouseDir)
     
 end
 
-cueShiftPairStruc.pathCell = pathCell;
-cueShiftPairStruc.cueShiftNameCell = cueShiftNameCell;
+cueOmitPairStruc.pathCell = pathCell;
+cueOmitPairStruc.cueShiftNameCell = cueShiftNameCell;
 
-cueShiftPairStruc.shiftLap = shiftLap;
-cueShiftPairStruc.preLap = preLap;
-cueShiftPairStruc.postLap = postLap;
+cueOmitPairStruc.omitLap = omitLap;
+cueOmitPairStruc.preLap = preLap;
+cueOmitPairStruc.postLap = postLap;
 
 
 %% save and plot
 
 try    
-save(['cueShiftPairStruc_shiftPrePost_' date '.mat'], 'cueShiftPairStruc');
+save(['cueOmitPairStruc_omitPrePost_' date '.mat'], 'cueOmitPairStruc');
 catch
 end
 try
 figure; 
-plotMeanSEMshaderr(shiftLap,'r'); 
+plotMeanSEMshaderr(cueOmitPairStruc.omitLap,'r'); 
 hold on; 
-plotMeanSEMshaderr(preLap,'g');
-plotMeanSEMshaderr(postLap,'b');
+plotMeanSEMshaderr(cueOmitPairStruc.preLap,'g');
+plotMeanSEMshaderr(cueOmitPairStruc.postLap,'b');
 catch
 end
 

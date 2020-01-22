@@ -65,11 +65,11 @@ for i=1:length(rewZoneStartTimes)
 end
 
 [counts, edges, rewPosBin] = histcounts(rewPos,1:200:2000);
-midRewInds = find(rewPosBin>=4 & rewPosBin<=7); % +1;
+midRewInds = find(rewPosBin>=5 & rewPosBin<=7); % +1;
 %notMidRewInds = find(rewPosBin>7 | rewPosBin<5); % +1; notMidRewInds = notMidRewInds(1:end-1);
 
 midCueLaps = find(lapTypeArr==refLapType);
-midCueRewInds = intersect(midCueLaps, midRewInds); % inds of laps w midCue and rew
+midCueRewInds = intersect(midCueLaps, midRewInds);
 notMidRewInds = setxor(midCueLaps, midCueRewInds);
 
 lapTypeArr2 = NaN(1,length(lapTypeArr));

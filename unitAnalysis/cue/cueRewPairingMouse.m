@@ -1,4 +1,4 @@
-function [cueShiftPairStruc] = cueShiftPairingMouse()
+function [cueRewPairStruc] = cueRewPairingMouse()
 
 
 %{
@@ -35,7 +35,7 @@ for j=3:length(mouseDir)
         
         for i = 3:length(dayDir)
              try
-                if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) && contains(dayDir(i).name, 'mit') %&& contains(dayDir(i).name, 'hift') && contains(dayDir(i).name, 'mit')
+                if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) && contains(dayDir(i).name, 'mit') && contains(dayDir(i).name, 'hift') %&& contains(dayDir(i).name, 'mit')
                     cd([mousePath '/' dayName '/' dayDir(i).name]);
                     %sessDir = dir;
                     cueShiftStrucName = findLatestFilename('cueShiftStruc');
@@ -84,18 +84,6 @@ for j=3:length(mouseDir)
                     %if contains(dayDir(i).name, 'hift') %contains(dayDir(i).name, 'mit') || && ~isempty(find(lapTypeArr==0))
                         disp(['Processing shift file ' dayDir(i).name]); tic;
                         
-                        % put analysis in here
-                        % 1. find middle cells (not just cue?)
-                        %   - so have to be from shiftOmit bec. need omit
-                        %   to find cue cells, then shift to look at
-                        %   pairing response
-                        %   - also, just use midCueCells (2x omit rate)
-                        %   because I just want to make sure that the cells
-                        %   have some response to cues (i.e. not place
-                        %   cells)
-                        % 2. look at shift laps
-                        %   - find shift laps (from lapTypeArr?)
-                        % 3. find lap ca for shift laps -1:+2 (if not omit) 
                         
                         %% find the cue type for eventName
                         try
@@ -108,7 +96,7 @@ for j=3:length(mouseDir)
                         try
                             [cueCellStruc] = findCueCells(cueShiftStruc, eventName, segDictName, toPlot);
                             %n=n+1;
-                            midCueCellInd = cueCellStruc.midCueCellInd3; % 2x normal/omit PF rate; NO shuff cells
+                            midCueCellInd = cueCellStruc.midCueCellInd2; %3; % 2x normal/omit PF rate; NO shuff cells
                         catch e
                             disp('Problem finding cue cells');
                             fprintf(1,'The identifier was:\n%s', e.identifier);
@@ -116,62 +104,18 @@ for j=3:length(mouseDir)
                             disp(' ');
                         end
                         
-                        % find rew cells (still not working great, maybe
-                        % due to goodLaps)
-%                         try
-%                         [randCueCellStruc] = findRandCueCells('rew', 0, segDictName);
-%                         cueCellStruc.rewCueCellInd = randCueCellStruc.isCueCell;
-%                         catch
-%                         end
-%                         
-                        % loop through all these cells
+                     
+                        % loop through all these cells and find middle cue
+                        % response with and without reward
+                        % BUT
+                        % need to check and make sure animal got reward/s
                         
-                        load(segDictName);
-                        if ~isempty(strfind(segDictName, 'seg2P'))
-                            C = seg2P.C2p;
-                        end
-                        
-                        %preLap = []; omitLap = []; postLap = [];
                         for seg=1:length(midCueCellInd)
-                            preLapSeg = []; omitLapSeg = []; postLapSeg = [];
-                            toPlot = 0;
-                            try
-                                % calc interp lap calcium for each
-                                % midCueCell 
-                                [lapAvAmp, lapRate, lapCa] = findCaPkAmpLap(C(midCueCellInd(seg),:), toPlot);
-                                lapCa2 = lapCa; %(lapCa-min(lapCa(:)))./max(lapCa(:)-min(lapCa(:))); % 
-                                
-                                
-                                %try
-                                for omit=1:length(omitLapInds) % have to go lap-by-lap because of end cases
-                                    try
-                                        preLapSeg = [preLapSeg lapCa2(:,omitLapInds(omit)-1)]; % lapCa(:,omitLapInds-1);%
-                                        omitLapSeg = [omitLapSeg lapCa2(:,omitLapInds(omit))]; % lapCa(:,omitLapInds); %
-                                        postLapSeg = [postLapSeg lapCa2(:,omitLapInds(omit)+1)]; % lapCa(:,omitLapInds+1); %
-                                    catch e
-                                        disp('Problem tabulating lap ca');
-                                        fprintf(1,'The identifier was:\n%s', e.identifier);
-                                        fprintf(1,', error message:\n%s', e.message);
-                                        disp(' ');
-                                    end
-                                end
-                                
-                                preLap = [preLap mean(preLapSeg,2)];
-                                omitLap = [omitLap mean(omitLapSeg,2)];
-                                postLap = [postLap mean(postLapSeg,2)];
-                                
-                            catch e
-                                disp('Problem calculating seg lap ca');
-                                fprintf(1,'The identifier was:\n%s', e.identifier);
-                                fprintf(1,', error message:\n%s', e.message);
-                                disp(' ');
-                            end
+                            [cueTrigSigStruc] = avgCueTrigSigRew(seg, eventName);
                             
-                            %figure; plotMeanSEMshaderr(omitLap,'r'); hold on; plotMeanSEMshaderr(preLap,'g');plotMeanSEMshaderr(postLap,'b'); title(midCueCellInd(seg));
                         end
                         
-                        %figure; plotMeanSEMshaderr(omitLap,'r'); hold on; plotMeanSEMshaderr(preLap,'g');plotMeanSEMshaderr(postLap,'b');
-                        
+
                         % firing of place cells normally at shift location
                         % during shift laps
 
@@ -200,26 +144,26 @@ for j=3:length(mouseDir)
     
 end
 
-cueShiftPairStruc.pathCell = pathCell;
-cueShiftPairStruc.cueShiftNameCell = cueShiftNameCell;
+cueRewPairStruc.pathCell = pathCell;
+cueRewPairStruc.cueShiftNameCell = cueShiftNameCell;
 
-cueShiftPairStruc.omitLap = omitLap;
-cueShiftPairStruc.preLap = preLap;
-cueShiftPairStruc.postLap = postLap;
+cueRewPairStruc.omitLap = omitLap;
+cueRewPairStruc.preLap = preLap;
+cueRewPairStruc.postLap = postLap;
 
 
 %% save and plot
 
 try    
-save(['cueShiftPairStruc_omitPrePost_' date '.mat'], 'cueShiftPairStruc');
+save(['cueRewPairStruc_omitPrePost_' date '.mat'], 'cueRewPairStruc');
 catch
 end
 try
 figure; 
-plotMeanSEMshaderr(omitLap,'r'); 
+plotMeanSEMshaderr(cueRewPairStruc.omitLap,'r'); 
 hold on; 
-plotMeanSEMshaderr(preLap,'g');
-plotMeanSEMshaderr(postLap,'b');
+plotMeanSEMshaderr(cueRewPairStruc.preLap,'g');
+plotMeanSEMshaderr(cueRewPairStruc.postLap,'b');
 catch
 end
 

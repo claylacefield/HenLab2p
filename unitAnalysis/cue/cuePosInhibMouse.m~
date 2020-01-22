@@ -10,10 +10,6 @@ normRatesBlanked = []; normRatesBlankedCell={};
 omitRatesBlanked = []; omitRatesBlankedCell={};
 pfRates = []; pfRatesCell = {};
 pfOmitRates = []; pfOmitRatesCell = {};
-
-posRates = []; posRatesCell = {};
-omitRates = []; omitRatesCell = {};
-
 pathCell = {}; cueShiftNameCell={};
 posBinFracCell={}; posInfoCell={};
 
@@ -51,7 +47,7 @@ for j=3:length(mouseDir)
                     
                     
                     % make sure it's shiftOmit, and not 'led'?
-                    if (contains(dayDir(i).name, 'mit') ) && ~contains(dayDir(i).name, 'one') && ~contains(dayDir(i).name, '3sens') % || contains(dayDir(i).name, 'hift') && ~isempty(find(lapTypeArr==0))
+                    if contains(dayDir(i).name, 'mit') || contains(dayDir(i).name, 'hift') %&& ~isempty(find(lapTypeArr==0))
                         disp(['Processing Omit file ' dayDir(i).name]); tic;
                         toPlot=0; goodSeg = 0; % is PC only % goodSeg = 1; % is all cells
                         [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit, pcRatesSorted, omitRatesSorted] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
@@ -65,7 +61,6 @@ for j=3:length(mouseDir)
                         posRates = [posRates; pcRatesSorted];
                         posRatesCell = [posRatesCell pcRatesSorted];
                         omitRates = [omitRates; omitRatesSorted];
-                        omitRatesCell = [omitRatesCell omitRatesSorted];
                         
                         pathCell = [pathCell cueShiftStruc.path];
                         cueShiftNameCell = [cueShiftNameCell cueShiftStrucName];
@@ -101,11 +96,6 @@ cueInhibStruc.pfRates = pfRates;
 cueInhibStruc.pfRatesCell = pfRatesCell;
 cueInhibStruc.pfOmitRates = pfOmitRates;
 cueInhibStruc.pfOmitRatesCell = pfOmitRatesCell;
-
-cueInhibStruc.posRates = posRates;
-cueInhibStruc.posRatesCell = posRatesCell;
-cueInhibStruc.omitRates = omitRates;
-cueInhibStruc.omitRatesCell = omitRatesCell;
 
 %% save and plot
 try

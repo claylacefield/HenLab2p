@@ -270,7 +270,7 @@ for i = 1:length(midCellInd)
     [h,p,ci,stats] = ttest2(midCueAmp, omitCueAmp);
     
     % if cue event amplitudes signif > omit, then add cell to list
-    if h==1
+    if p<=0.05 && mean(midCueAmp)>mean(omitCueAmp)%h==1
         midCueCellInd2 = [midCueCellInd2 midCellInd(i)];
     end
     catch

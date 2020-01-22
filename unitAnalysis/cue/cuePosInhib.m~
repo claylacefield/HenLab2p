@@ -1,4 +1,4 @@
-function [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit, pcRatesSorted, omitRatesSorted] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
+function [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, goodSeg, refLapType, toPlot);
 
 % formerly popPosInfo
 
@@ -70,17 +70,17 @@ for i = 1:size(pcRatesSorted,1) % for all cells (actually not just pc now)
         pfRates2(pkPos+10:100-(10-pkPos)) = NaN;
         
     elseif pkPos>90 % wraparound for units at end
-        rates(pkPos-9:100) = NaN; % changing all 10 to 9 for pfBlanked
-        rates(1:9-(100-pkPos)) = NaN;
-        rates2(pkPos-9:100) = NaN;
-        rates2(1:9-(100-pkPos)) = NaN;
+        rates(pkPos-10:100) = NaN;
+        rates(1:10-(100-pkPos)) = NaN;
+        rates2(pkPos-10:100) = NaN;
+        rates2(1:10-(100-pkPos)) = NaN;
         
         % place field rates only 
         pfRates(10-(100-pkPos):pkPos-10) = NaN;
         pfRates2(10-(100-pkPos):pkPos-10) = NaN;
     else % units in middle
-        rates(pkPos-9:pkPos+9) = NaN;
-        rates2(pkPos-9:pkPos+9) = NaN;
+        rates(pkPos-10:pkPos+10) = NaN;
+        rates2(pkPos-10:pkPos+10) = NaN;
         
         % place field rates only 
         pfRates(1:pkPos-10) = NaN;
