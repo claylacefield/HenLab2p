@@ -1,17 +1,39 @@
 function [cueShiftStruc] = noCueTuning()
 
+% USAGE: [cueShiftStruc] = noCueTuning(); % to be run within session folder
+% Clay Fall 2019
+
+
+path = pwd;
+slashInds = strfind(path,'/');
+basename = path(slashInds(end)+1:end);
 
 
 % load goodSeg if present
 try
-filename = findLatestFilename('_seg2P_');
-load(filename); 
+segDictName = findLatestFilename('_seg2P_');
+load(segDictName); 
 C = seg2P.C2p;
 pksCell = seg2P.pksCell;
+filename = [basename '_cueShiftStrucQuick2p_' date '.mat'];
 catch
-    disp('Cant find seg2P');
+    disp('Cant find seg2P so using CNMF');
+    segDictName = findLatestFilename('_segDict_');
+    load(segDictName);
+    fps = 15;
+    
+    disp('Calculating transients');
+    sdThresh = 3;
+    timeout = 3;
+    toPlot = 0;
+    tic;
+    for seg = 1:size(C,1)
+        pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
+    end
+    toc;
+    filename = [basename '_cueShiftStrucQuickTuning_' date '.mat'];
 end
-disp(['Calculating cue shift tuning for ' filename]);
+disp(['Calculating cue shift tuning for ' segDictName]);
 
 % load treadBehStruc or create if necessary 
 try
@@ -21,6 +43,12 @@ catch
     [treadBehStruc] = procHen2pBehav('auto', 'cue');
 end
 
+
+cueShiftStruc.filename = filename;
+cueShiftStruc.path = path;
+cueShiftStruc.segDictName = segDictName;
+
+% just do PC calculation for all laps
 [PCLappedSess] = wrapAndresPlaceFieldsClay(pksCell, 0, treadBehStruc);
 %pc = find(PCLappedSess.Shuff.isPC==1);
 cueShiftStruc.PCLappedSessCell{1} = PCLappedSess;
@@ -29,11 +57,16 @@ cueShiftStruc.PCLappedSessCell{1} = PCLappedSess;
 % PFs of pc's only
 [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, 0, 1, 1);
 
-figure; 
-subplot(2,1,2);
-plot(nanmean(pfOnlyRates,1));
-subplot(2,1,1);
-imagesc(pfOnlyRates);
-title([filename 'pfOnly rates']);
+%cueShiftStruc.
 
 
+% figure; 
+% subplot(2,1,2);
+% plot(nanmean(pfOnlyRates,1));
+% subplot(2,1,1);
+% imagesc(pfOnlyRates);
+% title([segDictName 'pfOnly rates']);
+
+plotCueShiftStruc(cueShiftStruc,1,1);
+
+save(filename, 'cueShiftStruc');

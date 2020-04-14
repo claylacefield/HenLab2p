@@ -64,6 +64,15 @@ sortInd = oldInd;
 % posRates = posRates(sortInd,:);
 % posRatesCell{refLapType} = posRates;
 
+pkRates = posRates(:,maxInd
+
+cueCellInds = find(maxInd>40 & maxInd<70);
+posRates2 = posRates(cueCellInds,:);
+posRates2b = posRatesCell{3}(cueCellInds,:);
+for cellN = 1:size(posRates2,1)
+dPFrates = posRatesCell{1}(cellN,
+
+end
 
 %%
 figure('Position', [0 0 1000 800]);

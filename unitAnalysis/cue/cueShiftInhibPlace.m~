@@ -4,7 +4,7 @@ function [shiftLocNormRates, shiftLocShiftRates, shiftLocPcInd] = cueShiftInhibP
 % Clay 2019
 % Look at effect of shifted cue on place cells normally at that location
 % 1. find cells with PF in location to which cue is shifted
-% 2. look at mean rate in normal vs. shift laps
+% 2. 
 
 refLapType = findRefLapType(cueShiftStruc);
 pc = find(cueShiftStruc.PCLappedSessCell{refLapType}.Shuff.isPC==1);

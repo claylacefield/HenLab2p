@@ -1,18 +1,19 @@
-function [dPFratePC, pkPosPC, relPFratePC] = diffOmitPosRates(cueShiftStruc, toPlot)
+function [dPFratePC, pkPosPC, relPFratePC] = diffCueOptoPosRates(cueShiftStruc, toPlot)
 
-%% USAGE: [dPFratePC, pkPosPC, relPFratePC] = diffOmitPosRates(cueShiftStruc, toPlot)
-% NOTE: posRates1 should always be normal laps, and posRates2 shift
-% mod from: xcorrPosRates
+%% USAGE: [dPFratePC, pkPosPC, relPFratePC] = diffCueOptoPosRates(cueShiftStruc, toPlot)
+% NOTE: posRates1 should always be normal laps, and posRates2 opto (lap3
+% cue+opto)
+% mod from: diffOmitPosRates
 %
-% Clay 2019
-% Compare posRates for all cells for normal cue vs. omit laps
-% To make plot of how much cells are affected by cue omission, by position
+% Clay 2020
+% Compare posRates for all cells for normal cue vs. cue+opto laps
+% To make plot of how much cells are affected by opto, by position
 
 
 filename = cueShiftStruc.filename;
 [refLapType] = findRefLapType(cueShiftStruc);
 posRates1 = cueShiftStruc.PCLappedSessCell{refLapType}.posRates; % normal laps
-posRates2 = cueShiftStruc.PCLappedSessCell{end}.posRates; % omit laps should always be last
+posRates2 = cueShiftStruc.PCLappedSessCell{3}.posRates; % omit laps should always be last
 
 
 for i = 1:size(posRates1,1) % for all cells

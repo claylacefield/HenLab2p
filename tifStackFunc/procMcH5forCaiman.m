@@ -24,6 +24,22 @@ function procMcH5forCaiman(varargin)
 endFr = 0;  % to read all frames from Ch2 (GCaMP)
 %filename = 0; %
 
+[fps, numCh] = find2pScanParams();
+if fps>27
+    fps = 30;
+    disp('Processing 30fps data');
+elseif fps>8 && fps<27
+    fps = 10;
+    disp('Processing 10fps data');
+end
+
+if numCh==2
+    segCh = 2;
+    disp("2 channels, so using Ch2");
+else
+    segCh = 1;
+end
+
 if length(varargin)>0
     if length(varargin)==1
         if isnumeric(varargin{1})
@@ -36,11 +52,11 @@ if length(varargin)>0
             else
                 Y = varargin{1};
                 filename = findLatestFilename('Cycle');
-                segCh=1;
+                %segCh=1;
             end
         else
             flag = varargin{1};
-            segCh = 1;
+            %segCh = 1;
             if isempty(strfind(flag, 'tiffs'))
                 if strfind(flag, 'auto')
                     filename = findLatestFilename('Cycle');
@@ -51,7 +67,7 @@ if length(varargin)>0
                 Y = squeeze(Y);
                 Y = permute(Y, [2 1 3]);
             else
-                [Y, filename] = readTiffSeqSess();
+                [Y, filename] = readTiffSeqSess(); % only reads Ch2 tiffs
             end
         end
         
@@ -72,7 +88,7 @@ if length(varargin)>0
         else
             Y = varargin{1};
             filename = varargin{2};
-            segCh=1;
+            %segCh=1;
         end
     end
     
@@ -80,7 +96,7 @@ else
     %filename = findLatestFilename('Cycle');
     [filename, path] = uigetfile('*.h5', 'Select orig TSeries H5 file to process');
     cd(path);
-    segCh = 1;
+    %segCh = 1;
     
     [Y, Ysiz, filename] = h5readClay(segCh, endFr, filename);
     Y = squeeze(Y);
@@ -133,7 +149,11 @@ imwrite(double(avCh2/max(avCh2(:))), [basename '_avCaCh.tif']); % save tif
 
 %% filter stack
 toTrim = 0; % already trimmed in separate step
-tau = 10; % 10 yields xcorr offset of 10fr (but this gets downsampled)
+if fps==30
+    tau = 10; % 10 yields xcorr offset of 10fr (but this gets downsampled)
+elseif fps==10
+    tau = 3;
+end
 sigma = 0;
 Y = caSpatTempFilt(Y, toTrim, tau, sigma);
 
@@ -144,12 +164,18 @@ Y = caSpatTempFilt(Y, toTrim, tau, sigma);
 
 if size(Y,1)>256
     toDownsample = [2 2];  % spatial/temporal, [4 2]
-    Y = downsampleStack(Y,toDownsample(1),toDownsample(2));
     %segStruc.avCh2ds = squeeze(mean(Y,3));  % avg downsampled green channel
 else
     toDownsample = [0 2]; %0;
-    Y = downsampleStack(Y,toDownsample(1),toDownsample(2));
 end
+
+if fps==30
+    toDownsample(2) = 2;
+elseif fps==10
+    toDownsample(2) = 0;
+end
+
+Y = downsampleStack(Y,toDownsample(1),toDownsample(2));
 
 Y = im2uint16(Y/max(Y(:)));
 

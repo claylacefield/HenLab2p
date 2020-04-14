@@ -3,24 +3,26 @@ function procMcTiffsDay()
 % This function performs procMcH5forCaiman directly from folder of TIFFs
 % (before H5 conversion, e.g. when conversion fails)
 
-dayPath = uigetdir('/DataRoller2/sebnem/DG_data');
+dayPath = uigetdir('/DataRoller2/clay/dgData'); % sebnem/DG_data');
 cd(dayPath);
 dayDir = dir;
-dayName = dayPath(strfind(dayPath, '/19')+1:end);
+
+slashInds = strfind(dayPath, '/');
+dayName = dayPath(slashInds(end)+1:end);
 
 for i = 3:length(dayDir)
-    if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) %'TSeries')
+    if isfolder(dayDir(i).name) %, '18')) || ~isempty(strfind(dayDir(i).name, '19')) %'TSeries')
         cd(dayDir(i).name);
         sessDir = dir;
         %try
-        if isempty(findLatestFilename('eMC'))
+        if length({sessDir.name})>50 && isempty(findLatestFilename('eMC'))
         %catch
             try
             disp(['Cant find previous eMC.h5 so processing tiff sequence: ']);
             procMcH5forCaiman('tiffs');
             
             disp('Copying files to Backup20TB');
-            outfolder = ['/Backup20TB/clay/DGdata/' dayName '/' dayDir(i).name '/'];
+            outfolder = ['/data/clay/dgData/' dayName '/' dayDir(i).name '/'];
             mkdir(outfolder);
             envName = [dayDir(i).name '.env'];
             copyfile(envName, outfolder);

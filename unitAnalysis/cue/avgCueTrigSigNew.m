@@ -105,7 +105,8 @@ cuePos = round(mean(evPos(find(bin==ind))));
 
 lapEpochs = lapCueStruc.lapEpochs;
 evRow = find(strcmp(lapCueStruc.cueNameCell, eventName));
-omitLaps = find(lapCueStruc.cuesPosLap(evRow,:)==0);
+omitLaps2 = find(lapCueStruc.cuesPosLap(evRow,:)==0); % omit is all laps with no eventName cues (including opto)
+omitLaps = find(lapTypeArr==0);
 if length(omitLaps)~=0%min(lapTypeArr)==0
 %     cuePos = lapCueStruc.lapTypeCuePos;
 %     lapEpochs = lapCueStruc.lapEpochs;
@@ -144,19 +145,34 @@ end
 
 % evTrigSig for each cue type/pos
 % questionable conditions: two cuePos/lap, one type of cue omitted laps, 
-cueLapArr = lapTypeArr(setxor(1:length(lapTypeArr),omitLaps));%lapTypeArr(find(lapTypeArr~=0)); 
+cueLapArr = lapTypeArr(setxor(1:length(lapTypeArr),omitLaps2));%lapTypeArr(find(lapTypeArr~=0)); % assumes that all omit laps are lapType=0 which is not always the case
 if max(cueLapArr)>1%length(cuePos)>1 % if multiple cue positions
     %cueLapArr = lapTypeArr(find(lapTypeArr~=0)); % laps with cues
-    goodLaps = 0;
-    for i=1:max(cueLapArr)
-        posEvInd = find(cueLapArr==i);
-        if length(posEvInd)>3 % just in case few weird laps (e.g. end)
-            goodLaps = goodLaps+1;
-            try
-                [evTrigSig{goodLaps}, zeroFr] = eventTrigSig(ca, evTimes(posEvInd), 0, [-30 180], frTimes(1:ds:end));
-            catch
-                disp(['prob with lap type ' num2str(i)]);
+    goodLapTypes = 0;
+    for i=1:max(cueLapArr) % for each lap type with a cue (i.e. not "omit" OR omit+opto)
+        lapTypeInds = find(cueLapArr==i);
+        if ~isempty(lapTypeInds)
+            if length(lapTypeInds)>3 % just in case few weird laps (e.g. end)
+                goodLapTypes = goodLapTypes+1;
+                try
+                    [evTrigSig{goodLapTypes}, zeroFr] = eventTrigSig(ca, evTimes(lapTypeInds), 0, [-30 180], frTimes(1:ds:end));
+                catch
+                    disp(['prob with lap type ' num2str(i) ' (maybe weird pos cue one lap)']);
+                end
             end
+        else % if lapTypeInds = [] then maybe omit + opto (or anyway, do like omit)
+            goodLapTypes = goodLapTypes+1;
+            laps = find(lapTypeArr==i);
+            for j=1:length(laps)
+                try
+                    epochPos = y(lapEpochs(laps(j),1):lapEpochs(laps(j),2)); % array of positions for this omit lap
+                    cuePosInd = find(epochPos>cuePos(end),1); % find index of normal cue pos on this lap
+                    epochTimes = frTimes(lapEpochs(laps(j),1):lapEpochs(laps(j),2)); % match with time for this pos/lap
+                    pseudoCueTimes(j) = epochTimes(cuePosInd);
+                catch
+                end
+            end
+            [evTrigSig{goodLapTypes}, zeroFr] = eventTrigSig(ca, pseudoCueTimes, 0, [-30 180], frTimes(1:ds:end));
         end
     end
     
@@ -194,7 +210,7 @@ filename = findLatestFilename('.xml');
 filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
-colors = {'g','b','c','m','k','y'};
+colors = {'g','c','b','m','k','y'};
 if toPlot
     figure;
     subplot(2,1,1); hold on;

@@ -9,7 +9,7 @@ cd(dayPath);
 dayDir = dir;
 
 for i = 3:length(dayDir)
-    if ~isempty(strfind(dayDir(i).name, '18')) ||  ~isempty(strfind(dayDir(i).name, '19'))%'TSeries')
+    if isfolder(dayDir(i).name)   %~isempty(strfind(dayDir(i).name, '18')) ||  ~isempty(strfind(dayDir(i).name, '19'))%'TSeries')
         cd(dayDir(i).name);
         sessDir = dir;
         %try

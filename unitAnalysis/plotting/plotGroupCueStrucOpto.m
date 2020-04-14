@@ -64,6 +64,16 @@ sortInd = oldInd;
 % posRates = posRates(sortInd,:);
 % posRatesCell{refLapType} = posRates;
 
+pkRates = posRates(:,maxInd-10:maxInd+10);
+
+cueCellInds = find(maxInd>40 & maxInd<70);
+posRates2 = posRates(cueCellInds,:);
+posRates2b = posRatesCell{3}(cueCellInds,:);
+[maxVal2, maxInd2] = max(posRates2');
+for cellN = 1:size(posRates2,1)
+dPFrates(cellN) = mean(posRates2b(cellN,maxInd2(cellN)-10:maxInd2(cellN)+10)) - mean(posRates2(cellN,maxInd2(cellN)-10:maxInd2(cellN)+10));
+PFrates(cellN) = mean(posRates2(cellN,maxInd2(cellN)-10:maxInd2(cellN)+10));
+end
 
 %%
 figure('Position', [0 0 1000 800]);

@@ -144,6 +144,7 @@ handles.d2 = d2;
 handles.treadBehStruc = treadBehStruc;
 
 handles.deconvC = zeros(size(C));
+handles.posDeconv = zeros(size(C,1),100);
 
 vel = fixVel(treadBehStruc.vel(1:tempDs:end));
 vel = vel/max(vel(:));
@@ -437,7 +438,7 @@ if plotDff == 1 && max(handles.deconvC(handles.segNum,:))==0
     ca = handles.C(handles.segNum,:);
     disp('Deconvolving calcium for this segment');
     tic;
-deconv = clayDeconvCa(ca, 0);
+deconv = clayDeconvCa2(ca, 0);
 deconv = deconv/max(deconv)*max(ca);
 handles.deconvC(handles.segNum, 1:length(ca)) = deconv;
 
@@ -695,7 +696,10 @@ plot(handles.posTuneAxes, handles.binVel/20, 'c.');
 hold(handles.posTuneAxes, 'on');
 plot(handles.posTuneAxes, binCa/2, 'g');
 if handles.plotDff 
+    try
     plot(handles.posTuneAxes, handles.posDeconv(segNum,:));
+    catch
+    end
 else
 plot(handles.posTuneAxes, binSpks);
 end

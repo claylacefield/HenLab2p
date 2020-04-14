@@ -23,6 +23,11 @@ plotMeanSEMshaderr(cueInhibStruc.normRatesBlanked', 'r');
 plotMeanSEMshaderr(cueInhibStruc.omitRatesBlanked', 'g');
 
 
+subplot(2,3,6);
+plotMeanSEMshaderr(cueInhibStruc.pfRates','b'); 
+hold on; 
+plotMeanSEMshaderr(cueInhibStruc.pfOmitRates', 'g');
+
 %%%%%%%%%%%%%%%%
 for i=51:63
 figure; 

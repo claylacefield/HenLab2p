@@ -5,6 +5,10 @@
 norm = cueSpatModStruc.avMidCueAmps;
 shift = cueSpatModStruc.avShiftCueAmps;
 
+% delete extreme values if necessary
+norm(shift>50)=[]; shift(shift>50)=[];
+shift(norm>50)=[]; norm(norm>50)=[];
+
 % bar plot with ttest and errorbars
 [h,p] = ttest(shift,norm); %bd
 sdNorm = std(norm)/sqrt(length(norm)); sdShift = std(shift)/sqrt(length(shift));

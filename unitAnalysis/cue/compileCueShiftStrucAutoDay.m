@@ -1,4 +1,4 @@
-function [groupCueStruc] = compileCueShiftStrucAutoDay()
+function [groupCueStruc] = compileCueShiftStrucAutoDay(tag)
 
 
 % clay2019
@@ -11,7 +11,7 @@ dayDir = dir;
 %groupCueStruc = struct;
 
 for i = 3:length(dayDir)
-    if ~isempty(strfind(dayDir(i).name, '18')) ||  ~isempty(strfind(dayDir(i).name, '19')) && isfolder(dayDir(i).name)%'TSeries')
+    if (~isempty(strfind(dayDir(i).name, '18')) ||  ~isempty(strfind(dayDir(i).name, '19')) ||  ~isempty(strfind(dayDir(i).name, '20'))) && isfolder(dayDir(i).name) && ~isempty(strfind(dayDir(i).name, tag))%'TSeries')
         cd(dayDir(i).name);
         sessDir = dir;
         %try

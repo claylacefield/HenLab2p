@@ -471,7 +471,7 @@ end
 
 %% now shuffle on shift amplitudes
 try
-inds = midCueCellInd3; % only look amongst midCueCells
+inds = midCueCellInd; %3; % only look amongst midCueCells
 catch
     disp('No cueCells/omitCue, so using all for shift');
     inds = midCellInd;
@@ -486,7 +486,8 @@ try
         try
         % calc avgCueTrigSig for each middle cell
 %         try
-            [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0, segDictName); % cueTrigSigStruc.
+            toZ = 1;
+            [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0, segDictName, toZ); % cueTrigSigStruc.
 %         catch
 %             [cueTrigSigStruc] = avgCueTrigSig(inds(i), eventName, 0);
 %         end
@@ -557,6 +558,7 @@ try
         end
     end
 catch
+    disp('Prob with shift calc #2');
 end
 
 %end % end IF numLapType>=3
@@ -595,6 +597,13 @@ catch
     cueCellStruc.allMidCueCellInd = unique([midCueCellInd2 midCueCellInd3]);
     catch
     end
+    
+    try
+    cueCellStruc.avMidCueAmp = avMidCueAmp;
+    cueCellStruc.avShiftCueAmp = avShiftCueAmp;
+    catch
+    end
+    
 end
 
 

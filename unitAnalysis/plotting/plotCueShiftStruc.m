@@ -4,13 +4,17 @@ function plotCueShiftStruc(cueShiftStruc, refLapType, usePC)
 
 numLapTypes = length(cueShiftStruc.PCLappedSessCell); %pksCellCell);
 
-if refLapType==0
-    lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
-    lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
-    for i=1:length(cueShiftStruc.pksCellCell)
-        numLapType(i) = length(find(lapTypeArr==i));
+if numLapTypes>1
+    if refLapType==0
+        lapTypeArr = cueShiftStruc.lapCueStruc.lapTypeArr;
+        lapTypeArr(lapTypeArr==0) = max(lapTypeArr)+1;
+        for i=1:length(cueShiftStruc.pksCellCell)
+            numLapType(i) = length(find(lapTypeArr==i));
+        end
+        [val, refLapType] = max(numLapType); % use ref lap from one with most laps
     end
-    [val, refLapType] = max(numLapType); % use ref lap from one with most laps
+else
+    refLapType=1;
 end
 
 % select place cells
@@ -96,6 +100,7 @@ legend(numCell);
 
 % sorted unit time plot
 figure;
+try
 if ~contains(cueShiftStruc.filename, '2P')
 load(findLatestFilename('segDict', 'goodSeg'),'C'); % exclude goodSeg files
 else
@@ -116,3 +121,6 @@ end
 for i=1:size(cpc,1); cpc2(i,:) = (cpc(i,:)-min(cpc(i,:)))/(max(cpc(i,:))-min(cpc(i,:))); end
 imagesc(cpc2(sortInd,:));
 title('C for all PCs');
+
+catch
+end

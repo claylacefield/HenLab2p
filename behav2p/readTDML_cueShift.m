@@ -65,6 +65,15 @@ for i=1:length(behCell)
     if ~isempty(strfind(rowStr, '"settings"'))
         treadBehStruc.settingsString = rowStr;
         syncPin = str2num(rowStr(strfind(rowStr, 'sync_pin')+11:strfind(rowStr, 'sync_pin')+12));
+        if ~isempty(strfind(rowStr, '"led'))
+            ledInd = strfind(rowStr, '"led');
+            substr = rowStr(ledInd(1)-120:ledInd(1)-60);
+            valvInd = strfind(substr,'"valves"');
+           ledPin = str2num(substr(valvInd+11));
+        else
+            ledPin = 500;
+        end
+        
     end
     
     % sync pin (2p trigger ON)
@@ -155,11 +164,11 @@ for i=1:length(behCell)
         end
         
         % LED stim time/pos
-        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
+        if ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"open"')) && contains(rowStr, ['"pin": ' num2str(ledPin) ',']) % && (~isempty(strfind(rowStr, '"pin": 34,'))|| ~isempty(strfind(rowStr, 'led')))
             ledTimeStart = [ledTimeStart currTime];
             ledPosStart = [ledPosStart currY];
             ledLap = [ledLap lap];
-        elseif ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"close"')) && ~isempty(strfind(rowStr, '"pin": 34,'))
+        elseif ~isempty(strfind(rowStr, '"valve"')) && ~isempty(strfind(rowStr, '"close"')) && contains(rowStr, ['"pin": ' num2str(ledPin) ',']) % ~isempty(strfind(rowStr, '"pin": 34,'))
             ledTimeEnd = [ledTimeEnd currTime];
             ledPosEnd = [ledPosEnd currY];
             

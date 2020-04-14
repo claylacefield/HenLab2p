@@ -26,11 +26,11 @@ function [pksCellCell, posLapCell, lapCueStruc] = sepCueShiftLapSpkTimes(pksCell
 pos = treadBehStruc.resampY;
 
 maxFr = [];
-for numSeg = 1:size(pksCell)
-    maxFr = max([pksCell{numSeg} maxFr]);
+for numSeg = 1:length(pksCell)
+    maxFr = max([max(pksCell{numSeg}) maxFr]);
 end
 
-if length(pos)>maxFr*1.5
+if length(pos)>maxFr*1.8
     pos = pos(1:2:end);
 end
 
@@ -112,11 +112,11 @@ disp('Separating spikes and pos by lap type');
 
 % initialize output arrays
 for k=1:numLapTypes
-    posLapCell{k} = [];
-    pksCellCell{k} = cell(1,length(pksCellGood));
-    if k==1
-        posLapCell{k} = pos(1:lapFrInds(1));
-    end
+    posLapCell{k} = []; % posLapCell = concat pos arrays for each lap type (for tuning by lap type)
+    pksCellCell{k} = cell(1,length(pksCellGood)); % and spike times for each lapType, for each cell
+%     if k==1
+%         posLapCell{k} = pos(1:lapFrInds(1));
+%     end
 end
 
 % first, just fill in first lap (for each cell, find spikes in first lap)
@@ -127,23 +127,26 @@ if lapType~=0
         lapPks = unitPks(find(unitPks>=1 & unitPks<=lapFrInds(1))); % see which are in this lap
         pksCellCell{lapType}{p} = lapPks;
     end
+    posLapCell{lapType} = pos(1:lapFrInds(1));
 end
 
 % now find spikes for each lap, for each cell, based upon lapType
 for i=1:length(lapFrInds)-1
     lapType = lapTypeArr(i+1);
     if lapType ~= 0
-    for j=1:length(pksCellGood)  % for each cell
-        unitPks = unique(pksCellGood{j}); % get all pks for that cell (sometimes repeats, so get unique)
-        lapPks = unitPks(find(unitPks>=lapFrInds(i) & unitPks<=lapFrInds(i+1))); % see which are in this lap
+        for j=1:length(pksCellGood)  % for each cell
+            unitPks = unique(pksCellGood{j}); % get all pks for that cell (sometimes repeats, so get unique)
+            lapPks = unitPks(find(unitPks>=lapFrInds(i) & unitPks<=lapFrInds(i+1))); % see which are in this lap
+            
+            if ~isempty(lapPks) % if there are pks in this lap, add to correct lap type cellarray
+                % now adjust based upon separated lapType epochs
+                pksCellCell{lapType}{j} = [pksCellCell{lapType}{j}; lapPks-lapFrInds(i)+length(posLapCell{lapType})+1];
+            end
+            
+        end
         
-        % now adjust based upon separated lapType epochs
-        pksCellCell{lapType}{j} = [pksCellCell{lapType}{j}; lapPks-lapFrInds(i)+length(posLapCell{lapType})+1];
-        
-    end
-    
-    % and concatenate pos for this lap based upon this lapType
-    posLapCell{lapType} = [posLapCell{lapType} pos(lapFrInds(i):lapFrInds(i+1))];
+        % and concatenate pos for this lap based upon this lapType
+        posLapCell{lapType} = [posLapCell{lapType} pos(lapFrInds(i):lapFrInds(i+1))];
     end
 end
 

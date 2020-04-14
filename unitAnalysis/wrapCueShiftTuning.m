@@ -85,11 +85,12 @@ end
 T = treadBehStruc.adjFrTimes;
 
 maxFr = [];
-for numSeg = 1:size(pksCell)
-    maxFr = max([pksCell{numSeg} maxFr]);
+for numSeg = 1:length(pksCell)
+    maxFr = max([max(pksCell{numSeg}) maxFr]);
 end
 
-if length(T)>maxFr*1.5
+% NOTE this is hacky and may not work sometimes
+if length(T)>maxFr*1.8
     T = T(1:2:end);
 end
 
