@@ -7,9 +7,40 @@ function [s] = clayDeconvCa2(ca, toPlot);
 % NOTE: this may produce spurious results for bad units so 
 % maybe cull units with more stringent transient detection first.
 
-% 'ar2' model seems to work okay for G6s
-model = 'ar2'; %'ar2';  % autoregressive model of convolution kernel
+% (from deconvCa.m)
+%% inputs:
+%   y: T x 1 vector, fluorescence trace
+%   varargin: variable input arguments
+%       type: string, defines the model of the deconvolution kernel. possible
+%           options are:
+%           'ar1':  auto-regressive model with order p=1
+%           'ar2':  auto-regressive model with order p=2
+%           'exp2': the convolution kernel is modeled as the difference of two
+%               exponential functions -
+%               h(t) = (exp(-t/tau_d) - exp(-t/tau_r)) / (tau_d-tau_r)
+%           'kernel':   a vector of the convolution kernel
+%       pars: parameters for the specified convolution kernel. it has
+%           different shapes for differrent types of the convolution model:
+%           'ar1':  scalar
+%           'ar2':  2 x 1 vector, [r_1, r_2]
+%           'exp2': 2 x 1 vector, [tau_r, tau_d]
+%           'kernel': maxISI x 1 vector, the kernel.
+%       sn:  scalar, standard deviation of the noise distribution. If no
+%           values is give, then sn is estimated from the data based on power
+%           spectual density method.
+%       b:  fluorescence baseline vlaues. default is 0
+%       optimize_pars:  estimate the parameters of the convolution kernel. default: 0
+%       optimize_b:     estimate the baseline. default: 0
+%       lambda:     penalty parameter
+%       method: methods for running deconvolution. {'foopsi',
+%       'constrained_foopsi' (default), 'thresholded'},
 
+%% 
+
+% % 'ar2' model seems to work okay for G6s
+% model = 'ar2'; %'ar2';  % autoregressive model of convolution kernel
+
+% do a little filtering on ca signal
 ca0 = ca;
 ca = runmean(ca,10);
 ca = ca-runmean(ca, 500);

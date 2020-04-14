@@ -23,7 +23,7 @@ for j=3:length(mouseDir)    % go through all days
         
         for i = 3:length(dayDir) % and all sessions
             try
-                if ~isempty(strfind(dayDir(i).name, '18')) || ~isempty(strfind(dayDir(i).name, '19')) %&& contains(dayDir(i).name, 'mit')
+                if (contains(dayDir(i).name, '18') || contains(dayDir(i).name, '19') || contains(dayDir(i).name, '20')) %&& contains(dayDir(i).name, 'mit')
                     cd([mousePath '/' dayName '/' dayDir(i).name]);
                     %sessDir = dir;
                     cueShiftStrucName = findLatestFilename('cueShiftStruc'); % load latest cueShiftStruc
@@ -47,9 +47,9 @@ for j=3:length(mouseDir)    % go through all days
                         pkShiftCell = [pkShiftCell pkShiftPCsess];
                         pkPosPC = [pkPosPC pkPosPCsess];    % posRate pk pos for all cells
                         pkPosCell = [pkPosCell pkPosPCsess];
-
-                        pathCell = [pathCell cueShiftStruc.path]; % just save path and name for each session used
-                        cueShiftNameCell = [cueShiftNameCell cueShiftStrucName];
+                        currPath = pwd;
+                        pathCell = [pathCell; currPath]; % just save path and name for each session used
+                        cueShiftNameCell = [cueShiftNameCell; cueShiftStrucName];
 
                     else
                         disp([dayDir(i).name ' is not cueShift']);

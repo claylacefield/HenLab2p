@@ -18,9 +18,10 @@ pksCell = seg2P.pksCell;
 filename = [basename '_cueShiftStrucQuick2p_' date '.mat'];
 catch
     disp('Cant find seg2P so using CNMF');
-    segDictName = findLatestFilename('_segDict_');
+    segDictName = findLatestFilename('_segDict_', 'goodSeg');
     load(segDictName);
-    fps = 15;
+    %fps = 15;
+    [fps, numCh] = find2pScanParams();
     
     disp('Calculating transients');
     sdThresh = 3;
