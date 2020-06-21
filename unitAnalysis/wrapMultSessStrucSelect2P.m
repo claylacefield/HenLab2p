@@ -37,7 +37,7 @@ while stillAdding
             %segName = findLatestFilename('segDict');
             %load(goodSegName);
             
-            [treadBehStruc] = procHen2pBehav('auto');
+            [treadBehStruc] = procHen2pBehav('auto', 'cue');
             load(findLatestFilename('treadBehStruc'));
             
 %             numBins = 100 ; rayThresh = 0.05;
@@ -88,8 +88,8 @@ while stillAdding
     catch
         stillAdding = 0;
         disp('Canceled folder selection so aborting.');
-        saveFilename = ['/Backup20TB/clay/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
-        save(saveFilename, 'multSessSegStruc');
+%         saveFilename = ['/Backup20TB/clay/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
+%         save(saveFilename, 'multSessSegStruc');
     end
     cd ..;
 end

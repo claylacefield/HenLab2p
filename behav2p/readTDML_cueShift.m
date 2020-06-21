@@ -71,7 +71,7 @@ for i=1:length(behCell)
             valvInd = strfind(substr,'"valves"');
            ledPin = str2num(substr(valvInd+11));
         else
-            ledPin = 500;
+            ledPin = 5;
         end
         
     end

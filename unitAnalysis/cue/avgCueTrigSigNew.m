@@ -210,7 +210,7 @@ filename = findLatestFilename('.xml');
 filename = filename(1:strfind(filename, '.xml')-1);
 
 %% Plotting
-colors = {'g','c','b','m','k','y'};
+colors = {'g','b','c','m','k','y'};
 if toPlot
     figure;
     subplot(2,1,1); hold on;

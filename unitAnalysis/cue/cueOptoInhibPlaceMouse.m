@@ -5,13 +5,12 @@ function [cueOptoInhibPlaceStruc] = cueOptoInhibPlaceMouse(epoch)
 Clay 2020
 from cueShiftInhibPlaceMouse
 
-110919
-look at response during shift for place cells normally at that
+look at response during opto laps for place cells normally at that
 location
 
 %}
 
-%sourcePath = '/Backup20TB/Analysis Aug 2019/Figure1';
+%sourcePath = '/Backup20TB/clay/DGdata/mossy/mossyOpto/dorsalMossyArch';
 
 
 %toPlot=1;

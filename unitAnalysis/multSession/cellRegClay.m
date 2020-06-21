@@ -8,6 +8,8 @@ function [cell_registered_struct] = cellRegClay(multSessSegStruc, varargin);
 % C/A/treadBehStruc/etc. 
 % Outputs are saved in the output directory (the current directory), as
 % "cellRegistered_..._.m", and also output as cell_registered_struct
+%
+% NOTE: uses goodSeg if present, otherwise uses full A
 
 if nargin == 2
     toAlign = 1;
@@ -101,6 +103,8 @@ for i = 1:length(multSessSegStruc)
         spatial_footprints{i} = A;
     end
 end
+
+file_names = {multSessSegStruc.segDictName};
 
 % (clay) this is a fix to remove spatial footprints for cells with null/NaN
 % values (e.g. if part of frame has been trimmed after manual alignment to

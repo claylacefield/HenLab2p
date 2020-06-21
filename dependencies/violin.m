@@ -160,9 +160,9 @@ i=1;
 for i=1:size(Y,2)
     
     if isempty(b)==0
-        [f, u, bb]=ksdensity(Y{i},'bandwidth',b(i));
+        [f, u, bb]=ksdensity(Y{i},'bandwidth',b(i)); %ksdensity(Y{i},'bandwidth',b(i), 'support', 'positive', 'Censoring', Y{i}<=0); %ksdensity(Y{i},'bandwidth',b(i)); %
     elseif isempty(b)
-        [f, u, bb]=ksdensity(Y{i});
+        [f, u, bb]=ksdensity(Y{i}); %ksdensity(Y{i}, 'support', 'positive', 'Censoring', Y{i}<=0); %ksdensity(Y{i}); %
     end
     
     f=f/max(f)*0.3; %normalize

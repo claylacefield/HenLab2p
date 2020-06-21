@@ -1,4 +1,4 @@
-function [multSessSegStruc] = wrapMultSessStrucSelectCue2P(varargin);
+function [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
 
 %% USAGE: [multSessSegStruc] = wrapMultSessStrucSelect(varargin);
 % Start with multSessTuninStruc or create new, selecting folders to
@@ -24,11 +24,11 @@ end
 stillAdding = 1;
 while stillAdding
     try
-        [segDictName, path] = uigetfile('*.mat', 'Select session seg2P file to add to multSessTuningStruc');
+        [segDictName, path] = uigetfile('*.mat', 'Select session segDict file to add to multSessTuningStruc');
         cd(path);
         
         try
-%             goodSegName = uigetfile('*.mat', 'Select goodSeg file for this segDict');
+            %goodSegName = uigetfile('*.mat', 'Select goodSeg file for this segDict');
             
             disp(['Adding ' segDictName ' to multSessTuningStruc']);
         
@@ -37,7 +37,7 @@ while stillAdding
             %segName = findLatestFilename('segDict');
             %load(goodSegName);
             
-            %[treadBehStruc] = procHen2pBehav('auto', 'cue');
+            %[treadBehStruc] = procHen2pBehav('auto');
             load(findLatestFilename('treadBehStruc'));
             
 %             numBins = 100 ; rayThresh = 0.05;
@@ -54,10 +54,10 @@ while stillAdding
             multSessSegStruc(numSess).segDictName = segDictName;
             %multSessSegStruc(numSess).goodSegName = goodSegName;
             %multSessTuningStruc(numSess).sessPath = foldername;
-            multSessSegStruc(numSess).C = seg2P.C2p;
-            multSessSegStruc(numSess).A = seg2P.A2p;
-            multSessSegStruc(numSess).d1 = seg2P.d12p;
-            multSessSegStruc(numSess).d2 = seg2P.d22p;
+            multSessSegStruc(numSess).C = C;
+            multSessSegStruc(numSess).A = A;
+            multSessSegStruc(numSess).d1 = d1;
+            multSessSegStruc(numSess).d2 = d2;
             multSessSegStruc(numSess).treadBehStruc = treadBehStruc;
             %multSessSegStruc(numSess).avgTiff = imread(findLatestFilename('_avCaChDs'));
             
@@ -70,11 +70,11 @@ while stillAdding
 %             catch
 %                 disp('No okSegs or INs');
 %             end
-            
-            multSessSegStruc(numSess).pksCell = seg2P.pksCell;
-%             multSessSegStruc(numSess).deconvC = deconvC;
-%             multSessSegStruc(numSess).posRates = posRates;
-%             multSessSegStruc(numSess).posDeconv = posDeconv;
+%             
+            multSessSegStruc(numSess).pksCell = pksCell;
+            multSessSegStruc(numSess).deconvC = deconvC;
+            multSessSegStruc(numSess).posRates = posRates;
+            multSessSegStruc(numSess).posDeconv = posDeconv;
 
 %             multSessTuningStruc(numSess).goodSegPosPkStruc = goodSegPosPkStruc;
 %             wellTunedInd = find(circStatStruc.uniform(:,1)<0.01);
@@ -88,10 +88,10 @@ while stillAdding
     catch
         stillAdding = 0;
         disp('Canceled folder selection so aborting.');
-        saveFilename = ['/Backup20TB/clay/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
+        saveFilename = ['/Backup20TB/clay/DGdata/' multSessSegStruc(1).mouseName '/' multSessSegStruc(1).dayName '/' multSessSegStruc(1).mouseName '_' multSessSegStruc(1).dayName '_multSessSegStruc_' date '.mat'];
         save(saveFilename, 'multSessSegStruc');
     end
-    
+     cd ..;
 end
 
 

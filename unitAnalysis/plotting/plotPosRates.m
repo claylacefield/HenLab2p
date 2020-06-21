@@ -35,7 +35,7 @@ end
 
 %figure;
 %subplot(2,3,1);
-colormap(jet);
+colormap(hot);
 imagesc(posRates2);
 xlabel('position');
 

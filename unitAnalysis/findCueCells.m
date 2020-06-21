@@ -362,9 +362,9 @@ if toPlot
         end
         
         subplot(2,2,2);
-        plot(mean(posRatesRef(midCueCellInd,:),1), 'b');
+        plot(mean(posRatesRef(midCueCellInd3,:),1), 'b');
         hold on;
-        plot(mean(posRatesOmit(midCueCellInd,:),1), 'r');
+        plot(mean(posRatesOmit(midCueCellInd3,:),1), 'r');
         title('avgs');
         xlabel('pos');
         ylabel('mean rate (Hz)');
@@ -566,6 +566,7 @@ end
 %% pack some stuff in output structure
 cueCellStruc.path = cueShiftStruc.path;
 cueCellStruc.cueShiftName = cueShiftStruc.filename;
+cueCellStruc.posRatesRef = posRatesRef; % posRates for reference laps
 cueCellStruc.startCueCellInd = startCueCellInd; 
 cueCellStruc.placeCellInd = setdiff(pc, [midCellInd; startCueCellInd]); 
 cueCellStruc.midCellInd = midCellInd; % just cells in middle

@@ -1,4 +1,4 @@
-function plotGroupCueStruc2(groupCueStruc, refLapType, usePC)
+function [posRatesCell] = plotGroupCueStruc2(groupCueStruc, refLapType, usePC, toNorm)
 
 % for use with wrapCueShiftTuning, compileCueShiftStrucAutoDay
 
@@ -13,15 +13,17 @@ sessAvPosRatesCell = {}; %cell(numLapTypes,1);
 
 for j = 1:length(groupCueStruc)
     % select place cells
-    pc = find(groupCueStruc(j).PCLappedSessCell{refLapType}.Shuff.isPC==1);
-    % Now compile PCs from all types
-    % pc=[];
-    % for i=1:numLapTypes
-    %     pcType = find(cueShiftStruc.PCLappedSessCell{i}.Shuff.isPC==1);
-    %     %pcType = find(cueShiftStruc.PCLappedSessCell{i}.InfoPerSpk>=3.5);
-    %     pc = [pc; pcType];
-    % end
-    % pc = sort(unique(pc));
+    if usePC==2  % Now compile PCs from all types
+        pc=[];
+        for i=1:length(groupCueStruc(1).PCLappedSessCell)
+            pcType = find(groupCueStruc(j).PCLappedSessCell{i}.Shuff.isPC==1);
+            %pcType = find(cueShiftStruc.PCLappedSessCell{i}.InfoPerSpk>=3.5);
+            pc = [pc; pcType];
+        end
+        pc = sort(unique(pc));
+    else
+        pc = find(groupCueStruc(j).PCLappedSessCell{refLapType}.Shuff.isPC==1);
+    end
     
     numLapTypes = length(groupCueStruc(j).pksCellCell);
     goodLapTypes = 0;
@@ -35,11 +37,16 @@ for j = 1:length(groupCueStruc)
             if usePC==1
                 posRates = posRates(pc,:);
             end
+            if toNorm==1
+                for k=1:size(posRates,1)
+                   posRates(k,:) = posRates(k,:)/max(posRates(k,:)); 
+                end
+            end
             if length(posRatesCell)>=goodLapTypes
-                sessAvPosRatesCell{goodLapTypes} = [sessAvPosRatesCell{goodLapTypes}; mean(posRates,1)];
+                sessAvPosRatesCell{goodLapTypes} = [sessAvPosRatesCell{goodLapTypes}; nanmean(posRates,1)];
                 posRatesCell{goodLapTypes} = [posRatesCell{goodLapTypes}; posRates];
             else
-                sessAvPosRatesCell{goodLapTypes} = mean(posRates,1);
+                sessAvPosRatesCell{goodLapTypes} = nanmean(posRates,1);
                 posRatesCell{goodLapTypes} = posRates;
             end
             
@@ -79,18 +86,27 @@ for i = 1:numLapTypes
     j = lapTypeList(i);
     try
         subplot(2,numCols,i);
-        colormap(jet);
+        colormap(hot);
         posRates = posRatesCell{j};
         imagesc(posRates(sortInd,:));
         %colorbar;
         xlabel('position');
         if i==1
+            if length(toNorm)==1
             cl = caxis;
-            %title(cueShiftStruc.filename(1:strfind(cueShiftStruc.filename,'cueShift')-2));
+            else
+                caxis(toNorm);
+                cl = caxis;
+            end
+            title(groupCueStruc(1).filename(1:6));
         else
             caxis(cl);
             title(['LapType '  num2str(j)]);
         end
+        
+%         if i==numLapTypes
+%             colorbar;
+%         end
 
     catch
     end
@@ -102,13 +118,15 @@ subplot(2,numCols,numLapTypes+1); hold on;
 colors = {'r', 'g', 'b', 'c', 'm', 'y', 'k'};
 for i = 1:numLapTypes
     try
-        plot(mean(posRatesCell{i},1), colors{i});
+        plot(nanmean(posRatesCell{i},1), colors{i});
     catch
     end
     numCell{i}=num2str(i);
 end
 %title('posRates1=b, posRates2=g');
 legend(numCell);
+ylabel('mean rate');
+xlabel('position');
 
 % and mean of each
 subplot(2,numCols,numLapTypes+2); 
@@ -122,3 +140,5 @@ for i = 1:numLapTypes
 %     end
     numCell{i}=num2str(i);
 end
+ylabel('mean rate');
+xlabel('position');

@@ -48,6 +48,7 @@ if exist(figures_directory,'dir')~=7
 end
 figures_visibility='on'; % either 'on' or 'off' (in any case figures are saved)
 
+file_names = {multSessSegStruc.segDictName};
         
 %% Stage 1 - Loading the spatial footprints of cellular activity:
 % This stage loads a new data set which includes several sessions with the

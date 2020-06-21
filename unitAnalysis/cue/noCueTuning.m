@@ -15,7 +15,7 @@ segDictName = findLatestFilename('_seg2P_');
 load(segDictName); 
 C = seg2P.C2p;
 pksCell = seg2P.pksCell;
-filename = [basename '_cueShiftStrucQuick2p_' date '.mat'];
+filename = [basename '_noCueShiftStrucQuick2p_' date '.mat'];
 catch
     disp('Cant find seg2P so using CNMF');
     segDictName = findLatestFilename('_segDict_', 'goodSeg');
@@ -32,7 +32,7 @@ catch
         pksCell{seg} = clayCaTransients(C(seg,:), fps, toPlot, sdThresh, timeout);
     end
     toc;
-    filename = [basename '_cueShiftStrucQuickTuning_' date '.mat'];
+    filename = [basename '_noCueShiftStrucQuickTuning_' date '.mat'];
 end
 disp(['Calculating cue shift tuning for ' segDictName]);
 
@@ -56,8 +56,10 @@ cueShiftStruc.PCLappedSessCell{1} = PCLappedSess;
 
 % Look at PFs only to look for periodicity of PFs without cues
 % PFs of pc's only
+try
 [posBinFrac, posInfo, pcRatesBlanked, pcOmitRatesBlanked, pfOnlyRates, pfOnlyRatesOmit] = cuePosInhib(cueShiftStruc, 0, 1, 1);
-
+catch
+end
 %cueShiftStruc.
 
 
